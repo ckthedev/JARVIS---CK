@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #080D16;
+  --foreground: #F5F7FA;
+  --sidebar: #0D1421;
+  --card: #111B2B;
+  --card-hover: #162338;
+  --primary: #00D4FF;
+  --secondary: #7A3FFF;
+  --primary-text: #F5F7FA;
+  --secondary-text: #94A3B8;
+  --border: #1E2A3F;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080D16;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E2A3F;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2D3D58;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: none;
+}
