@@ -23,9 +23,7 @@ import {
   Share2,
   FileText,
   FolderOpen,
-  Plus,
   ArrowRight,
-  Sparkles,
   MapPin,
   ExternalLink,
   Layers,
@@ -33,15 +31,12 @@ import {
   Flame,
   CheckCircle2,
 } from "lucide-react";
-import { CockpitTelemetryBar } from "@/components/layout/cockpit-telemetry-bar";
-import { CockpitTelemetryCards } from "@/components/dashboard/cockpit-telemetry-cards";
+import { JarvisHudHeader } from "@/components/dashboard/jarvis-hud-header";
+import { JarvisTopStatCards } from "@/components/dashboard/jarvis-top-stat-cards";
 import {
-  SystemWorkloadWaveChart,
-  MemoryDonutGauge,
-  FilesystemUsageTable,
-  HardwareLatencyAndNetwork,
-  ActiveProblemsPanel,
-} from "@/components/dashboard/cockpit-charts";
+  ProductivityVelocityChart,
+  TaskDistributionDonutGauge,
+} from "@/components/dashboard/jarvis-dashboard-charts";
 
 export const dynamic = "force-dynamic";
 
@@ -87,91 +82,45 @@ export default async function DashboardPage() {
     year: "numeric",
   }).format(now);
 
+  const nextMeeting = upcomingMeetings[0];
+  const nextMeetingTime = nextMeeting ? formatTime(nextMeeting.startTime) : null;
+
   return (
     <div className="space-y-6">
-      {/* 1. Cockpit NOC Telemetry Bar (Header, Real-time Clock, Server Agent Status) */}
-      <CockpitTelemetryBar />
+      {/* 1. JARVIS HUD Header: Personalized Greeting, Clock & Quick Actions */}
+      <JarvisHudHeader
+        userName={user.name.split(" ")[0]}
+        greetingTime={greetingTime}
+        formattedDate={formattedDate}
+      />
 
-      {/* 2. Cockpit Top Telemetry Stat Cards with Glowing Area Wave Sparklines */}
-      <CockpitTelemetryCards />
+      {/* 2. Top Telemetry Stat Cards with Glowing Area Wave Sparklines */}
+      <JarvisTopStatCards
+        taskStats={taskStats}
+        upcomingMeetingsCount={upcomingMeetings.length}
+        nextMeetingTime={nextMeetingTime}
+        reminderStats={reminderStats}
+        socialStats={socialStats}
+      />
 
-      {/* 3. NOC Workload Wave Chart & Memory Radial Donut Gauge */}
+      {/* 3. Hero Visualizations: Productivity Velocity Wave Chart & Task Allocation Donut Gauge */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
-          <SystemWorkloadWaveChart />
+          <ProductivityVelocityChart
+            totalTasks={taskStats.totalActive}
+            todayTasks={taskStats.today}
+            completedTasks={8}
+          />
         </div>
         <div className="lg:col-span-1">
-          <MemoryDonutGauge />
-        </div>
-      </div>
-
-      {/* 4. Filesystems Occupancy & Disk/Interface Latency Matrix */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <FilesystemUsageTable />
-        <HardwareLatencyAndNetwork />
-      </div>
-
-      {/* 5. Active Problems / Diagnostic Alert Console */}
-      <ActiveProblemsPanel />
-
-      {/* 6. Section Separator for Operational Productivity Modules */}
-      <div className="pt-4 border-t border-border/60">
-        <div className="flex items-center gap-2 mb-4 font-mono">
-          <span className="flex h-2 w-2 rounded-full bg-primary" />
-          <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-            Personal Productivity Operations & Matrix
-          </h2>
-          <span className="text-secondary-text text-xs">&mdash;</span>
-          <span className="text-xs text-secondary-text">Tasks &bull; Meetings &bull; Social &bull; Notes &bull; Storage</span>
-        </div>
-      </div>
-
-      {/* Personalized Greeting & Status Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border/40 pb-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-mono">
-              {greetingTime}, {user.name.split(" ")[0]}
-            </h1>
-            <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-          </div>
-          <p className="mt-1 text-sm text-secondary-text font-mono">
-            {formattedDate} &bull; JARVIS Core status is optimal.
-          </p>
-        </div>
-
-        {/* Quick Actions Bar */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Link href="/tasks">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
-              <Plus className="h-3.5 w-3.5 text-primary" />
-              New Task
-            </Button>
-          </Link>
-          <Link href="/notes">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
-              <Plus className="h-3.5 w-3.5 text-secondary" />
-              New Note
-            </Button>
-          </Link>
-          <Link href="/meetings">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
-              <Plus className="h-3.5 w-3.5 text-emerald-400" />
-              New Meeting
-            </Button>
-          </Link>
-          <Link href="/reminders">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
-              <Plus className="h-3.5 w-3.5 text-amber-400" />
-              New Reminder
-            </Button>
-          </Link>
-          <Link href="/social">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
-              <Plus className="h-3.5 w-3.5 text-cyan-400" />
-              Plan Post
-            </Button>
-          </Link>
+          <TaskDistributionDonutGauge
+            totalActive={taskStats.totalActive}
+            today={taskStats.today}
+            inProgress={taskStats.inProgress}
+            upcoming={taskStats.upcoming}
+            overdue={taskStats.overdue}
+            critical={taskStats.critical}
+          />
         </div>
       </div>
 
