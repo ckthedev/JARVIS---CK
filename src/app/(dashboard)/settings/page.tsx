@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import { User, ShieldCheck, Database, HardDrive, KeyRound } from "lucide-react";
+import { PasswordChangeCard } from "./password-change-card";
 
 export const dynamic = "force-dynamic";
 
@@ -134,20 +135,23 @@ export default async function SettingsPage() {
         </Card>
       </div>
 
+      {/* Direct Password Change Card */}
+      <PasswordChangeCard />
+
       {/* Security Credentials Guidance */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <KeyRound className="h-4 w-4 text-primary" />
-            Security & Password Management
+            Security & Password Architecture
           </CardTitle>
           <CardDescription>
-            You can change your password at any time using the &quot;Change Password&quot; option in the top-right profile menu.
+            Passphrase encryption and credential boundaries
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-primary/20 bg-primary/5 p-4 text-xs text-secondary-text">
-            <p className="text-foreground font-semibold mb-1">
+          <div className="rounded-md border border-primary/20 bg-primary/5 p-4 text-xs text-secondary-text space-y-1">
+            <p className="text-foreground font-semibold">
               Administrator Credential Protection:
             </p>
             <p>

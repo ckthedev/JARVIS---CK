@@ -20,29 +20,28 @@ export const authConfig = {
       }
 
       const isLoginPage = pathname === "/login";
+      const isSetupPage = pathname === "/setup";
 
-      if (isLoginPage) {
-        if (isLoggedIn) {
+      if (isLoggedIn) {
+        if (isLoginPage || isSetupPage) {
           return Response.redirect(new URL("/dashboard", nextUrl));
         }
         return true;
       }
 
+      // Unauthenticated access allowed for login and first-time setup
+      if (isLoginPage || isSetupPage) {
+        return true;
+      }
+
       // Root path redirects to dashboard if logged in, login otherwise
       if (pathname === "/") {
-        if (isLoggedIn) {
-          return Response.redirect(new URL("/dashboard", nextUrl));
-        }
         return Response.redirect(new URL("/login", nextUrl));
       }
 
       // All other routes require authentication
-      if (!isLoggedIn) {
-        const callbackUrl = encodeURIComponent(pathname);
-        return Response.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl));
-      }
-
-      return true;
+      const callbackUrl = encodeURIComponent(pathname);
+      return Response.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl));
     },
     async jwt({ token, user, trigger, session }) {
       if (user) {

@@ -118,7 +118,7 @@ Copy `.env.example` to `.env.local` and `.env`:
 cp .env.example .env.local
 cp .env.example .env
 ```
-Ensure `AUTH_SECRET`, `DATABASE_URL`, and initial admin credentials are set.
+Ensure `AUTH_SECRET` and `DATABASE_URL` are configured.
 
 ### Step 2: Start PostgreSQL
 
@@ -132,21 +132,19 @@ docker compose up -d
 powershell -ExecutionPolicy Bypass -File .\scripts\start-local-db.ps1
 ```
 
-### Step 3: Run Database Migrations and Seed
+### Step 3: Run Database Migrations
 ```bash
 npx prisma migrate dev
-npm run db:seed
 ```
 
-Default administrator credentials provisioned:
-- **Email**: `admin@jarvis.local`
-- **Password**: `JarvisAdmin2026!`
-
-### Step 4: Start Development Server
+### Step 4: Start Development Server and Complete First-Time Setup
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+1. Open [http://localhost:3000](http://localhost:3000) in your browser.
+2. The system automatically redirects to the first-time setup wizard (`/setup`).
+3. Set your preferred administrator email (e.g. `ck@jarvis.local`), name, and secure passphrase.
+4. Once created, the setup route permanently locks, external registration is disabled, and only your configured administrator account has access.
 
 ---
 

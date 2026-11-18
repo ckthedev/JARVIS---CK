@@ -2,6 +2,13 @@ import { redirect } from "next/navigation";
 import { auth } from "./auth";
 import { prisma } from "@/lib/prisma/client";
 
+export async function hasAdminUser(): Promise<boolean> {
+  const count = await prisma.user.count({
+    where: { role: "ADMIN" },
+  });
+  return count > 0;
+}
+
 export async function getSession() {
   return await auth();
 }
