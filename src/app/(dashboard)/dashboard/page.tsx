@@ -33,6 +33,15 @@ import {
   Flame,
   CheckCircle2,
 } from "lucide-react";
+import { CockpitTelemetryBar } from "@/components/layout/cockpit-telemetry-bar";
+import { CockpitTelemetryCards } from "@/components/dashboard/cockpit-telemetry-cards";
+import {
+  SystemWorkloadWaveChart,
+  MemoryDonutGauge,
+  FilesystemUsageTable,
+  HardwareLatencyAndNetwork,
+  ActiveProblemsPanel,
+} from "@/components/dashboard/cockpit-charts";
 
 export const dynamic = "force-dynamic";
 
@@ -79,17 +88,54 @@ export default async function DashboardPage() {
   }).format(now);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* 1. Cockpit NOC Telemetry Bar (Header, Real-time Clock, Server Agent Status) */}
+      <CockpitTelemetryBar />
+
+      {/* 2. Cockpit Top Telemetry Stat Cards with Glowing Area Wave Sparklines */}
+      <CockpitTelemetryCards />
+
+      {/* 3. NOC Workload Wave Chart & Memory Radial Donut Gauge */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
+          <SystemWorkloadWaveChart />
+        </div>
+        <div className="lg:col-span-1">
+          <MemoryDonutGauge />
+        </div>
+      </div>
+
+      {/* 4. Filesystems Occupancy & Disk/Interface Latency Matrix */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <FilesystemUsageTable />
+        <HardwareLatencyAndNetwork />
+      </div>
+
+      {/* 5. Active Problems / Diagnostic Alert Console */}
+      <ActiveProblemsPanel />
+
+      {/* 6. Section Separator for Operational Productivity Modules */}
+      <div className="pt-4 border-t border-border/60">
+        <div className="flex items-center gap-2 mb-4 font-mono">
+          <span className="flex h-2 w-2 rounded-full bg-primary" />
+          <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
+            Personal Productivity Operations & Matrix
+          </h2>
+          <span className="text-secondary-text text-xs">&mdash;</span>
+          <span className="text-xs text-secondary-text">Tasks &bull; Meetings &bull; Social &bull; Notes &bull; Storage</span>
+        </div>
+      </div>
+
       {/* Personalized Greeting & Status Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border/40 pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-mono">
               {greetingTime}, {user.name.split(" ")[0]}
             </h1>
             <Sparkles className="h-5 w-5 text-primary animate-pulse" />
           </div>
-          <p className="mt-1 text-sm text-secondary-text">
+          <p className="mt-1 text-sm text-secondary-text font-mono">
             {formattedDate} &bull; JARVIS Core status is optimal.
           </p>
         </div>
@@ -97,31 +143,31 @@ export default async function DashboardPage() {
         {/* Quick Actions Bar */}
         <div className="flex flex-wrap items-center gap-2">
           <Link href="/tasks">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
               <Plus className="h-3.5 w-3.5 text-primary" />
               New Task
             </Button>
           </Link>
           <Link href="/notes">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
               <Plus className="h-3.5 w-3.5 text-secondary" />
               New Note
             </Button>
           </Link>
           <Link href="/meetings">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
               <Plus className="h-3.5 w-3.5 text-emerald-400" />
               New Meeting
             </Button>
           </Link>
           <Link href="/reminders">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
               <Plus className="h-3.5 w-3.5 text-amber-400" />
               New Reminder
             </Button>
           </Link>
           <Link href="/social">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs font-mono">
               <Plus className="h-3.5 w-3.5 text-cyan-400" />
               Plan Post
             </Button>

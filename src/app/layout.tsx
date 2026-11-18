@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/hooks/use-toast";
+import { JarvisCursor } from "@/components/ui/jarvis-cursor";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -26,8 +33,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`dark ${inter.variable}`}>
-      <body className="min-h-screen bg-background font-sans text-foreground antialiased selection:bg-primary selection:text-background">
+    <html lang="en" className={`dark ${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="min-h-screen bg-background font-sans text-foreground antialiased selection:bg-primary selection:text-background relative">
+        <JarvisCursor />
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>

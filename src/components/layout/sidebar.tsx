@@ -146,7 +146,20 @@ export function Sidebar() {
         </div>
 
         {/* Bottom Navigation */}
-        <div className="border-t border-sidebar-border p-3 space-y-1">
+        <div className="border-t border-sidebar-border p-3 space-y-2">
+          {!collapsed && (
+            <div className="flex items-center justify-between px-2 py-1.5 rounded bg-background/60 border border-border/40 font-mono text-[10px]">
+              <div className="flex items-center gap-1.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                <span className="text-primary font-semibold tracking-wider">ONLINE</span>
+              </div>
+              <span className="text-secondary-text">12ms</span>
+            </div>
+          )}
+
           <Link
             href="/settings"
             onClick={() => setMobileOpen(false)}

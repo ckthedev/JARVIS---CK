@@ -3,16 +3,21 @@
 @tailwind utilities;
 
 :root {
-  --background: #080D16;
-  --foreground: #F5F7FA;
-  --sidebar: #0D1421;
-  --card: #111B2B;
-  --card-hover: #162338;
-  --primary: #00D4FF;
-  --secondary: #7A3FFF;
-  --primary-text: #F5F7FA;
+  --background: #080B10;
+  --foreground: #F1F5F9;
+  --sidebar: #0B0F17;
+  --card: #0E131F;
+  --card-hover: #141C2B;
+  --primary: #00E599;
+  --secondary: #00D4FF;
+  --primary-text: #F1F5F9;
   --secondary-text: #94A3B8;
-  --border: #1E2A3F;
+  --border: #1A2333;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
@@ -20,30 +25,105 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
 }
 
-/* Custom Scrollbars */
+/* Tactile Click Feedback */
+button:active,
+a:active,
+[role="button"]:active {
+  transform: scale(0.98);
+  transition: transform 0.08s ease;
+}
+
+/* Custom Sleek Futuristic Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #080D16;
+  background: #080B10;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E2A3F;
-  border-radius: 3px;
+  background: #1A2333;
+  border-radius: 9999px;
+  border: 1px solid #141C2B;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2D3D58;
+  background: #00E59955;
+  box-shadow: 0 0 8px rgba(0, 229, 153, 0.4);
 }
 
 /* Focus styles */
 *:focus-visible {
   outline: none;
+}
+
+/* Cockpit HUD Decorative Elements */
+.cockpit-panel {
+  background-color: #0E131F;
+  border: 1px solid #1A2333;
+  border-radius: 0.5rem;
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cockpit-panel:hover {
+  border-color: #26354D;
+}
+
+/* Subtle corner tick brackets for high-tech HUD cards */
+.hud-brackets {
+  position: relative;
+}
+
+.hud-brackets::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid rgba(0, 229, 153, 0.6);
+  border-left: 2px solid rgba(0, 229, 153, 0.6);
+  pointer-events: none;
+  border-top-left-radius: 4px;
+}
+
+.hud-brackets::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 8px;
+  height: 8px;
+  border-bottom: 2px solid rgba(0, 229, 153, 0.6);
+  border-right: 2px solid rgba(0, 229, 153, 0.6);
+  pointer-events: none;
+  border-bottom-right-radius: 4px;
+}
+
+/* Pulsing live dot */
+@keyframes livePulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(0, 229, 153, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(0, 229, 153, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(0, 229, 153, 0);
+  }
+}
+
+.pulse-live {
+  animation: livePulse 2s infinite;
 }
 
 /* Tiptap Editor Typography & Formatting */
@@ -140,7 +220,7 @@ body {
 }
 
 .tiptap ul[data-type="taskList"] li > label input[type="checkbox"] {
-  accent-color: #00D4FF;
+  accent-color: #00E599;
   cursor: pointer;
   width: 1rem;
   height: 1rem;
@@ -158,19 +238,19 @@ body {
 
 /* Blockquote */
 .tiptap blockquote {
-  border-left: 3px solid #00D4FF;
+  border-left: 3px solid #00E599;
   padding-left: 1rem;
   margin: 1rem 0;
   font-style: italic;
   color: #94A3B8;
-  background: rgba(0, 212, 255, 0.03);
+  background: rgba(0, 229, 153, 0.04);
   border-radius: 0 0.375rem 0.375rem 0;
 }
 
 /* Code Blocks */
 .tiptap pre {
-  background: #0B111E;
-  border: 1px solid #1E2A3F;
+  background: #0B0F17;
+  border: 1px solid #1A2333;
   border-radius: 0.5rem;
   color: #E2E8F0;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -181,10 +261,10 @@ body {
 }
 
 .tiptap code {
-  background: #111B2B;
-  border: 1px solid #1E2A3F;
+  background: #0E131F;
+  border: 1px solid #1A2333;
   border-radius: 0.25rem;
-  color: #00D4FF;
+  color: #00E599;
   font-size: 0.85em;
   padding: 0.15rem 0.35rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -200,7 +280,7 @@ body {
 
 /* Links */
 .tiptap a {
-  color: #00D4FF;
+  color: #00E599;
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
@@ -214,6 +294,6 @@ body {
 /* Horizontal Rule */
 .tiptap hr {
   border: none;
-  border-top: 1px solid #1E2A3F;
+  border-top: 1px solid #1A2333;
   margin: 1.5rem 0;
 }
