@@ -47,6 +47,7 @@ export default async function DashboardPage() {
     upcomingReminders,
     scheduledPosts,
     recentNotes,
+    noteStats,
     recentFiles,
   ] = await Promise.all([
     taskService.getDashboardTaskStats(user.id),
@@ -55,6 +56,7 @@ export default async function DashboardPage() {
     reminderService.getUpcomingReminders(user.id, 4),
     socialService.getScheduledPosts(user.id, 4),
     noteService.getRecentNotes(user.id, 4),
+    noteService.getDashboardNoteStats(user.id),
     fileService.getRecentFiles(user.id, 4),
   ]);
 
@@ -604,12 +606,17 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-base flex items-center gap-2">
-                <FileText className="h-4 w-4 text-primary" />
-                Recent Notes
-              </CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" />
+                  Recent Notes
+                </CardTitle>
+                <Badge variant="outline" className="text-[10px] text-secondary-text font-normal">
+                  {noteStats.totalActive} Active &bull; {noteStats.pinned} Pinned
+                </Badge>
+              </div>
               <CardDescription>
-                Knowledge base entries and quick snippets
+                Knowledge base entries, rich documentation and quick snippets
               </CardDescription>
             </div>
             <Link
@@ -636,29 +643,50 @@ export default async function DashboardPage() {
             ) : (
               <div className="space-y-3">
                 {recentNotes.map((note) => (
-                  <div
+                  <Link
                     key={note.id}
-                    className="rounded-md border border-border bg-[#0A101C] p-3 transition-colors hover:border-border/80"
+                    href={`/notes?note=${note.id}`}
+                    className="group block rounded-md border border-border bg-[#0A101C] p-3 transition-colors hover:border-primary/50 hover:bg-[#101725]"
                   >
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-semibold text-foreground">
-                        {note.title}
-                      </h4>
+                      <div className="flex items-center gap-2 truncate">
+                        <h4 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                          {note.title || "Untitled Note"}
+                        </h4>
+                        {note.category && (
+                          <span
+                            className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded border"
+                            style={{
+                              backgroundColor: `${note.category.color || "#00D4FF"}15`,
+                              color: note.category.color || "#00D4FF",
+                              borderColor: `${note.category.color || "#00D4FF"}35`,
+                            }}
+                          >
+                            <span
+                              className="h-1.5 w-1.5 rounded-full"
+                              style={{ backgroundColor: note.category.color || "#00D4FF" }}
+                            />
+                            {note.category.name}
+                          </span>
+                        )}
+                      </div>
                       {note.isPinned && (
-                        <Badge variant="secondary">Pinned</Badge>
+                        <Badge variant="secondary" className="text-[10px] shrink-0">
+                          Pinned
+                        </Badge>
                       )}
                     </div>
                     <p className="mt-1 text-xs text-secondary-text line-clamp-2">
-                      {note.content}
+                      {note.plainText || "Empty document"}
                     </p>
                     <div className="mt-2 flex items-center justify-between">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {note.tags.map((tag) => (
                           <span
-                            key={tag}
+                            key={tag.id}
                             className="text-[10px] bg-sidebar-accent px-1.5 py-0.5 rounded text-secondary-text"
                           >
-                            #{tag}
+                            #{tag.name}
                           </span>
                         ))}
                       </div>
@@ -666,7 +694,7 @@ export default async function DashboardPage() {
                         {formatDate(note.updatedAt)}
                       </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

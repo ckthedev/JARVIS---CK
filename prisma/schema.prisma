@@ -34,6 +34,7 @@ model User {
   socialPosts    SocialPost[]
   notes          Note[]
   noteTags       NoteTag[]
+  noteCategories NoteCategory[]
   folders        Folder[]
   storedFiles    StoredFile[]
   notifications  Notification[]
@@ -263,21 +264,45 @@ model SocialMediaAsset {
 // -----------------------------------------------------------------------------
 
 model Note {
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   userId     String
+  categoryId String?
   title      String
   content    String
-  isPinned   Boolean  @default(false)
-  isArchived Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  plainText  String?   @default("")
+  isPinned   Boolean   @default(false)
+  isArchived Boolean   @default(false)
+  deletedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
-  user User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags NoteTagOnNote[]
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category    NoteCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags        NoteTagOnNote[]
+  attachments NoteAttachment[]
 
   @@index([userId, isPinned])
+  @@index([userId, isArchived])
+  @@index([userId, deletedAt])
+  @@index([userId, categoryId])
   @@index([userId, updatedAt])
   @@map("notes")
+}
+
+model NoteCategory {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  color     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notes Note[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("note_categories")
 }
 
 model NoteTag {
@@ -305,6 +330,21 @@ model NoteTagOnNote {
 
   @@id([noteId, tagId])
   @@map("note_tags_on_notes")
+}
+
+model NoteAttachment {
+  id        String   @id @default(uuid())
+  noteId    String
+  fileId    String
+  createdAt DateTime @default(now())
+
+  note Note       @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  file StoredFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([noteId, fileId])
+  @@index([noteId])
+  @@index([fileId])
+  @@map("note_attachments")
 }
 
 // -----------------------------------------------------------------------------
@@ -341,8 +381,9 @@ model StoredFile {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  folder Folder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folder          Folder?          @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  noteAttachments NoteAttachment[]
 
   @@index([userId, folderId])
   @@index([userId, mimeType])
