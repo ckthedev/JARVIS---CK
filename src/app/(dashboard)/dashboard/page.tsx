@@ -50,16 +50,18 @@ export default async function DashboardPage() {
     noteStats,
     recentFiles,
     reminderStats,
+    socialStats,
   ] = await Promise.all([
     taskService.getDashboardTaskStats(user.id),
     taskService.getTasks(user.id, { limit: 5 }),
     meetingService.getUpcomingMeetings(user.id, 4),
     reminderService.getUpcomingReminders(user.id, 4),
-    socialService.getScheduledPosts(user.id, 4),
+    socialService.getPosts(user.id, { status: "SCHEDULED", limit: 4, sortBy: "plannedAt", sortOrder: "asc" }),
     noteService.getRecentNotes(user.id, 4),
     noteService.getDashboardNoteStats(user.id),
     fileService.getRecentFiles(user.id, 4),
     reminderService.getReminderStats(user.id),
+    socialService.getSocialStats(user.id),
   ]);
 
   // Greeting computation
@@ -116,6 +118,12 @@ export default async function DashboardPage() {
             <Button size="sm" variant="outline" className="gap-1.5 text-xs">
               <Plus className="h-3.5 w-3.5 text-amber-400" />
               New Reminder
+            </Button>
+          </Link>
+          <Link href="/social">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs">
+              <Plus className="h-3.5 w-3.5 text-cyan-400" />
+              Plan Post
             </Button>
           </Link>
         </div>
@@ -575,56 +583,81 @@ export default async function DashboardPage() {
             <div>
               <CardTitle className="text-base flex items-center gap-2">
                 <Share2 className="h-4 w-4 text-[#A78BFA]" />
-                Social Media Schedule
+                Social Media Planner
               </CardTitle>
               <CardDescription>
-                Upcoming posts queued for publication
+                {socialStats.scheduled} scheduled &bull; {socialStats.drafts} drafts &bull; {socialStats.inReview} in review
+                {socialStats.overdue > 0 && (
+                  <span className="text-red-400 font-semibold ml-1.5">({socialStats.overdue} overdue)</span>
+                )}
               </CardDescription>
             </div>
-            <Link
-              href="/social"
-              className="text-xs text-primary hover:underline flex items-center gap-1 font-medium"
-            >
-              Manage <ArrowRight className="h-3 w-3" />
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/social/calendar"
+                className="text-xs text-secondary-text hover:text-foreground font-medium"
+              >
+                Calendar
+              </Link>
+              <span className="text-border">&bull;</span>
+              <Link
+                href="/social"
+                className="text-xs text-primary hover:underline flex items-center gap-1 font-medium"
+              >
+                Manage <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
           </CardHeader>
           <CardContent>
             {scheduledPosts.length === 0 ? (
               <EmptyState
                 icon={Share2}
                 title="No scheduled posts"
-                description="Your social media queue is currently empty."
+                description="Your social media publishing queue is currently empty."
                 action={
-                  <Link href="/social">
+                  <Link href="/social/posts">
                     <Button size="sm" variant="outline">
-                      Schedule a Post
+                      Plan a Post
                     </Button>
                   </Link>
                 }
               />
             ) : (
               <div className="space-y-3">
-                {scheduledPosts.map((post) => (
-                  <div
-                    key={post.id}
-                    className="rounded-md border border-border bg-[#0A101C] p-3 transition-colors hover:border-border/80"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-secondary">
-                        {post.platform || "MULTI-CHANNEL"} &bull; {post.accountName || "Default"}
-                      </span>
-                      <Badge variant="outline">{post.status}</Badge>
-                    </div>
-                    <p className="mt-2 text-xs text-foreground line-clamp-2">
-                      {post.content}
-                    </p>
-                    {post.scheduledFor && (
-                      <p className="mt-2 text-[11px] text-secondary-text">
-                        Scheduled: {formatDate(post.scheduledFor)} at {formatTime(post.scheduledFor)}
+                {scheduledPosts.map((post) => {
+                  const targetDate = post.plannedAt || post.scheduledFor;
+                  return (
+                    <Link
+                      key={post.id}
+                      href="/social/posts"
+                      className="block rounded-lg border border-border bg-[#0A101C] p-3 transition-colors hover:border-primary/50 group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate max-w-[200px]">
+                          {post.title}
+                        </span>
+                        <Badge variant="outline" className="text-[10px] bg-cyan-500/10 text-cyan-400 border-cyan-500/30">
+                          {post.status}
+                        </Badge>
+                      </div>
+                      <p className="mt-1.5 text-xs text-secondary-text line-clamp-2">
+                        {post.content || post.description || "No caption"}
                       </p>
-                    )}
-                  </div>
-                ))}
+                      {targetDate && (
+                        <p className="mt-2 text-[11px] text-cyan-400 font-mono flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          Planned: {new Date(targetDate).toLocaleString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                            timeZone: "Asia/Kolkata",
+                          })} IST
+                        </p>
+                      )}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </CardContent>

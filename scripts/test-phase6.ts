@@ -454,6 +454,7 @@ async function runTests() {
   });
   const persistentTask = await meetingService.createFollowUpTask(user.id, tempMeetingForTask.id, {
     title: "Action Item to Keep",
+    priority: "NORMAL",
   });
   await meetingService.deleteMeeting(user.id, tempMeetingForTask.id, true);
   const remainingTask = await prisma.task.findUnique({ where: { id: persistentTask.id } });

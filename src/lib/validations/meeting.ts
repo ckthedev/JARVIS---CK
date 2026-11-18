@@ -36,7 +36,7 @@ export const attendeeSchema = z.object({
   status: attendeeStatusEnum.default("INVITED"),
 });
 
-export type AttendeeInput = z.infer<typeof attendeeSchema>;
+export type AttendeeInput = z.input<typeof attendeeSchema>;
 
 export const agendaItemSchema = z.object({
   id: z.string().uuid().optional(),
@@ -48,7 +48,7 @@ export const agendaItemSchema = z.object({
   notes: z.string().trim().max(5000).nullable().optional(),
 });
 
-export type AgendaItemInput = z.infer<typeof agendaItemSchema>;
+export type AgendaItemInput = z.input<typeof agendaItemSchema>;
 
 export const createMeetingSchema = z
   .object({
@@ -92,7 +92,7 @@ export const createMeetingSchema = z
     }
   );
 
-export type CreateMeetingInput = z.infer<typeof createMeetingSchema>;
+export type CreateMeetingInput = z.input<typeof createMeetingSchema>;
 
 export const updateMeetingSchema = z
   .object({

@@ -39,6 +39,11 @@ model User {
   storedFiles        StoredFile[]
   notifications      Notification[]
   reminderDeliveries ReminderDelivery[]
+  socialCampaigns      SocialCampaign[]
+  contentPillars       ContentPillar[]
+  hashtags             Hashtag[]
+  hashtagCollections   HashtagCollection[]
+  socialPostActivities SocialPostActivity[]
 
   @@map("users")
 }
@@ -141,6 +146,7 @@ model Reminder {
   userId               String
   taskId               String?
   meetingId            String?
+  socialPostId         String?
   title                String
   description          String?
   dueAt                DateTime
@@ -178,6 +184,7 @@ model Reminder {
   user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   task          Task?               @relation(fields: [taskId], references: [id], onDelete: SetNull)
   meeting       Meeting?            @relation(fields: [meetingId], references: [id], onDelete: SetNull)
+  socialPost    SocialPost?         @relation(fields: [socialPostId], references: [id], onDelete: SetNull)
   deliveries    ReminderDelivery[]
   notifications Notification[]
 
@@ -187,6 +194,7 @@ model Reminder {
   @@index([userId, deletedAt])
   @@index([taskId])
   @@index([meetingId])
+  @@index([socialPostId])
   @@map("reminders")
 }
 
@@ -341,8 +349,95 @@ model MeetingAttachment {
 }
 
 // -----------------------------------------------------------------------------
-// SOCIAL MEDIA
+// SOCIAL MEDIA PLANNER & CONTENT WORKFLOW
 // -----------------------------------------------------------------------------
+
+model SocialCampaign {
+  id            String       @id @default(uuid())
+  userId        String
+  name          String
+  description   String?
+  objective     String?
+  startDate     DateTime?
+  endDate       DateTime?
+  status        String       @default("PLANNING") // PLANNING, ACTIVE, COMPLETED, ARCHIVED
+  platforms     String[]     @default([])
+  internalNotes String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts SocialPost[]
+
+  @@index([userId, status])
+  @@map("social_campaigns")
+}
+
+model ContentPillar {
+  id          String       @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  color       String?      @default("#00D4FF")
+  isArchived  Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts SocialPost[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("content_pillars")
+}
+
+model Hashtag {
+  id          String                @id @default(uuid())
+  userId      String
+  tag         String                // normalized lowercase without leading #
+  displayTag  String                // formatted tag e.g. #TechTrends
+  category    String?
+  notes       String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  user        User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collections HashtagInCollection[]
+  posts       SocialPostHashtag[]
+
+  @@unique([userId, tag])
+  @@index([userId])
+  @@map("hashtags")
+}
+
+model HashtagCollection {
+  id          String                @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  color       String?               @default("#7A3FFF")
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  user     User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hashtags HashtagInCollection[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("hashtag_collections")
+}
+
+model HashtagInCollection {
+  hashtagId    String
+  collectionId String
+  createdAt    DateTime          @default(now())
+
+  hashtag    Hashtag           @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+  collection HashtagCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@id([hashtagId, collectionId])
+  @@map("hashtags_in_collections")
+}
 
 model SocialAccount {
   id          String   @id @default(uuid())
@@ -363,23 +458,113 @@ model SocialAccount {
 }
 
 model SocialPost {
-  id              String    @id @default(uuid())
+  id              String               @id @default(uuid())
   userId          String
   socialAccountId String?
-  content         String
-  status          String    @default("DRAFT") // DRAFT, SCHEDULED, PUBLISHED, FAILED
-  scheduledFor    DateTime?
+  campaignId      String?
+  contentPillarId String?
+  title           String               @default("Untitled Post")
+  description     String?
+  content         String               @default("")
+  internalNotes   String?
+  status          String               @default("DRAFT") // IDEA, DRAFT, IN_REVIEW, APPROVED, SCHEDULED, PUBLISHED, CANCELLED
+  priority        String               @default("NORMAL") // HIGH, NORMAL, LOW
+  plannedAt       DateTime?
+  scheduledFor    DateTime?            // backward compatibility
   publishedAt     DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  reviewedAt      DateTime?
+  approvedAt      DateTime?
+  timezone        String               @default("Asia/Kolkata")
+  deletedAt       DateTime?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
 
-  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  socialAccount SocialAccount?      @relation(fields: [socialAccountId], references: [id], onDelete: SetNull)
-  assets        SocialMediaAsset[]
+  user          User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  socialAccount SocialAccount?       @relation(fields: [socialAccountId], references: [id], onDelete: SetNull)
+  campaign      SocialCampaign?      @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  contentPillar ContentPillar?       @relation(fields: [contentPillarId], references: [id], onDelete: SetNull)
+  platforms     SocialPostPlatform[]
+  media         SocialPostMedia[]
+  hashtags      SocialPostHashtag[]
+  activities    SocialPostActivity[]
+  reminders     Reminder[]
+  assets        SocialMediaAsset[]   // backward compatibility
 
   @@index([userId, status])
+  @@index([userId, plannedAt])
   @@index([userId, scheduledFor])
+  @@index([userId, campaignId])
+  @@index([userId, contentPillarId])
+  @@index([userId, deletedAt])
   @@map("social_posts")
+}
+
+model SocialPostPlatform {
+  id          String     @id @default(uuid())
+  postId      String
+  platform    String     // INSTAGRAM, FACEBOOK, LINKEDIN, PINTEREST, THREADS, YOUTUBE
+  caption     String?
+  title       String?    // E.g. YouTube / Pinterest title
+  description String?    // E.g. YouTube description
+  customData  Json?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  post SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, platform])
+  @@index([postId])
+  @@index([platform])
+  @@map("social_post_platforms")
+}
+
+model SocialPostMedia {
+  id           String     @id @default(uuid())
+  postId       String
+  fileId       String
+  displayOrder Int        @default(0)
+  caption      String?
+  createdAt    DateTime   @default(now())
+
+  post SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  file StoredFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, fileId])
+  @@index([postId, displayOrder])
+  @@index([fileId])
+  @@map("social_post_media")
+}
+
+model SocialPostHashtag {
+  postId    String
+  hashtagId String
+  createdAt DateTime @default(now())
+
+  post    SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  hashtag Hashtag    @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, hashtagId])
+  @@index([postId])
+  @@index([hashtagId])
+  @@map("social_post_hashtags")
+}
+
+model SocialPostActivity {
+  id             String     @id @default(uuid())
+  postId         String
+  userId         String
+  previousStatus String?
+  newStatus      String?
+  action         String     // CREATED, UPDATED, STATUS_CHANGED, RESCHEDULED, MEDIA_ATTACHED, REMINDER_SET, DUPLICATED, PUBLISHED_CONFIRMED
+  details        String?
+  createdAt      DateTime   @default(now())
+
+  post SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([postId, createdAt])
+  @@index([userId])
+  @@map("social_post_activities")
 }
 
 model SocialMediaAsset {
@@ -534,6 +719,7 @@ model StoredFile {
   noteAttachments   NoteAttachment[]
   socialMediaAssets SocialMediaAsset[]
   meetingAttachments MeetingAttachment[]
+  socialPostMedia   SocialPostMedia[]
 
   @@index([userId, folderId])
   @@index([userId, category])
