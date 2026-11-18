@@ -12,12 +12,13 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatDate, formatTime, formatBytes } from "@/lib/utils";
+import { formatDate, formatTime, formatBytes, cn } from "@/lib/utils";
+import { formatKolkataDate, isDueTodayKolkata, isOverdueKolkata } from "@/lib/utils/timezone";
 import {
   CheckSquare,
   Clock,
   Calendar,
-  AlertCircle,
+  AlertTriangle,
   Bell,
   Share2,
   FileText,
@@ -27,6 +28,10 @@ import {
   Sparkles,
   MapPin,
   ExternalLink,
+  Layers,
+  Sun,
+  Flame,
+  CheckCircle2,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -37,13 +42,15 @@ export default async function DashboardPage() {
   // Real Database Queries
   const [
     taskStats,
+    recentTasks,
     upcomingMeetings,
     upcomingReminders,
     scheduledPosts,
     recentNotes,
     recentFiles,
   ] = await Promise.all([
-    taskService.getSummaryStats(user.id),
+    taskService.getDashboardTaskStats(user.id),
+    taskService.getTasks(user.id, { limit: 5 }),
     meetingService.getUpcomingMeetings(user.id, 4),
     reminderService.getUpcomingReminders(user.id, 4),
     socialService.getScheduledPosts(user.id, 4),
@@ -104,40 +111,287 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Task Summary Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Total Tasks"
-          value={taskStats.total}
-          subtitle="All recorded tasks"
-          icon={CheckSquare}
-          badge={{ text: "Active", variant: "default" }}
-        />
-        <StatCard
-          title="In Progress"
-          value={taskStats.inProgress}
-          subtitle="Under active execution"
-          icon={Clock}
-          badge={{ text: "Working", variant: "secondary" }}
-        />
-        <StatCard
-          title="Completed"
-          value={taskStats.completed}
-          subtitle="Successfully finished"
-          icon={CheckSquare}
-          badge={{ text: "Done", variant: "success" }}
-        />
-        <StatCard
-          title="Urgent Priority"
-          value={taskStats.urgent}
-          subtitle="Requires immediate attention"
-          icon={AlertCircle}
-          badge={{
-            text: taskStats.urgent > 0 ? "Action Required" : "Clear",
-            variant: taskStats.urgent > 0 ? "destructive" : "outline",
-          }}
-        />
+      {/* Task Summary Metrics - 8 Real Metrics with Direct Navigation */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold tracking-wider uppercase text-secondary-text">
+            Task Overview & Live Metrics
+          </h2>
+          <Link
+            href="/tasks"
+            className="text-xs text-primary hover:underline flex items-center gap-1 font-medium"
+          >
+            Open Task Manager <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link
+            href="/tasks?view=all"
+            className="group block focus:outline-none focus:ring-1 focus:ring-primary rounded-xl"
+            title="View all active tasks"
+          >
+            <StatCard
+              title="Total Active"
+              value={taskStats.totalActive}
+              subtitle="All open & pending tasks"
+              icon={Layers}
+              badge={{ text: "Active", variant: "default" }}
+              className="group-hover:border-primary/50 transition-colors cursor-pointer"
+            />
+          </Link>
+
+          <Link
+            href="/tasks?view=my-day"
+            className="group block focus:outline-none focus:ring-1 focus:ring-amber-400 rounded-xl"
+            title="View tasks due today (Asia/Kolkata)"
+          >
+            <StatCard
+              title="Due Today"
+              value={taskStats.today}
+              subtitle="Current day agenda"
+              icon={Sun}
+              badge={{
+                text: "My Day",
+                variant: taskStats.today > 0 ? "warning" : "outline",
+              }}
+              className="group-hover:border-amber-400/50 transition-colors cursor-pointer"
+            />
+          </Link>
+
+          <Link
+            href="/tasks?view=upcoming"
+            className="group block focus:outline-none focus:ring-1 focus:ring-primary rounded-xl"
+            title="View upcoming tasks"
+          >
+            <StatCard
+              title="Upcoming"
+              value={taskStats.upcoming}
+              subtitle="Future deadlines"
+              icon={Calendar}
+              badge={{ text: "Scheduled", variant: "secondary" }}
+              className="group-hover:border-primary/50 transition-colors cursor-pointer"
+            />
+          </Link>
+
+          <Link
+            href="/tasks?view=overdue"
+            className="group block focus:outline-none focus:ring-1 focus:ring-red-500 rounded-xl"
+            title="View overdue tasks"
+          >
+            <StatCard
+              title="Overdue"
+              value={taskStats.overdue}
+              subtitle="Past scheduled deadline"
+              icon={AlertTriangle}
+              badge={{
+                text: taskStats.overdue > 0 ? "Action Required" : "Clear",
+                variant: taskStats.overdue > 0 ? "destructive" : "outline",
+              }}
+              className="group-hover:border-red-500/50 transition-colors cursor-pointer"
+            />
+          </Link>
+
+          <Link
+            href="/tasks?view=all&status=IN_PROGRESS"
+            className="group block focus:outline-none focus:ring-1 focus:ring-secondary rounded-xl"
+            title="View tasks currently in progress"
+          >
+            <StatCard
+              title="In Progress"
+              value={taskStats.inProgress}
+              subtitle="Under active execution"
+              icon={Clock}
+              badge={{ text: "Working", variant: "secondary" }}
+              className="group-hover:border-secondary/50 transition-colors cursor-pointer"
+            />
+          </Link>
+
+          <Link
+            href="/tasks?view=all&status=TODO"
+            className="group block focus:outline-none focus:ring-1 focus:ring-blue-400 rounded-xl"
+            title="View backlog tasks to do"
+          >
+            <StatCard
+              title="To Do"
+              value={taskStats.todo}
+              subtitle="Queued in backlog"
+              icon={CheckSquare}
+              badge={{ text: "Pending", variant: "default" }}
+              className="group-hover:border-blue-400/50 transition-colors cursor-pointer"
+            />
+          </Link>
+
+          <Link
+            href="/tasks?view=all&priority=CRITICAL"
+            className="group block focus:outline-none focus:ring-1 focus:ring-red-400 rounded-xl"
+            title="View critical priority tasks"
+          >
+            <StatCard
+              title="Critical Priority"
+              value={taskStats.critical}
+              subtitle="Top urgency tasks"
+              icon={Flame}
+              badge={{
+                text: taskStats.critical > 0 ? "Urgent" : "None",
+                variant: taskStats.critical > 0 ? "destructive" : "outline",
+              }}
+              className="group-hover:border-red-400/50 transition-colors cursor-pointer"
+            />
+          </Link>
+
+          <Link
+            href="/tasks?view=completed"
+            className="group block focus:outline-none focus:ring-1 focus:ring-emerald-400 rounded-xl"
+            title="View completed tasks"
+          >
+            <StatCard
+              title="Completed"
+              value={taskStats.completed}
+              subtitle="Finished tasks"
+              icon={CheckCircle2}
+              badge={{ text: "Done", variant: "success" }}
+              className="group-hover:border-emerald-400/50 transition-colors cursor-pointer"
+            />
+          </Link>
+        </div>
       </div>
+
+      {/* Priority Focus & Recent Tasks Section */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-base flex items-center gap-2">
+              <CheckSquare className="h-4 w-4 text-primary" />
+              Priority Focus & Recent Tasks
+            </CardTitle>
+            <CardDescription>
+              Tasks requiring your immediate attention and recent activity
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/tasks"
+              className="text-xs text-primary hover:underline flex items-center gap-1 font-medium"
+            >
+              View all tasks <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {recentTasks.length === 0 ? (
+            <EmptyState
+              icon={CheckSquare}
+              title="No tasks recorded yet"
+              description="Your task queue is completely empty. Create a task to get organized."
+              action={
+                <Link href="/tasks">
+                  <Button size="sm" variant="outline">
+                    Create First Task
+                  </Button>
+                </Link>
+              }
+            />
+          ) : (
+            <div className="space-y-2.5">
+              {recentTasks.map((task) => {
+                const isOverdue = isOverdueKolkata(task.dueDate, task.status);
+                const isDueToday = isDueTodayKolkata(task.dueDate);
+                const projectColor = task.project?.color || "#00D4FF";
+                const categoryColor = task.category?.color || "#7A3FFF";
+                return (
+                  <div
+                    key={task.id}
+                    className="flex items-center justify-between rounded-lg border border-border bg-[#0A101C] p-3 transition-colors hover:border-border/80"
+                  >
+                    <div className="space-y-1 min-w-0 pr-3">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="text-sm font-medium text-foreground truncate">
+                          {task.title}
+                        </h4>
+                        {task.project && (
+                          <span
+                            className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium border"
+                            style={{
+                              backgroundColor: `${projectColor}15`,
+                              color: projectColor,
+                              borderColor: `${projectColor}35`,
+                            }}
+                          >
+                            {task.project.name}
+                          </span>
+                        )}
+                        {task.category && (
+                          <span className="inline-flex items-center gap-1 text-[11px] text-secondary-text">
+                            <span
+                              className="h-1.5 w-1.5 rounded-full"
+                              style={{ backgroundColor: categoryColor }}
+                            />
+                            {task.category.name}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-secondary-text">
+                        {task.dueDate && (
+                          <span
+                            className={cn(
+                              "flex items-center gap-1 text-[11px]",
+                              isOverdue && "text-red-400 font-semibold",
+                              isDueToday && !isOverdue && "text-amber-400 font-medium"
+                            )}
+                          >
+                            <Clock className="h-3 w-3" />
+                            {isOverdue
+                              ? "Overdue: "
+                              : isDueToday
+                              ? "Due Today: "
+                              : "Due: "}
+                            {formatKolkataDate(task.dueDate)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Badge
+                        variant={
+                          task.priority === "CRITICAL"
+                            ? "destructive"
+                            : task.priority === "HIGH"
+                            ? "warning"
+                            : "outline"
+                        }
+                        className="text-[10px] uppercase tracking-wider"
+                      >
+                        {task.priority}
+                      </Badge>
+                      <Badge
+                        variant={
+                          task.status === "COMPLETED"
+                            ? "success"
+                            : task.status === "IN_PROGRESS"
+                            ? "secondary"
+                            : task.status === "CANCELLED"
+                            ? "outline"
+                            : "default"
+                        }
+                        className="text-[10px]"
+                      >
+                        {task.status.replace("_", " ")}
+                      </Badge>
+                      <Link
+                        href={`/tasks?view=all&search=${encodeURIComponent(task.title)}`}
+                        className="rounded-md border border-border p-1.5 text-secondary-text hover:text-primary hover:border-primary/40 transition-colors"
+                        title="Open task in Task Manager"
+                      >
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Main Grid: Upcoming Meetings & Reminders */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

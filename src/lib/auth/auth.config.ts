@@ -39,7 +39,12 @@ export const authConfig = {
         return Response.redirect(new URL("/login", nextUrl));
       }
 
-      // All other routes require authentication
+      // API routes return 401 Unauthorized when unauthenticated
+      if (pathname.startsWith("/api/")) {
+        return Response.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      // All other page routes require authentication - redirect to login
       const callbackUrl = encodeURIComponent(pathname);
       return Response.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl));
     },
