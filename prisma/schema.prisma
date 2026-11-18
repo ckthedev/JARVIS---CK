@@ -120,12 +120,15 @@ model Task {
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   project   Project?      @relation(fields: [projectId], references: [id], onDelete: SetNull)
   category  TaskCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  meetingId String?
+  meeting   Meeting?      @relation(fields: [meetingId], references: [id], onDelete: SetNull)
   reminders Reminder[]
 
   @@index([userId, status])
   @@index([userId, dueDate])
   @@index([userId, priority])
   @@index([userId, deletedAt])
+  @@index([meetingId])
   @@map("tasks")
 }
 
@@ -231,39 +234,110 @@ model Notification {
 // -----------------------------------------------------------------------------
 
 model Meeting {
-  id          String   @id @default(uuid())
-  userId      String
-  title       String
-  description String?
-  startTime   DateTime
-  endTime     DateTime
-  location    String?
-  meetingUrl  String?
-  status      String   @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String    @id @default(uuid())
+  userId          String
+  title           String
+  description     String?
+  startTime       DateTime
+  endTime         DateTime
+  timezone        String    @default("Asia/Kolkata")
+  meetingType     String    @default("ONLINE") // ONLINE, PHYSICAL, PHONE
+  priority        String    @default("NORMAL") // HIGH, NORMAL, LOW
+  location        String?
+  meetingUrl      String?
+  status          String    @default("SCHEDULED") // SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED, RESCHEDULED, NO_SHOW
+  actualStartTime DateTime?
+  actualEndTime   DateTime?
+  completedAt     DateTime?
+  cancelledAt     DateTime?
+  deletedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  attendees MeetingAttendee[]
-  reminders Reminder[]
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attendees   MeetingAttendee[]
+  agendaItems MeetingAgendaItem[]
+  notes       MeetingNoteLink[]
+  tasks       Task[]
+  attachments MeetingAttachment[]
+  reminders   Reminder[]
 
   @@index([userId, startTime])
   @@index([userId, status])
+  @@index([userId, deletedAt])
   @@map("meetings")
 }
 
 model MeetingAttendee {
-  id        String   @id @default(uuid())
-  meetingId String
-  name      String
-  email     String?
-  status    String   @default("INVITED") // INVITED, ACCEPTED, DECLINED, TENTATIVE
-  createdAt DateTime @default(now())
+  id           String   @id @default(uuid())
+  meetingId    String
+  name         String
+  email        String?
+  phone        String?
+  organization String?
+  role         String?
+  status       String   @default("INVITED") // INVITED, ACCEPTED, DECLINED, TENTATIVE, ATTENDED, ABSENT
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
 
   @@index([meetingId])
+  @@index([email])
   @@map("meeting_attendees")
+}
+
+model MeetingAgendaItem {
+  id              String   @id @default(uuid())
+  meetingId       String
+  title           String
+  description     String?
+  durationMinutes Int?     @default(15)
+  sortOrder       Int      @default(0)
+  isCompleted     Boolean  @default(false)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@index([meetingId, sortOrder])
+  @@map("meeting_agenda_items")
+}
+
+model MeetingNoteLink {
+  id                String   @id @default(uuid())
+  meetingId         String
+  noteId            String
+  discussionSummary String?
+  keyDecisions      String?
+  importantPoints   String?
+  followUpInfo      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  note    Note    @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, noteId])
+  @@index([meetingId])
+  @@index([noteId])
+  @@map("meeting_note_links")
+}
+
+model MeetingAttachment {
+  id        String   @id @default(uuid())
+  meetingId String
+  fileId    String
+  createdAt DateTime @default(now())
+
+  meeting Meeting    @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  file    StoredFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, fileId])
+  @@index([meetingId])
+  @@index([fileId])
+  @@map("meeting_attachments")
 }
 
 // -----------------------------------------------------------------------------
@@ -345,6 +419,7 @@ model Note {
   category    NoteCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   tags        NoteTagOnNote[]
   attachments NoteAttachment[]
+  meetingLinks MeetingNoteLink[]
 
   @@index([userId, isPinned])
   @@index([userId, isArchived])
@@ -458,6 +533,7 @@ model StoredFile {
   folder            Folder?            @relation(fields: [folderId], references: [id], onDelete: SetNull)
   noteAttachments   NoteAttachment[]
   socialMediaAssets SocialMediaAsset[]
+  meetingAttachments MeetingAttachment[]
 
   @@index([userId, folderId])
   @@index([userId, category])
