@@ -49,6 +49,7 @@ export default async function DashboardPage() {
     recentNotes,
     noteStats,
     recentFiles,
+    reminderStats,
   ] = await Promise.all([
     taskService.getDashboardTaskStats(user.id),
     taskService.getTasks(user.id, { limit: 5 }),
@@ -58,6 +59,7 @@ export default async function DashboardPage() {
     noteService.getRecentNotes(user.id, 4),
     noteService.getDashboardNoteStats(user.id),
     fileService.getRecentFiles(user.id, 4),
+    reminderService.getReminderStats(user.id),
   ]);
 
   // Greeting computation
@@ -108,6 +110,12 @@ export default async function DashboardPage() {
             <Button size="sm" variant="outline" className="gap-1.5 text-xs">
               <Plus className="h-3.5 w-3.5 text-emerald-400" />
               New Meeting
+            </Button>
+          </Link>
+          <Link href="/reminders">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs">
+              <Plus className="h-3.5 w-3.5 text-amber-400" />
+              New Reminder
             </Button>
           </Link>
         </div>
@@ -475,12 +483,24 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Bell className="h-4 w-4 text-amber-400" />
-                Upcoming Reminders
-              </CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Bell className="h-4 w-4 text-amber-400" />
+                  Upcoming Reminders
+                </CardTitle>
+                {reminderStats.overdue > 0 && (
+                  <Badge variant="destructive" className="text-[10px] h-4 px-1">
+                    {reminderStats.overdue} Overdue
+                  </Badge>
+                )}
+                {reminderStats.today > 0 && (
+                  <Badge variant="warning" className="text-[10px] h-4 px-1">
+                    {reminderStats.today} Today
+                  </Badge>
+                )}
+              </div>
               <CardDescription>
-                Time-critical follow-ups and notifications
+                Time-critical follow-ups, alarms, and notifications
               </CardDescription>
             </div>
             <Link
@@ -512,9 +532,16 @@ export default async function DashboardPage() {
                     className="flex items-center justify-between rounded-md border border-border bg-[#0A101C] p-3 transition-colors hover:border-border/80"
                   >
                     <div className="space-y-1">
-                      <h4 className="text-sm font-medium text-foreground">
-                        {reminder.title}
-                      </h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm font-medium text-foreground">
+                          {reminder.title}
+                        </h4>
+                        {reminder.isRecurring && (
+                          <span className="text-[10px] text-purple-400 bg-purple-500/10 border border-purple-500/20 px-1 rounded">
+                            Recurring
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-secondary-text">
                         Due: {formatDate(reminder.dueAt)} at{" "}
                         {formatTime(reminder.dueAt)}
@@ -522,12 +549,13 @@ export default async function DashboardPage() {
                     </div>
                     <Badge
                       variant={
-                        reminder.priority === "URGENT"
+                        reminder.priority === "CRITICAL"
                           ? "destructive"
                           : reminder.priority === "HIGH"
                           ? "warning"
                           : "outline"
                       }
+                      className="text-[10px] uppercase"
                     >
                       {reminder.priority}
                     </Badge>

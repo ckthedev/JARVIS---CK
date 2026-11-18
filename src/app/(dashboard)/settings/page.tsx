@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import { User, ShieldCheck, Database, HardDrive, KeyRound } from "lucide-react";
 import { PasswordChangeCard } from "./password-change-card";
+import { ReminderSettingsCard } from "./reminder-settings-card";
 
 export const dynamic = "force-dynamic";
 
@@ -137,6 +138,9 @@ export default async function SettingsPage() {
 
       {/* Direct Password Change Card */}
       <PasswordChangeCard />
+
+      {/* Reminders & Notification Settings Card */}
+      <ReminderSettingsCard />
 
       {/* Security Credentials Guidance */}
       <Card>

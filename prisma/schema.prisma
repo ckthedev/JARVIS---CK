@@ -36,23 +36,28 @@ model User {
   noteTags       NoteTag[]
   noteCategories NoteCategory[]
   folders        Folder[]
-  storedFiles    StoredFile[]
-  notifications  Notification[]
+  storedFiles        StoredFile[]
+  notifications      Notification[]
+  reminderDeliveries ReminderDelivery[]
 
   @@map("users")
 }
 
 model UserSettings {
-  id                  String   @id @default(uuid())
-  userId              String   @unique
-  theme               String   @default("dark")
-  timezone            String   @default("UTC")
-  notificationEmail   Boolean  @default(true)
-  notificationBrowser Boolean  @default(true)
-  digestFrequency     String   @default("DAILY")
-  sidebarCollapsed    Boolean  @default(false)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  userId               String   @unique
+  theme                String   @default("dark")
+  timezone             String   @default("Asia/Kolkata")
+  notificationEmail    Boolean  @default(true)
+  notificationBrowser  Boolean  @default(true)
+  digestFrequency      String   @default("DAILY")
+  sidebarCollapsed     Boolean  @default(false)
+  soundEnabled         Boolean  @default(true)
+  soundTheme           String   @default("subtle") // subtle, chime, modern
+  defaultSnoozeMinutes Int      @default(10)
+  missedReminderPolicy String   @default("NOTIFY_IMMEDIATELY") // NOTIFY_IMMEDIATELY, SKIP_OLDER
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -129,39 +134,95 @@ model Task {
 // -----------------------------------------------------------------------------
 
 model Reminder {
-  id          String   @id @default(uuid())
-  userId      String
-  taskId      String?
-  title       String
-  description String?
-  dueAt       DateTime
-  isCompleted Boolean  @default(false)
-  priority    String   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                   String    @id @default(uuid())
+  userId               String
+  taskId               String?
+  meetingId            String?
+  title                String
+  description          String?
+  dueAt                DateTime
+  isCompleted          Boolean   @default(false)
+  status               String    @default("PENDING") // PENDING, SENT, COMPLETED, SNOOZED, CANCELLED
+  priority             String    @default("NORMAL") // CRITICAL, HIGH, NORMAL, LOW
+  
+  // Recurrence
+  isRecurring          Boolean   @default(false)
+  recurrenceRule       String?   // DAILY, WEEKLY, MONTHLY, YEARLY, CUSTOM
+  recurrenceInterval   Int?      @default(1)
+  recurrenceDaysOfWeek Int[]     @default([])
+  recurrenceDayOfMonth Int?
+  recurrenceMonth      Int?
+  recurrenceEndAt      DateTime?
+  nextRunAt            DateTime?
 
-  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  task Task? @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  // Offset for meeting-linked or task-linked reminders
+  offsetMinutes        Int?
+
+  // Snooze
+  snoozedUntil         DateTime?
+  snoozeCount          Int       @default(0)
+
+  // Tracking & Lifecycle
+  lastNotifiedAt       DateTime?
+  completedAt          DateTime?
+  deletedAt            DateTime?
+  missedPolicy         String    @default("NOTIFY_IMMEDIATELY") // NOTIFY_IMMEDIATELY, SKIP
+  jobId                String?
+
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task          Task?               @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  meeting       Meeting?            @relation(fields: [meetingId], references: [id], onDelete: SetNull)
+  deliveries    ReminderDelivery[]
+  notifications Notification[]
 
   @@index([userId, dueAt])
+  @@index([userId, status])
   @@index([userId, isCompleted])
+  @@index([userId, deletedAt])
+  @@index([taskId])
+  @@index([meetingId])
   @@map("reminders")
 }
 
-model Notification {
-  id        String   @id @default(uuid())
-  userId    String
-  title     String
-  message   String
-  type      String   @default("INFO") // INFO, WARNING, SUCCESS, ALERT
-  isRead    Boolean  @default(false)
-  link      String?
-  createdAt DateTime @default(now())
+model ReminderDelivery {
+  id          String   @id @default(uuid())
+  reminderId  String
+  userId      String
+  scheduledAt DateTime
+  deliveredAt DateTime @default(now())
+  status      String   @default("DELIVERED") // DELIVERED, MISSED, FAILED, SNOOZED
+  channel     String   @default("IN_APP") // IN_APP, BROWSER
+  error       String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminder Reminder @relation(fields: [reminderId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([reminderId])
+  @@index([userId, deliveredAt])
+  @@map("reminder_deliveries")
+}
+
+model Notification {
+  id         String    @id @default(uuid())
+  userId     String
+  reminderId String?
+  title      String
+  message    String
+  type       String    @default("INFO") // TASK, REMINDER, MEETING, SOCIAL, SYSTEM, INFO, WARNING, SUCCESS, ALERT
+  isRead     Boolean   @default(false)
+  link       String?
+  metadata   Json?
+  createdAt  DateTime  @default(now())
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminder Reminder? @relation(fields: [reminderId], references: [id], onDelete: SetNull)
 
   @@index([userId, isRead])
   @@index([userId, createdAt])
+  @@index([reminderId])
   @@map("notifications")
 }
 
@@ -184,6 +245,7 @@ model Meeting {
 
   user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   attendees MeetingAttendee[]
+  reminders Reminder[]
 
   @@index([userId, startTime])
   @@index([userId, status])

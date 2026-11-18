@@ -89,6 +89,7 @@ async function runTests() {
     imgFile.category === "IMAGE" &&
       imgFile.mimeType === "image/png" &&
       imgFile.extension === "png" &&
+      imgFile.checksum !== null &&
       imgFile.checksum.length === 64,
     "3. Upload PNG image with accurate category, MIME type, and SHA-256 checksum"
   );

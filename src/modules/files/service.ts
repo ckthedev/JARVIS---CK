@@ -628,20 +628,20 @@ export class FileService {
       throw new Error("File not found or unauthorized");
     }
 
-    // Update lastAccessedAt timestamp and fetch updated model
+    // Update lastAccessedAt timestamp
     const updated = await prisma.storedFile.update({
       where: { id: fileId },
       data: { lastAccessedAt: new Date() },
       include: { folder: true },
     });
 
-    const buffer = await storageProvider.getFile(updated.storagePath);
+    const buffer = await storageProvider.getFile(file.storagePath);
 
     return {
       buffer,
       file: this.mapToFileDto(updated),
-      mimeType: updated.mimeType,
-      filename: updated.originalName,
+      mimeType: file.mimeType,
+      filename: file.originalName,
     };
   }
 
@@ -1149,15 +1149,15 @@ export class FileService {
       updatedAt: file.updatedAt,
       folder: file.folder
         ? {
-            id: file.folder.id,
-            userId: file.folder.userId,
-            parentId: file.folder.parentId,
-            name: file.folder.name,
-            color: file.folder.color,
-            deletedAt: file.folder.deletedAt,
-            createdAt: file.folder.createdAt,
-            updatedAt: file.folder.updatedAt,
-          }
+          id: file.folder.id,
+          userId: file.folder.userId,
+          parentId: file.folder.parentId,
+          name: file.folder.name,
+          color: file.folder.color,
+          deletedAt: file.folder.deletedAt,
+          createdAt: file.folder.createdAt,
+          updatedAt: file.folder.updatedAt,
+        }
         : null,
       isPreviewable: isPreviewable(category, file.originalName),
     };

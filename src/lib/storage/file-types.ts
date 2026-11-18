@@ -1,5 +1,6 @@
 import path from "path";
 import crypto from "crypto";
+export { formatBytes } from "@/lib/utils";
 
 export type FileCategory =
   | "IMAGE"
@@ -266,18 +267,6 @@ export function calculateChecksum(buffer: Buffer): string {
 }
 
 /**
- * Format bytes into human readable string (e.g., "12.5 MB").
- */
-export function formatBytes(bytes: number, decimals = 1): string {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-}
-
-/**
  * Maximum configured upload size (default 100MB).
  */
 export function getMaxUploadSizeBytes(): number {
@@ -285,3 +274,4 @@ export function getMaxUploadSizeBytes(): number {
   const mb = isNaN(envMb) || envMb <= 0 ? 100 : envMb;
   return mb * 1024 * 1024;
 }
+

@@ -11,7 +11,6 @@ export interface StorageUploadResult {
 }
 
 export interface IStorageProvider {
-  init(): Promise<void>;
   uploadFile(
     fileBuffer: Buffer,
     originalName: string,
@@ -31,6 +30,7 @@ export interface IStorageProvider {
     totalStoredBytes: number;
     fileCount: number;
   }>;
+  init(): Promise<void>;
 }
 
 export class LocalStorageProvider implements IStorageProvider {

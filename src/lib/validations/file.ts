@@ -39,8 +39,8 @@ export const attachNoteFileSchema = z.object({
   fileId: z.string().uuid("Invalid file ID"),
 });
 
-export type CreateFolderInput = z.infer<typeof createFolderSchema>;
-export type UpdateFolderInput = z.infer<typeof updateFolderSchema>;
+export type CreateFolderInput = z.input<typeof createFolderSchema>;
+export type UpdateFolderInput = z.input<typeof updateFolderSchema>;
 export type DeleteFolderInput = z.infer<typeof deleteFolderSchema>;
 export type RenameFileInput = z.infer<typeof renameFileSchema>;
 export type MoveFileInput = z.infer<typeof moveFileSchema>;

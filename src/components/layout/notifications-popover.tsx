@@ -1,8 +1,20 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Bell, Check, ExternalLink } from "lucide-react";
+import Link from "next/link";
+import {
+  Bell,
+  Check,
+  ExternalLink,
+  Calendar,
+  AlertTriangle,
+  Share2,
+  CheckCircle2,
+  Info,
+  ArrowRight,
+} from "lucide-react";
 import { cn, formatDateTime } from "@/lib/utils";
+import { playNotificationChime } from "@/lib/notifications/sound";
 
 interface NotificationItem {
   id: string;
@@ -19,16 +31,26 @@ export function NotificationsPopover() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const lastUnreadRef = useRef<number>(0);
   const popoverRef = useRef<HTMLDivElement>(null);
 
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/notifications");
+      const res = await fetch("/api/notifications?limit=8");
       if (res.ok) {
         const data = await res.json();
-        setNotifications(data.items || []);
-        setUnreadCount(data.unreadCount || 0);
+        const items = data.items || [];
+        const count = data.unreadCount || 0;
+
+        // If new unread notifications arrived while app is running, play melodic chime
+        if (count > lastUnreadRef.current && lastUnreadRef.current !== 0) {
+          playNotificationChime("subtle");
+        }
+        lastUnreadRef.current = count;
+
+        setNotifications(items);
+        setUnreadCount(count);
       }
     } catch (err) {
       console.error("Failed to load notifications", err);
@@ -39,6 +61,10 @@ export function NotificationsPopover() {
 
   useEffect(() => {
     fetchNotifications();
+
+    // Check every 30 seconds for new alerts
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -63,6 +89,7 @@ export function NotificationsPopover() {
       if (res.ok) {
         setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
         setUnreadCount(0);
+        lastUnreadRef.current = 0;
       }
     } catch (err) {
       console.error(err);
@@ -80,8 +107,27 @@ export function NotificationsPopover() {
         prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
       );
       setUnreadCount((c) => Math.max(0, c - 1));
+      lastUnreadRef.current = Math.max(0, lastUnreadRef.current - 1);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case "REMINDER":
+        return <Bell className="h-3.5 w-3.5 text-amber-400" />;
+      case "TASK":
+        return <CheckCircle2 className="h-3.5 w-3.5 text-primary" />;
+      case "MEETING":
+        return <Calendar className="h-3.5 w-3.5 text-emerald-400" />;
+      case "SOCIAL":
+        return <Share2 className="h-3.5 w-3.5 text-purple-400" />;
+      case "WARNING":
+      case "ALERT":
+        return <AlertTriangle className="h-3.5 w-3.5 text-red-400" />;
+      default:
+        return <Info className="h-3.5 w-3.5 text-primary" />;
     }
   };
 
@@ -144,6 +190,10 @@ export function NotificationsPopover() {
                     !n.isRead && "bg-primary/5"
                   )}
                 >
+                  <div className="mt-0.5 p-1.5 rounded bg-sidebar border border-border/60 shrink-0">
+                    {getTypeIcon(n.type)}
+                  </div>
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1">
                       <p className="text-xs font-semibold text-foreground truncate">
@@ -177,6 +227,17 @@ export function NotificationsPopover() {
                 </div>
               ))
             )}
+          </div>
+
+          {/* Footer with direct link to full /notifications page */}
+          <div className="p-2 border-t border-border bg-[#0A101C] text-center">
+            <Link
+              href="/notifications"
+              onClick={() => setOpen(false)}
+              className="inline-flex items-center justify-center gap-1 text-xs text-primary hover:underline font-medium w-full py-1"
+            >
+              Open Notifications Center <ArrowRight className="h-3 w-3" />
+            </Link>
           </div>
         </div>
       )}
