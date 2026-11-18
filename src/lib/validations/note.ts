@@ -40,9 +40,9 @@ export const updateNoteTagSchema = z.object({
   color: z.string().trim().max(30).optional(),
 });
 
-export type CreateNoteInput = z.infer<typeof createNoteSchema>;
-export type UpdateNoteInput = z.infer<typeof updateNoteSchema>;
-export type CreateNoteCategoryInput = z.infer<typeof createNoteCategorySchema>;
-export type UpdateNoteCategoryInput = z.infer<typeof updateNoteCategorySchema>;
-export type CreateNoteTagInput = z.infer<typeof createNoteTagSchema>;
-export type UpdateNoteTagInput = z.infer<typeof updateNoteTagSchema>;
+export type CreateNoteInput = z.input<typeof createNoteSchema>;
+export type UpdateNoteInput = z.input<typeof updateNoteSchema>;
+export type CreateNoteCategoryInput = z.input<typeof createNoteCategorySchema>;
+export type UpdateNoteCategoryInput = z.input<typeof updateNoteCategorySchema>;
+export type CreateNoteTagInput = z.input<typeof createNoteTagSchema>;
+export type UpdateNoteTagInput = z.input<typeof updateNoteTagSchema>;

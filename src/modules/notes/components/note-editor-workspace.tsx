@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { NoteDto, NoteCategoryDto, NoteTagDto } from "../types";
 import { TiptapEditor } from "./tiptap-editor";
 import { AutosaveStatus, SaveState } from "./autosave-status";
+import { NoteAttachments } from "@/modules/files/components/note-attachments";
 import {
   Pin,
   Archive,
@@ -15,7 +16,6 @@ import {
   Plus,
   ArrowLeft,
   RotateCcw,
-  Paperclip,
 } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
 
@@ -327,22 +327,8 @@ export function NoteEditorWorkspace({
           className="min-h-[420px]"
         />
 
-        {/* Note Attachments Integration Point (Phase 4 Ready) */}
-        <div className="rounded-lg border border-border/50 bg-[#0A101C]/60 p-3.5 space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-1.5 font-medium text-secondary-text">
-              <Paperclip className="h-3.5 w-3.5 text-primary" />
-              <span>Attachments & Linked Files (Phase 4 Integration)</span>
-            </div>
-            <span className="text-[10px] bg-sidebar-accent px-1.5 py-0.5 rounded text-secondary-text">
-              File Manager Ready
-            </span>
-          </div>
-          <p className="text-[11px] text-secondary-text/70">
-            Relational storage schema (<code className="text-primary text-[10px]">NoteAttachment</code>) is deployed in PostgreSQL.
-            Direct file attachments will seamlessly activate with the File Manager release.
-          </p>
-        </div>
+        {/* Note Attachments Integration */}
+        <NoteAttachments noteId={note.id} readOnly={isTrash} />
 
         {/* Document Stats Footer */}
         <div className="flex flex-wrap items-center justify-between text-[11px] text-secondary-text/70 pt-2 border-t border-border/40 pb-6">
