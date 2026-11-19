@@ -88,13 +88,13 @@ export function FileMoveModal({
           {/* Root Option */}
           <div
             onClick={() => setTargetFolderId(null)}
-            className={`flex items-center gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-colors ${
+            className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-colors ${
               targetFolderId === null
-                ? "border-primary bg-primary/10 text-primary font-medium"
-                : "border-border bg-[#0D1421] text-foreground hover:bg-card-hover"
+                ? "border-primary bg-accent-subtle text-primary font-medium"
+                : "border-border bg-card text-foreground hover:bg-muted"
             }`}
           >
-            <FolderIcon className="h-4 w-4 text-cyan-400 shrink-0" />
+            <FolderIcon className="h-4 w-4 text-primary shrink-0" />
             <span>Root (No folder)</span>
           </div>
 
@@ -103,10 +103,10 @@ export function FileMoveModal({
             <div
               key={folder.id}
               onClick={() => setTargetFolderId(folder.id)}
-              className={`flex items-center justify-between p-2.5 rounded-lg border text-xs cursor-pointer transition-colors ${
+              className={`flex items-center justify-between p-2.5 rounded-xl border text-xs cursor-pointer transition-colors ${
                 targetFolderId === folder.id
-                  ? "border-primary bg-primary/10 text-primary font-medium"
-                  : "border-border bg-[#0D1421] text-foreground hover:bg-card-hover"
+                  ? "border-primary bg-accent-subtle text-primary font-medium"
+                  : "border-border bg-card text-foreground hover:bg-muted"
               }`}
             >
               <div className="flex items-center gap-2.5 truncate">

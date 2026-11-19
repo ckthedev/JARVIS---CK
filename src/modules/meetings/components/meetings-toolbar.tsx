@@ -8,7 +8,7 @@ import {
   MeetingStatus,
   MeetingFilters,
 } from "../types";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface MeetingsToolbarProps {
   filters: MeetingFilters;
@@ -24,28 +24,28 @@ export function MeetingsToolbar({
   onViewModeChange,
 }: MeetingsToolbarProps) {
   return (
-    <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-4 border-b border-border/40 bg-[#0A101D]/40 backdrop-blur-sm">
+    <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-3.5 border-b border-[#303030] bg-[#141414]">
       {/* Search Input */}
       <div className="relative flex-1 min-w-[220px]">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-text" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#737373]" />
         <input
           type="text"
           value={filters.search || ""}
           onChange={(e) => onFilterChange({ search: e.target.value })}
           placeholder="Search by title, location, agenda, participant..."
-          className="w-full pl-9 pr-8 py-2 rounded-lg bg-card/60 border border-border/60 text-sm text-foreground placeholder:text-secondary-text/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary/80 transition-all"
+          className="w-full pl-9 pr-8 py-1.5 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors"
         />
         {filters.search && (
           <button
             onClick={() => onFilterChange({ search: "" })}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-secondary-text hover:text-foreground"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#737373] hover:text-[#F5F5F5]"
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-3 w-3" />
           </button>
         )}
       </div>
 
-      {/* Filter Dropdowns & View Mode */}
+      {/* Filter Dropdowns & View Mode Switcher */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Type Filter */}
         <select
@@ -55,12 +55,12 @@ export function MeetingsToolbar({
               meetingType: (e.target.value as MeetingType) || undefined,
             })
           }
-          className="px-3 py-2 rounded-lg bg-card/60 border border-border/60 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          className="px-2.5 py-1.5 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] focus:border-[#8B5CF6]"
         >
           <option value="">All Types</option>
           <option value="ONLINE">Online</option>
           <option value="PHYSICAL">Physical</option>
-          <option value="PHONE">Phone</option>
+          <option value="PHONE">Phone Call</option>
         </select>
 
         {/* Priority Filter */}
@@ -71,7 +71,7 @@ export function MeetingsToolbar({
               priority: (e.target.value as MeetingPriority) || undefined,
             })
           }
-          className="px-3 py-2 rounded-lg bg-card/60 border border-border/60 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          className="px-2.5 py-1.5 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] focus:border-[#8B5CF6]"
         >
           <option value="">All Priorities</option>
           <option value="HIGH">High Priority</option>
@@ -87,7 +87,7 @@ export function MeetingsToolbar({
               status: (e.target.value as MeetingStatus) || undefined,
             })
           }
-          className="px-3 py-2 rounded-lg bg-card/60 border border-border/60 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          className="px-2.5 py-1.5 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] focus:border-[#8B5CF6]"
         >
           <option value="">All Statuses</option>
           <option value="SCHEDULED">Scheduled</option>
@@ -99,8 +99,8 @@ export function MeetingsToolbar({
         </select>
 
         {/* Sort Selector */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-card/40 border border-border/60">
-          <ArrowUpDown className="h-3.5 w-3.5 text-secondary-text" />
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#181818] border border-[#303030]">
+          <ArrowUpDown className="h-3 w-3 text-[#737373]" />
           <select
             value={`${filters.sortBy || "startTime"}-${filters.sortOrder || "asc"}`}
             onChange={(e) => {
@@ -110,44 +110,44 @@ export function MeetingsToolbar({
               ];
               onFilterChange({ sortBy, sortOrder });
             }}
-            className="bg-transparent text-xs text-foreground focus:outline-none cursor-pointer"
+            className="bg-transparent text-xs text-[#F5F5F5] focus:outline-none cursor-pointer"
           >
-            <option value="startTime-asc">Soonest First</option>
-            <option value="startTime-desc">Latest First</option>
-            <option value="title-asc">Title (A-Z)</option>
-            <option value="priority-desc">Priority</option>
-            <option value="createdAt-desc">Recently Created</option>
+            <option value="startTime-asc" className="bg-[#181818] text-[#F5F5F5]">Soonest First</option>
+            <option value="startTime-desc" className="bg-[#181818] text-[#F5F5F5]">Latest First</option>
+            <option value="title-asc" className="bg-[#181818] text-[#F5F5F5]">Title (A-Z)</option>
+            <option value="priority-desc" className="bg-[#181818] text-[#F5F5F5]">Priority (High-Low)</option>
+            <option value="createdAt-desc" className="bg-[#181818] text-[#F5F5F5]">Recently Created</option>
           </select>
         </div>
 
-        {/* View Mode Switcher */}
-        <div className="flex items-center p-0.5 rounded-lg bg-card/60 border border-border/60">
-          <Button
-            variant="ghost"
-            size="sm"
+        {/* View Switcher (List / Calendar) */}
+        <div className="flex items-center rounded-lg bg-[#181818] border border-[#303030] p-0.5 ml-1">
+          <button
             onClick={() => onViewModeChange("list")}
-            className={`h-8 px-2.5 gap-1.5 text-xs rounded-md ${
+            title="List View"
+            className={cn(
+              "flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors",
               viewMode === "list"
-                ? "bg-primary text-primary-foreground font-medium shadow-sm hover:bg-primary/90 hover:text-primary-foreground"
-                : "text-secondary-text hover:text-foreground hover:bg-transparent"
-            }`}
+                ? "bg-[#262626] text-[#F5F5F5] font-medium shadow-sm"
+                : "text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <List className="h-3.5 w-3.5" />
             <span>List</span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
+          </button>
+          <button
             onClick={() => onViewModeChange("calendar")}
-            className={`h-8 px-2.5 gap-1.5 text-xs rounded-md ${
+            title="Calendar View"
+            className={cn(
+              "flex items-center gap-1 px-2.5 py-1 rounded text-xs transition-colors",
               viewMode === "calendar"
-                ? "bg-primary text-primary-foreground font-medium shadow-sm hover:bg-primary/90 hover:text-primary-foreground"
-                : "text-secondary-text hover:text-foreground hover:bg-transparent"
-            }`}
+                ? "bg-[#262626] text-[#F5F5F5] font-medium shadow-sm"
+                : "text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <CalendarDays className="h-3.5 w-3.5" />
             <span>Calendar</span>
-          </Button>
+          </button>
         </div>
       </div>
     </div>

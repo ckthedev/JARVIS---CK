@@ -196,14 +196,14 @@ export function ProjectManagerModal({
       >
         <div className="space-y-6">
           {/* Create or Edit Form */}
-          <div className="rounded-lg border border-border/80 bg-[#0A101C] p-4 space-y-4">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
-              <Folder className="h-3.5 w-3.5" />
+          <div className="rounded-lg border border-[#292929] bg-[#181818] p-4 space-y-4">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-[#F5F5F5] flex items-center gap-2">
+              <Folder className="h-3.5 w-3.5 text-[#737373]" />
               {editingProject ? "Edit Project" : "Add New Project"}
             </h4>
 
             {error && (
-              <div className="flex items-center gap-2 rounded-md border border-red-500/30 bg-red-500/10 p-2.5 text-xs text-red-400">
+              <div className="flex items-center gap-2 rounded-md border border-[#4A2020] bg-[#2A1818] p-2.5 text-xs text-[#EF4444]">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>
@@ -237,7 +237,7 @@ export function ProjectManagerModal({
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value as "ACTIVE" | "ARCHIVED" | "COMPLETED")}
-                    className="flex h-9 w-full rounded-md border border-input bg-[#0A101C] px-3 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="flex h-9 w-full rounded-lg border border-[#303030] bg-[#181818] px-3 py-1 text-xs text-[#F5F5F5] focus:outline-none focus:border-[#454545] transition-colors"
                   >
                     <option value="ACTIVE">Active</option>
                     <option value="ARCHIVED">Archived</option>
@@ -258,7 +258,7 @@ export function ProjectManagerModal({
                         aria-label={`Color ${c}`}
                       >
                         {color === c && (
-                          <Check className="h-3 w-3 text-black stroke-[3]" />
+                          <Check className="h-3.5 w-3.5 text-black stroke-[3]" />
                         )}
                       </button>
                     ))}
@@ -286,16 +286,16 @@ export function ProjectManagerModal({
 
           {/* Existing Projects List */}
           <div className="space-y-2">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-[#A3A3A3]">
               Active &amp; Archived Projects ({projects.length})
             </h4>
 
             {projects.length === 0 ? (
-              <p className="py-4 text-center text-xs text-secondary-text">
+              <p className="py-4 text-center text-xs text-[#737373]">
                 No projects created yet. Add your first project above.
               </p>
             ) : (
-              <div className="max-h-60 overflow-y-auto divide-y divide-border/40 rounded-md border border-border bg-[#0A101C]">
+              <div className="max-h-60 overflow-y-auto divide-y divide-[#292929] rounded-lg border border-[#292929] bg-[#181818]">
                 {projects.map((proj) => (
                   <div
                     key={proj.id}

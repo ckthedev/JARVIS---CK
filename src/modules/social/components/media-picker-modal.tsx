@@ -163,10 +163,10 @@ export function MediaPickerModal({
               <span className="text-xs">Loading media files...</span>
             </div>
           ) : filteredFiles.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-secondary-text gap-2 border border-dashed border-border rounded-lg">
-              <AlertCircle className="h-8 w-8 text-secondary-text/60" />
-              <span className="text-sm font-medium">No media files found</span>
-              <span className="text-xs text-secondary-text">
+            <div className="flex flex-col items-center justify-center py-16 text-[#737373] gap-2 border border-[#292929] bg-[#181818]/60 rounded-lg">
+              <AlertCircle className="h-8 w-8 text-[#555555]" />
+              <span className="text-sm font-medium text-[#F5F5F5]">No media files found</span>
+              <span className="text-xs text-[#A3A3A3]">
                 Upload images or videos in the File Manager (/files) first.
               </span>
             </div>
@@ -183,8 +183,8 @@ export function MediaPickerModal({
                     className={cn(
                       "relative group rounded-lg overflow-hidden border cursor-pointer transition-all aspect-square flex flex-col justify-between p-2",
                       isSelected
-                        ? "border-primary bg-primary/10 shadow-sm shadow-primary/20"
-                        : "border-border/60 bg-card/40 hover:border-border"
+                        ? "border-[#454545] bg-[#343434]/40"
+                        : "border-[#292929] bg-[#181818] hover:border-[#383838]"
                     )}
                   >
                     {/* Media Preview or Icon */}
@@ -199,11 +199,11 @@ export function MediaPickerModal({
                           }}
                         />
                       ) : (
-                        <div className="flex flex-col items-center justify-center text-secondary-text gap-1">
+                        <div className="flex flex-col items-center justify-center text-[#737373] gap-1">
                           {isVideo ? (
-                            <Video className="h-8 w-8 text-cyan-400" />
+                            <Video className="h-8 w-8 text-[#A3A3A3]" />
                           ) : (
-                            <ImageIcon className="h-8 w-8 text-primary" />
+                            <ImageIcon className="h-8 w-8 text-[#A3A3A3]" />
                           )}
                           <span className="text-[10px] uppercase font-mono">{file.extension}</span>
                         </div>
@@ -215,7 +215,7 @@ export function MediaPickerModal({
                       className={cn(
                         "absolute top-1.5 right-1.5 h-5 w-5 rounded-full flex items-center justify-center transition-all",
                         isSelected
-                          ? "bg-primary text-primary-foreground font-bold text-xs"
+                          ? "bg-[#383838] text-[#F5F5F5] border border-[#454545] font-bold text-xs"
                           : "bg-black/60 border border-white/20 text-transparent group-hover:border-white/50"
                       )}
                     >

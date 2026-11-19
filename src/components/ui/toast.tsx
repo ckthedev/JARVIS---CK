@@ -46,7 +46,7 @@ function ToastCard({
     <div
       role="alert"
       className={cn(
-        "pointer-events-auto flex items-start gap-3 rounded-lg border bg-[#111B2B] p-4 text-foreground shadow-xl transition-all duration-200 animate-in slide-in-from-bottom-2",
+        "pointer-events-auto flex items-start gap-3 rounded-xl border bg-card p-4 text-foreground shadow-elevated transition-all duration-200 animate-in slide-in-from-bottom-2",
         borders[variant]
       )}
     >

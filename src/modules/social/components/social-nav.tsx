@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   CalendarDays,
   FileText,
+  FileEdit,
   Megaphone,
   Hash,
   Plus,
@@ -30,15 +31,21 @@ export function SocialNav({ onOpenCreate }: SocialNavProps) {
     },
     {
       href: "/social/calendar",
-      label: "Calendar",
+      label: "Content Calendar",
       icon: CalendarDays,
       isActive: pathname.startsWith("/social/calendar"),
     },
     {
       href: "/social/posts",
-      label: "Content Posts",
+      label: "All Posts",
       icon: FileText,
-      isActive: pathname.startsWith("/social/posts"),
+      isActive: pathname === "/social/posts",
+    },
+    {
+      href: "/social/posts?status=DRAFT",
+      label: "Drafts",
+      icon: FileEdit,
+      isActive: pathname === "/social/posts?status=DRAFT",
     },
     {
       href: "/social/campaigns",
@@ -48,15 +55,15 @@ export function SocialNav({ onOpenCreate }: SocialNavProps) {
     },
     {
       href: "/social/hashtags",
-      label: "Hashtags & Collections",
+      label: "Hashtag Library",
       icon: Hash,
       isActive: pathname.startsWith("/social/hashtags"),
     },
   ];
 
   return (
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4 mb-6">
-      <nav className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 scrollbar-thin">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-b border-[#303030] pb-4 mb-6">
+      <nav className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -64,13 +71,13 @@ export function SocialNav({ onOpenCreate }: SocialNavProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap",
+                "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap border",
                 item.isActive
-                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
-                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+                  ? "bg-[#262626] text-[#F5F5F5] border-[#8B5CF6]/50 font-semibold"
+                  : "bg-[#202020] text-[#A3A3A3] border-[#303030] hover:text-[#F5F5F5] hover:bg-[#2C2C2C]"
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className={cn("h-3.5 w-3.5", item.isActive ? "text-[#8B5CF6]" : "text-[#737373]")} />
               <span>{item.label}</span>
             </Link>
           );
@@ -79,11 +86,12 @@ export function SocialNav({ onOpenCreate }: SocialNavProps) {
 
       {onOpenCreate && (
         <Button
+          size="sm"
           onClick={onOpenCreate}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground shrink-0 gap-1.5 shadow-sm shadow-primary/20"
+          className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shrink-0 gap-1.5 h-8 text-xs font-semibold"
         >
-          <Plus className="h-4 w-4" />
-          <span>Create Post</span>
+          <Plus className="h-3.5 w-3.5" />
+          <span>Quick Create Post</span>
         </Button>
       )}
     </div>

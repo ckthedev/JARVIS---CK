@@ -27,21 +27,21 @@ export function DeleteConfirmationDialog({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md">
       <div className="flex items-start gap-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
-          <AlertTriangle className="h-5 w-5" />
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#2A1818] text-[#EF4444] border border-[#4A2020]">
+          <AlertTriangle className="h-4.5 w-4.5" />
         </div>
         <div className="space-y-1">
-          <h3 className="text-base font-semibold text-foreground">{title}</h3>
-          <p className="text-xs text-secondary-text leading-relaxed">
+          <h3 className="text-sm sm:text-base font-semibold text-[#F5F5F5]">{title}</h3>
+          <p className="text-xs text-[#A3A3A3] leading-relaxed">
             {description}
           </p>
         </div>
       </div>
 
-      <div className="mt-6 flex justify-end gap-3">
+      <div className="mt-6 flex justify-end gap-2.5">
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           size="sm"
           onClick={onClose}
           disabled={isLoading}

@@ -44,49 +44,49 @@ export function NotesNav({
   const [tagsOpen, setTagsOpen] = useState(true);
 
   return (
-    <div className={cn("flex flex-col h-full bg-[#0D1421] border-r border-border/80 select-none", className)}>
+    <div className={cn("flex flex-col h-full bg-[#141414] border-r border-[#292929] select-none", className)}>
       {/* Primary Section Links */}
       <div className="p-3 space-y-1">
         <NavButton
           active={currentSection === "all"}
           onClick={() => onSelectSection("all")}
-          icon={<FileText className="h-4 w-4 text-primary" />}
+          icon={<FileText className="h-4 w-4 text-[#A3A3A3]" />}
           label="All Notes"
           count={stats.totalActive}
         />
         <NavButton
           active={currentSection === "pinned"}
           onClick={() => onSelectSection("pinned")}
-          icon={<Pin className="h-4 w-4 text-amber-400" />}
+          icon={<Pin className="h-4 w-4 text-[#A3A3A3]" />}
           label="Pinned Notes"
           count={stats.pinned}
         />
         <NavButton
           active={currentSection === "archived"}
           onClick={() => onSelectSection("archived")}
-          icon={<Archive className="h-4 w-4 text-secondary-text" />}
+          icon={<Archive className="h-4 w-4 text-[#737373]" />}
           label="Archived"
           count={stats.archived}
         />
         <NavButton
           active={currentSection === "trash"}
           onClick={() => onSelectSection("trash")}
-          icon={<Trash2 className="h-4 w-4 text-red-400" />}
+          icon={<Trash2 className="h-4 w-4 text-[#EF4444]" />}
           label="Trash"
           count={stats.trash}
         />
       </div>
 
-      <div className="mx-3 my-1 border-t border-border/50" />
+      <div className="mx-3 my-1 border-t border-[#292929]" />
 
       {/* Categories Section */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-4">
         <div>
-          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-secondary-text mb-1 px-1">
+          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#737373] mb-1 px-1">
             <button
               type="button"
               onClick={() => setCategoriesOpen(!categoriesOpen)}
-              className="flex items-center gap-1 hover:text-foreground transition-colors"
+              className="flex items-center gap-1 hover:text-[#F5F5F5] transition-colors"
             >
               {categoriesOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
               <span>Categories</span>
@@ -94,7 +94,7 @@ export function NotesNav({
             <button
               type="button"
               onClick={onOpenCategoryManager}
-              className="rounded p-0.5 text-secondary-text hover:text-primary hover:bg-card-hover transition-colors"
+              className="rounded p-0.5 text-[#737373] hover:text-[#F5F5F5] hover:bg-[#252525] transition-colors"
               title="Manage Categories"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -104,7 +104,7 @@ export function NotesNav({
           {categoriesOpen && (
             <div className="space-y-0.5 mt-1">
               {categories.length === 0 ? (
-                <p className="text-[11px] text-secondary-text/70 px-2 py-1 italic">No categories</p>
+                <p className="text-[11px] text-[#737373] px-2 py-1 italic">No categories</p>
               ) : (
                 categories.map((cat) => {
                   const isSelected = currentSection === "category" && selectedCategoryId === cat.id;
@@ -116,18 +116,18 @@ export function NotesNav({
                       className={cn(
                         "w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs transition-colors",
                         isSelected
-                          ? "bg-primary/15 text-primary font-medium"
-                          : "text-secondary-text hover:text-foreground hover:bg-card-hover"
+                          ? "bg-[#343434] text-[#F5F5F5] font-medium border border-[#404040]"
+                          : "text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#202020]"
                       )}
                     >
                       <div className="flex items-center gap-2 truncate">
                         <span
                           className="h-2 w-2 rounded-full shrink-0"
-                          style={{ backgroundColor: cat.color || "#00D4FF" }}
+                          style={{ backgroundColor: cat.color || "#888888" }}
                         />
                         <span className="truncate">{cat.name}</span>
                       </div>
-                      <span className="text-[10px] text-secondary-text/70 ml-1">
+                      <span className="text-[10px] text-[#737373] ml-1">
                         {cat.noteCount ?? 0}
                       </span>
                     </button>
@@ -140,11 +140,11 @@ export function NotesNav({
 
         {/* Tags Section */}
         <div>
-          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-secondary-text mb-1 px-1">
+          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#737373] mb-1 px-1">
             <button
               type="button"
               onClick={() => setTagsOpen(!tagsOpen)}
-              className="flex items-center gap-1 hover:text-foreground transition-colors"
+              className="flex items-center gap-1 hover:text-[#F5F5F5] transition-colors"
             >
               {tagsOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
               <span>Tags</span>
@@ -152,7 +152,7 @@ export function NotesNav({
             <button
               type="button"
               onClick={onOpenTagManager}
-              className="rounded p-0.5 text-secondary-text hover:text-primary hover:bg-card-hover transition-colors"
+              className="rounded p-0.5 text-[#737373] hover:text-[#F5F5F5] hover:bg-[#252525] transition-colors"
               title="Manage Tags"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -162,7 +162,7 @@ export function NotesNav({
           {tagsOpen && (
             <div className="space-y-0.5 mt-1">
               {tags.length === 0 ? (
-                <p className="text-[11px] text-secondary-text/70 px-2 py-1 italic">No tags</p>
+                <p className="text-[11px] text-[#737373] px-2 py-1 italic">No tags</p>
               ) : (
                 tags.map((tag) => {
                   const isSelected = currentSection === "tag" && selectedTagId === tag.id;
@@ -174,18 +174,18 @@ export function NotesNav({
                       className={cn(
                         "w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs transition-colors",
                         isSelected
-                          ? "bg-secondary/20 text-[#A78BFA] font-medium"
-                          : "text-secondary-text hover:text-foreground hover:bg-card-hover"
+                          ? "bg-[#343434] text-[#F5F5F5] font-medium border border-[#404040]"
+                          : "text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#202020]"
                       )}
                     >
                       <div className="flex items-center gap-1.5 truncate">
                         <span
                           className="h-1.5 w-1.5 rounded-full shrink-0"
-                          style={{ backgroundColor: tag.color || "#7A3FFF" }}
+                          style={{ backgroundColor: tag.color || "#888888" }}
                         />
                         <span className="truncate">#{tag.name}</span>
                       </div>
-                      <span className="text-[10px] text-secondary-text/70 ml-1">
+                      <span className="text-[10px] text-[#737373] ml-1">
                         {tag.noteCount ?? 0}
                       </span>
                     </button>
@@ -199,11 +199,11 @@ export function NotesNav({
 
       {/* Bottom Actions: Trash Empty or Manage Settings */}
       {currentSection === "trash" && stats.trash > 0 && (
-        <div className="p-3 border-t border-border/60">
+        <div className="p-3 border-t border-[#292929]">
           <button
             type="button"
             onClick={onEmptyTrash}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-[#EF4444] bg-[#2A1818] hover:bg-[#381F1F] border border-[#502020] transition-colors"
           >
             <Trash2 className="h-3.5 w-3.5" />
             Empty Trash
@@ -234,8 +234,8 @@ function NavButton({
       className={cn(
         "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors",
         active
-          ? "bg-card text-foreground border border-border shadow-sm"
-          : "text-secondary-text hover:text-foreground hover:bg-card/50"
+          ? "bg-[#343434] text-[#F5F5F5] border border-[#404040]"
+          : "text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#202020]"
       )}
     >
       <div className="flex items-center gap-2.5">
@@ -245,8 +245,8 @@ function NavButton({
       {typeof count === "number" && (
         <span
           className={cn(
-            "rounded-full px-2 py-0.5 text-[10px]",
-            active ? "bg-primary/20 text-primary font-semibold" : "bg-sidebar-accent text-secondary-text"
+            "rounded px-1.5 py-0.5 text-[10px]",
+            active ? "bg-[#202020] text-[#F5F5F5] font-semibold" : "bg-[#202020] text-[#737373]"
           )}
         >
           {count}

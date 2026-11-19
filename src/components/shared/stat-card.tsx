@@ -24,30 +24,30 @@ export function StatCard({
   className,
 }: StatCardProps) {
   return (
-    <Card className={cn("relative overflow-hidden transition-all hover:border-border/80", className)}>
+    <Card className={cn("relative overflow-hidden transition-all hover:border-primary/30 hover:shadow-cardHover", className)}>
       <CardContent className="p-5">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-medium uppercase tracking-wider text-secondary-text">
+          <p className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
             {title}
           </p>
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-sidebar-accent text-primary">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-subtle text-primary">
             <Icon className="h-4 w-4" />
           </div>
         </div>
         <div className="mt-3 flex items-baseline justify-between">
-          <div className="text-2xl font-bold tracking-tight text-foreground">
+          <div className="text-2xl font-bold tracking-tight text-primary-text">
             {value}
           </div>
           {badge && (
             <span
               className={cn(
-                "inline-flex items-center rounded px-2 py-0.5 text-xs font-semibold",
-                badge.variant === "success" && "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
-                badge.variant === "warning" && "bg-amber-500/10 text-amber-400 border border-amber-500/20",
-                badge.variant === "destructive" && "bg-red-500/10 text-red-400 border border-red-500/20",
-                badge.variant === "secondary" && "bg-secondary/15 text-[#A78BFA] border border-secondary/25",
-                badge.variant === "outline" && "bg-transparent text-secondary-text border border-border",
-                (!badge.variant || badge.variant === "default") && "bg-primary/10 text-primary border border-primary/20"
+                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                badge.variant === "success" && "bg-success/10 text-success border border-success/20",
+                badge.variant === "warning" && "bg-warning/15 text-warning border border-warning/25",
+                badge.variant === "destructive" && "bg-danger/10 text-danger border border-danger/20",
+                badge.variant === "secondary" && "bg-muted text-secondary-text border border-border",
+                badge.variant === "outline" && "bg-card text-secondary-text border border-border",
+                (!badge.variant || badge.variant === "default") && "bg-accent-subtle text-primary border border-primary/20"
               )}
             >
               {badge.text}

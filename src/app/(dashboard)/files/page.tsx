@@ -15,7 +15,7 @@ export default async function FilesPage() {
         </div>
       }
     >
-      <div className="rounded-xl border border-border bg-[#0D1421] overflow-hidden h-[calc(100vh-10rem)] shadow-xl flex flex-col">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden h-[calc(100vh-10rem)] shadow-saas flex flex-col">
         <FilesManager />
       </div>
     </Suspense>

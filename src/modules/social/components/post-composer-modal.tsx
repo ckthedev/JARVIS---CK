@@ -689,20 +689,20 @@ export function PostComposerModal({
                 ))}
               </div>
             ) : (
-              <div className="py-5 text-center text-xs text-secondary-text border border-dashed border-border rounded-lg">
+              <div className="py-5 text-center text-xs text-[#737373] border border-[#292929] bg-[#181818]/60 rounded-lg">
                 No media attached yet. Click &quot;Attach Media&quot; to pick images or videos.
               </div>
             )}
           </div>
 
           {/* Planning & Schedule Section */}
-          <div className="space-y-3 p-3.5 rounded-lg border border-border/80 bg-card/40">
+          <div className="space-y-3 p-3.5 rounded-lg border border-[#292929] bg-[#181818]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-primary" />
+                <Calendar className="h-4 w-4 text-[#A3A3A3]" />
                 <div>
-                  <span className="text-xs font-medium text-foreground">Publishing Schedule & Reminders</span>
-                  <p className="text-[11px] text-secondary-text">
+                  <span className="text-xs font-medium text-[#F5F5F5]">Publishing Schedule & Reminders</span>
+                  <p className="text-[11px] text-[#737373]">
                     Schedule planned date and time in Asia/Kolkata (IST).
                   </p>
                 </div>

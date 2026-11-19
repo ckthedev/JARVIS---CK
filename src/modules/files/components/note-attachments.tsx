@@ -154,11 +154,11 @@ export function NoteAttachments({ noteId, readOnly = false }: NoteAttachmentsPro
   const unattachedFiles = availableFiles.filter((f) => !attachedFileIds.has(f.id));
 
   return (
-    <div className="rounded-lg border border-border/60 bg-[#0A101C] p-3.5 space-y-3">
+    <div className="rounded-lg border border-[#292929] bg-[#181818] p-3.5 space-y-3">
       {/* Header */}
       <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2 font-medium text-foreground">
-          <Paperclip className="h-3.5 w-3.5 text-primary" />
+        <div className="flex items-center gap-2 font-medium text-[#F5F5F5]">
+          <Paperclip className="h-3.5 w-3.5 text-[#A3A3A3]" />
           <span>Attachments ({attachments.length})</span>
         </div>
 
@@ -176,12 +176,12 @@ export function NoteAttachments({ noteId, readOnly = false }: NoteAttachmentsPro
               size="sm"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="h-6 text-[11px] gap-1 px-2 border-border bg-[#111B2B] text-foreground hover:border-primary/50"
+              className="h-6 text-[11px] gap-1 px-2 border border-[#303030] bg-[#202020] text-[#F5F5F5] hover:bg-[#252525]"
             >
               {uploading ? (
-                <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                <Loader2 className="h-3 w-3 animate-spin text-[#A3A3A3]" />
               ) : (
-                <Upload className="h-3 w-3 text-cyan-400" />
+                <Upload className="h-3 w-3 text-[#A3A3A3]" />
               )}
               <span>Upload New</span>
             </Button>
@@ -191,9 +191,9 @@ export function NoteAttachments({ noteId, readOnly = false }: NoteAttachmentsPro
               variant="outline"
               size="sm"
               onClick={handleOpenPicker}
-              className="h-6 text-[11px] gap-1 px-2 border-border bg-[#111B2B] text-foreground hover:border-primary/50"
+              className="h-6 text-[11px] gap-1 px-2 border border-[#303030] bg-[#202020] text-[#F5F5F5] hover:bg-[#252525]"
             >
-              <FolderOpen className="h-3 w-3 text-primary" />
+              <FolderOpen className="h-3 w-3 text-[#A3A3A3]" />
               <span>Attach File</span>
             </Button>
           </div>
@@ -202,12 +202,12 @@ export function NoteAttachments({ noteId, readOnly = false }: NoteAttachmentsPro
 
       {/* Attachment List */}
       {loading ? (
-        <div className="flex items-center gap-2 text-xs text-secondary-text py-2">
-          <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+        <div className="flex items-center gap-2 text-xs text-[#737373] py-2">
+          <Loader2 className="h-3.5 w-3.5 animate-spin text-[#A3A3A3]" />
           <span>Loading attachments...</span>
         </div>
       ) : attachments.length === 0 ? (
-        <p className="text-[11px] text-secondary-text/70 italic py-1">
+        <p className="text-[11px] text-[#737373] italic py-1">
           No files attached to this note yet. Click &ldquo;Attach File&rdquo; or &ldquo;Upload New&rdquo; to link assets.
         </p>
       ) : (
@@ -215,7 +215,7 @@ export function NoteAttachments({ noteId, readOnly = false }: NoteAttachmentsPro
           {attachments.map((att) => (
             <div
               key={att.id}
-              className="flex items-center justify-between p-2 rounded-md bg-[#111B2B] border border-border text-xs gap-2"
+              className="flex items-center justify-between p-2 rounded-md bg-[#202020] border border-[#292929] text-xs gap-2"
             >
               <div className="flex items-center gap-2 truncate min-w-0">
                 <FileCategoryIcon
@@ -288,8 +288,8 @@ export function NoteAttachments({ noteId, readOnly = false }: NoteAttachmentsPro
                   onClick={() => setSelectedFileId(file.id)}
                   className={`flex items-center justify-between p-2 rounded-lg border text-xs cursor-pointer transition-colors ${
                     selectedFileId === file.id
-                      ? "border-primary bg-primary/10 text-primary font-medium"
-                      : "border-border bg-[#0D1421] text-foreground hover:bg-card-hover"
+                      ? "border-[#404040] bg-[#343434] text-[#F5F5F5] font-medium"
+                      : "border-[#292929] bg-[#181818] text-[#A3A3A3] hover:bg-[#202020] hover:text-[#F5F5F5]"
                   }`}
                 >
                   <div className="flex items-center gap-2 truncate">
@@ -300,7 +300,7 @@ export function NoteAttachments({ noteId, readOnly = false }: NoteAttachmentsPro
                     />
                     <span className="truncate">{file.originalName}</span>
                   </div>
-                  <span className="text-[10px] text-secondary-text font-mono shrink-0">
+                  <span className="text-[10px] text-[#737373] font-mono shrink-0">
                     {formatBytes(file.sizeBytes)}
                   </span>
                 </div>
@@ -308,13 +308,13 @@ export function NoteAttachments({ noteId, readOnly = false }: NoteAttachmentsPro
             )}
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/50">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#292929]">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => setPickerOpen(false)}
-              className="border-border bg-transparent text-secondary-text hover:text-foreground text-xs"
+              className="border-[#303030] bg-transparent text-[#A3A3A3] hover:text-[#F5F5F5] text-xs"
             >
               Cancel
             </Button>
@@ -323,7 +323,7 @@ export function NoteAttachments({ noteId, readOnly = false }: NoteAttachmentsPro
               size="sm"
               onClick={handleAttachExisting}
               disabled={!selectedFileId || attaching}
-              className="bg-primary text-black font-medium hover:bg-primary/90 text-xs gap-1.5"
+              className="bg-[#383838] text-[#F5F5F5] font-medium hover:bg-[#454545] text-xs gap-1.5"
             >
               {attaching ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
               <span>Attach File</span>

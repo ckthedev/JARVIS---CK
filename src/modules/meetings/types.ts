@@ -20,6 +20,7 @@ export type AttendeeStatus =
   | "ABSENT";
 
 export type MeetingSection =
+  | "overview"
   | "all"
   | "today"
   | "upcoming"

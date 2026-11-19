@@ -124,7 +124,7 @@ export function FolderDialog({
             placeholder="e.g. Work Documents"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="h-8 bg-[#0D1421] border-border text-foreground text-xs focus:border-primary"
+            className="h-8 bg-[#181818] border-[#303030] text-[#F5F5F5] text-xs focus:border-[#454545]"
             autoFocus
             required
           />
@@ -132,7 +132,7 @@ export function FolderDialog({
 
         {/* Color Picker */}
         <div className="space-y-1.5">
-          <Label className="text-xs text-secondary-text">Folder Color</Label>
+          <Label className="text-xs text-[#A3A3A3]">Folder Color</Label>
           <div className="flex items-center gap-2">
             {FOLDER_COLORS.map((c) => (
               <button
@@ -141,7 +141,7 @@ export function FolderDialog({
                 onClick={() => setColor(c)}
                 className={cn(
                   "h-6 w-6 rounded-full transition-transform",
-                  color === c ? "scale-125 ring-2 ring-primary ring-offset-2 ring-offset-[#0D1421]" : "hover:scale-110"
+                  color === c ? "scale-125 ring-2 ring-[#454545] ring-offset-2 ring-offset-[#262626]" : "hover:scale-110"
                 )}
                 style={{ backgroundColor: c }}
               />
@@ -151,14 +151,14 @@ export function FolderDialog({
 
         {/* Parent Folder */}
         <div className="space-y-1.5">
-          <Label htmlFor="parent-folder" className="text-xs text-secondary-text">
+          <Label htmlFor="parent-folder" className="text-xs text-[#A3A3A3]">
             Location
           </Label>
           <select
             id="parent-folder"
             value={parentId || ""}
             onChange={(e) => setParentId(e.target.value || null)}
-            className="w-full bg-[#0D1421] text-foreground text-xs rounded border border-border px-2.5 py-1.5 focus:outline-none focus:border-primary cursor-pointer"
+            className="w-full bg-[#181818] text-[#F5F5F5] text-xs rounded border border-[#303030] px-2.5 py-1.5 focus:outline-none focus:border-[#454545] cursor-pointer"
           >
             <option value="">Root (No parent)</option>
             {availableParents.map((f) => (

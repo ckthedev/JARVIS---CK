@@ -130,10 +130,10 @@ export function TiptapEditor({
   }
 
   return (
-    <div className={cn("flex flex-col border border-border/80 rounded-lg bg-[#0A101C] overflow-hidden", className)}>
+    <div className={cn("flex flex-col border border-[#292929] rounded-lg bg-[#141414] overflow-hidden", className)}>
       {/* Formatting Toolbar */}
       {editable && (
-        <div className="flex flex-wrap items-center gap-0.5 border-b border-border/80 bg-[#0D1421] px-3 py-1.5 text-secondary-text">
+        <div className="flex flex-wrap items-center gap-0.5 border-b border-[#292929] bg-[#181818] px-3 py-1.5 text-[#A3A3A3]">
           {/* Headings */}
           <ToolbarButton
             active={editor.isActive("heading", { level: 1 })}
@@ -315,8 +315,8 @@ function ToolbarButton({
       disabled={disabled}
       title={title}
       className={cn(
-        "flex h-7 w-7 items-center justify-center rounded p-1 text-secondary-text transition-colors hover:bg-card-hover hover:text-foreground focus:outline-none disabled:opacity-30 disabled:pointer-events-none",
-        active && "bg-primary/15 text-primary hover:bg-primary/20 hover:text-primary font-semibold"
+        "flex h-7 w-7 items-center justify-center rounded p-1 text-[#A3A3A3] transition-colors hover:bg-[#252525] hover:text-[#F5F5F5] focus:outline-none disabled:opacity-30 disabled:pointer-events-none",
+        active && "bg-[#343434] text-[#F5F5F5] hover:bg-[#383838] hover:text-white font-semibold border border-[#404040]"
       )}
     >
       {children}
@@ -325,5 +325,5 @@ function ToolbarButton({
 }
 
 function ToolbarDivider() {
-  return <div className="mx-1 h-4 w-[1px] bg-border" />;
+  return <div className="mx-1 h-4 w-[1px] bg-[#303030]" />;
 }

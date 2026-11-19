@@ -17,6 +17,7 @@ export type RecurrenceRule =
 export type MissedReminderPolicy = "NOTIFY_IMMEDIATELY" | "SKIP";
 
 export type ReminderViewSection =
+  | "overview"
   | "all"
   | "today"
   | "upcoming"

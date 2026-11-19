@@ -145,16 +145,16 @@ export function FilesToolbar({
                 variant="outline"
                 size="sm"
                 onClick={onOpenCreateFolder}
-                className="h-8 gap-1.5 border-border bg-[#0D1421] text-xs hover:border-primary/50"
+                className="h-8 gap-1.5 border border-[#303030] bg-[#202020] text-[#F5F5F5] text-xs hover:bg-[#252525] hover:border-[#383838]"
               >
-                <FolderPlus className="h-3.5 w-3.5 text-primary" />
+                <FolderPlus className="h-3.5 w-3.5 text-[#A3A3A3]" />
                 <span>New Folder</span>
               </Button>
 
               <Button
                 size="sm"
                 onClick={onOpenUpload}
-                className="h-8 gap-1.5 bg-primary text-black font-medium hover:bg-primary/90 text-xs shadow-md shadow-primary/20"
+                className="h-8 gap-1.5 bg-[#383838] text-[#F5F5F5] font-medium hover:bg-[#454545] text-xs"
               >
                 <Upload className="h-3.5 w-3.5" />
                 <span>Upload</span>
@@ -165,23 +165,23 @@ export function FilesToolbar({
       </div>
 
       {/* Filter, Search, Sort & View Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 bg-[#0D1421]/60 border-t border-border/40">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 bg-[#181818] border-t border-[#292929]">
         <div className="flex items-center gap-2 flex-1 max-w-md">
           {/* Search Input */}
           <div className="relative w-full">
-            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-secondary-text" />
+            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[#737373]" />
             <Input
               type="text"
               placeholder="Search files by name or extension..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="h-8 pl-8 pr-8 text-xs bg-[#111B2B] border-border text-foreground placeholder:text-secondary-text/70"
+              className="h-8 pl-8 pr-8 text-xs bg-[#141414] border-[#303030] text-[#F5F5F5] placeholder:text-[#555555] focus:border-[#454545]"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => onSearchChange("")}
-                className="absolute right-2.5 top-2.5 text-secondary-text hover:text-foreground"
+                className="absolute right-2.5 top-2.5 text-[#737373] hover:text-[#F5F5F5]"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -192,8 +192,8 @@ export function FilesToolbar({
         {/* Sort & View Mode Switches */}
         <div className="flex items-center gap-2">
           {/* Sort Selector */}
-          <div className="flex items-center gap-1.5 bg-[#111B2B] rounded-md border border-border px-2 py-1 text-xs">
-            <ArrowUpDown className="h-3 w-3 text-secondary-text" />
+          <div className="flex items-center gap-1.5 bg-[#141414] rounded-md border border-[#303030] px-2 py-1 text-xs">
+            <ArrowUpDown className="h-3 w-3 text-[#737373]" />
             <select
               value={`${sortBy}-${sortOrder}`}
               onChange={(e) => {
@@ -203,27 +203,27 @@ export function FilesToolbar({
                 ];
                 onSortChange(sb, so);
               }}
-              className="bg-transparent text-foreground text-xs focus:outline-none cursor-pointer"
+              className="bg-transparent text-[#A3A3A3] text-xs focus:outline-none cursor-pointer"
             >
-              <option value="createdAt-desc" className="bg-[#0D1421]">Newest first</option>
-              <option value="createdAt-asc" className="bg-[#0D1421]">Oldest first</option>
-              <option value="name-asc" className="bg-[#0D1421]">Name (A &rarr; Z)</option>
-              <option value="name-desc" className="bg-[#0D1421]">Name (Z &rarr; A)</option>
-              <option value="sizeBytes-desc" className="bg-[#0D1421]">Size (Largest)</option>
-              <option value="sizeBytes-asc" className="bg-[#0D1421]">Size (Smallest)</option>
+              <option value="createdAt-desc" className="bg-[#181818]">Newest first</option>
+              <option value="createdAt-asc" className="bg-[#181818]">Oldest first</option>
+              <option value="name-asc" className="bg-[#181818]">Name (A &rarr; Z)</option>
+              <option value="name-desc" className="bg-[#181818]">Name (Z &rarr; A)</option>
+              <option value="sizeBytes-desc" className="bg-[#181818]">Size (Largest)</option>
+              <option value="sizeBytes-asc" className="bg-[#181818]">Size (Smallest)</option>
             </select>
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center rounded-md border border-border bg-[#111B2B] p-0.5">
+          <div className="flex items-center rounded-md border border-[#303030] bg-[#141414] p-0.5">
             <button
               type="button"
               onClick={() => onViewModeChange("grid")}
               className={cn(
                 "p-1.5 rounded transition-colors",
                 viewMode === "grid"
-                  ? "bg-primary text-black font-semibold"
-                  : "text-secondary-text hover:text-foreground"
+                  ? "bg-[#343434] text-[#F5F5F5] font-medium border border-[#404040]"
+                  : "text-[#737373] hover:text-[#F5F5F5] hover:bg-[#202020]"
               )}
               title="Grid View"
             >
@@ -235,8 +235,8 @@ export function FilesToolbar({
               className={cn(
                 "p-1.5 rounded transition-colors",
                 viewMode === "list"
-                  ? "bg-primary text-black font-semibold"
-                  : "text-secondary-text hover:text-foreground"
+                  ? "bg-[#343434] text-[#F5F5F5] font-medium border border-[#404040]"
+                  : "text-[#737373] hover:text-[#F5F5F5] hover:bg-[#202020]"
               )}
               title="List View"
             >
@@ -248,21 +248,21 @@ export function FilesToolbar({
 
       {/* Floating / Active Bulk Selection Bar */}
       {selectedCount > 0 && (
-        <div className="flex items-center justify-between px-4 py-2 bg-primary/10 border-t border-primary/30 text-xs">
+        <div className="flex items-center justify-between px-4 py-2 bg-[#202020] border-t border-[#303030] text-xs">
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 cursor-pointer font-medium text-foreground">
+            <label className="flex items-center gap-2 cursor-pointer font-medium text-[#F5F5F5]">
               <input
                 type="checkbox"
                 checked={isAllSelected}
                 onChange={isAllSelected ? onClearSelection : onSelectAll}
-                className="rounded border-border bg-[#111B2B] text-primary focus:ring-primary h-3.5 w-3.5"
+                className="rounded border-[#303030] bg-[#141414] text-[#A3A3A3] focus:ring-0 h-3.5 w-3.5"
               />
               <span>{selectedCount} item{selectedCount > 1 ? "s" : ""} selected</span>
             </label>
             <button
               type="button"
               onClick={onClearSelection}
-              className="text-secondary-text hover:text-foreground underline text-[11px]"
+              className="text-[#737373] hover:text-[#F5F5F5] underline text-[11px]"
             >
               Deselect all
             </button>
@@ -275,7 +275,7 @@ export function FilesToolbar({
                   variant="outline"
                   size="sm"
                   onClick={onBulkDownload}
-                  className="h-7 text-xs gap-1 border-border bg-[#0D1421] hover:border-primary/50"
+                  className="h-7 text-xs gap-1 border border-[#303030] bg-[#262626] text-[#F5F5F5] hover:bg-[#2C2C2C]"
                 >
                   <Download className="h-3 w-3" />
                   <span>Download</span>
@@ -284,16 +284,16 @@ export function FilesToolbar({
                   variant="outline"
                   size="sm"
                   onClick={onBulkMove}
-                  className="h-7 text-xs gap-1 border-border bg-[#0D1421] hover:border-primary/50"
+                  className="h-7 text-xs gap-1 border border-[#303030] bg-[#262626] text-[#F5F5F5] hover:bg-[#2C2C2C]"
                 >
-                  <FolderInput className="h-3 w-3 text-cyan-400" />
+                  <FolderInput className="h-3 w-3 text-[#A3A3A3]" />
                   <span>Move</span>
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={onBulkDelete}
-                  className="h-7 text-xs gap-1 border-red-500/30 bg-[#0D1421] text-red-400 hover:bg-red-500/10"
+                  className="h-7 text-xs gap-1 border border-[#502020] bg-[#2A1818] text-[#EF4444] hover:bg-[#381F1F]"
                 >
                   <Trash2 className="h-3 w-3" />
                   <span>Delete</span>
@@ -305,7 +305,7 @@ export function FilesToolbar({
                   variant="outline"
                   size="sm"
                   onClick={onBulkRestore}
-                  className="h-7 text-xs gap-1 border-border bg-[#0D1421] text-emerald-400 hover:border-emerald-500/50"
+                  className="h-7 text-xs gap-1 border border-[#303030] bg-[#262626] text-[#A3A3A3] hover:bg-[#2C2C2C]"
                 >
                   <RotateCcw className="h-3 w-3" />
                   <span>Restore</span>
@@ -314,7 +314,7 @@ export function FilesToolbar({
                   variant="outline"
                   size="sm"
                   onClick={onBulkPermanentDelete}
-                  className="h-7 text-xs gap-1 border-red-500/30 bg-[#0D1421] text-red-400 hover:bg-red-500/10"
+                  className="h-7 text-xs gap-1 border border-[#502020] bg-[#2A1818] text-[#EF4444] hover:bg-[#381F1F]"
                 >
                   <Trash2 className="h-3 w-3" />
                   <span>Delete Permanently</span>

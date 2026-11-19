@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const taskPriorityEnum = z.enum(["CRITICAL", "HIGH", "NORMAL", "LOW"]);
-export const taskStatusEnum = z.enum(["TODO", "IN_PROGRESS", "COMPLETED", "CANCELLED"]);
+export const taskStatusEnum = z.enum(["BACKLOG", "TODO", "IN_PROGRESS", "IN_REVIEW", "COMPLETED", "CANCELLED"]);
 
 export const createTaskSchema = z.object({
   title: z

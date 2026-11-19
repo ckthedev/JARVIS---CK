@@ -4,10 +4,11 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { RemindersNav } from "./reminders-nav";
 import { RemindersToolbar } from "./reminders-toolbar";
 import { ReminderCard } from "./reminder-card";
+import { RemindersOverview } from "./reminders-overview";
 import { ReminderDialog } from "./reminder-dialog";
 import { SnoozeDialog } from "./snooze-dialog";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
-import { EmptyState } from "@/components/shared/empty-state";
+import { EmptyState } from "@/components/dark-workspace";
 import {
   ReminderDto,
   ReminderSection,
@@ -16,10 +17,10 @@ import {
   ReminderStatus,
 } from "../types";
 import { CreateReminderInput } from "@/lib/validations/reminder";
-import { Bell, Sparkles } from "lucide-react";
+import { Bell } from "lucide-react";
 
 export function RemindersManager() {
-  const [section, setSection] = useState<ReminderSection>("all");
+  const [section, setSection] = useState<ReminderSection>("overview");
   const [search, setSearch] = useState("");
   const [priorityFilter, setPriorityFilter] = useState<ReminderPriority | "ALL">("ALL");
   const [statusFilter, setStatusFilter] = useState<ReminderStatus | "ALL">("ALL");
@@ -54,7 +55,8 @@ export function RemindersManager() {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      params.set("section", section);
+      // If overview, query 'all' so overview computes with the full set
+      params.set("section", section === "overview" ? "all" : section);
       if (search.trim()) params.set("search", search.trim());
       if (priorityFilter !== "ALL") params.set("priority", priorityFilter);
       if (statusFilter !== "ALL") params.set("status", statusFilter);
@@ -229,108 +231,73 @@ export function RemindersManager() {
 
       {/* Main Content Area */}
       <div className="flex-1 space-y-4 min-w-0">
-        <RemindersToolbar
-          search={search}
-          onSearchChange={setSearch}
-          priorityFilter={priorityFilter}
-          onPriorityChange={setPriorityFilter}
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          recurrenceFilter={recurrenceFilter}
-          onRecurrenceChange={setRecurrenceFilter}
-          sortBy={sortBy}
-          onSortByChange={setSortBy}
-          sortOrder={sortOrder}
-          onToggleSortOrder={() => setSortOrder((o) => (o === "asc" ? "desc" : "asc"))}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          onRefresh={() => {
-            fetchReminders();
-            fetchStats();
-          }}
-          loading={loading}
-        />
-
-        {/* Reminders List */}
-        {reminders.length === 0 ? (
-          <div className="rounded-xl border border-border/80 bg-card p-8">
-            <EmptyState
-              icon={Bell}
-              title={`No ${section !== "all" ? section : ""} reminders found`}
-              description={
-                search
-                  ? "No reminders matched your search criteria. Try modifying your filter terms."
-                  : section === "completed"
-                  ? "No completed reminders in the archive."
-                  : section === "overdue"
-                  ? "All alerts are fully on track! Zero overdue items."
-                  : "Create reminders with custom frequencies, priority levels, and automatic notification delivery."
-              }
-              action={
-                <button
-                  onClick={() => {
-                    setEditingReminder(null);
-                    setIsDialogOpen(true);
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Add First Reminder
-                </button>
-              }
-            />
-          </div>
-        ) : viewMode === "flat" ? (
-          <div className="space-y-2.5">
-            {reminders.map((reminder) => (
-              <ReminderCard
-                key={reminder.id}
-                reminder={reminder}
-                onComplete={handleComplete}
-                onReactivate={handleReactivate}
-                onCancel={handleCancel}
-                onEdit={(r) => {
-                  setEditingReminder(r);
-                  setIsDialogOpen(true);
-                }}
-                onOpenSnooze={(r) => setSnoozeReminder(r)}
-                onDelete={(r) => setDeleteReminder(r)}
-              />
-            ))}
-          </div>
+        {section === "overview" ? (
+          <RemindersOverview
+            reminders={reminders}
+            stats={stats}
+            onOpenCreate={() => {
+              setEditingReminder(null);
+              setIsDialogOpen(true);
+            }}
+            onOpenSnooze={(r) => setSnoozeReminder(r)}
+            onComplete={handleComplete}
+            onEdit={(r) => {
+              setEditingReminder(r);
+              setIsDialogOpen(true);
+            }}
+            onViewSection={(sec) => setSection(sec)}
+          />
         ) : (
-          <div className="space-y-6">
-            {/* Overdue Section */}
-            {groupedReminders?.overdue && groupedReminders.overdue.length > 0 && (
-              <div className="space-y-2.5">
-                <div className="flex items-center gap-2 text-xs font-semibold text-red-400 uppercase tracking-wider">
-                  <span>Overdue ({groupedReminders.overdue.length})</span>
-                </div>
-                {groupedReminders.overdue.map((reminder) => (
-                  <ReminderCard
-                    key={reminder.id}
-                    reminder={reminder}
-                    onComplete={handleComplete}
-                    onReactivate={handleReactivate}
-                    onCancel={handleCancel}
-                    onEdit={(r) => {
-                      setEditingReminder(r);
-                      setIsDialogOpen(true);
-                    }}
-                    onOpenSnooze={(r) => setSnoozeReminder(r)}
-                    onDelete={(r) => setDeleteReminder(r)}
-                  />
-                ))}
-              </div>
-            )}
+          <>
+            <RemindersToolbar
+              search={search}
+              onSearchChange={setSearch}
+              priorityFilter={priorityFilter}
+              onPriorityChange={setPriorityFilter}
+              statusFilter={statusFilter}
+              onStatusChange={setStatusFilter}
+              recurrenceFilter={recurrenceFilter}
+              onRecurrenceChange={setRecurrenceFilter}
+              sortBy={sortBy}
+              onSortByChange={setSortBy}
+              sortOrder={sortOrder}
+              onToggleSortOrder={() => setSortOrder((o) => (o === "asc" ? "desc" : "asc"))}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              onRefresh={() => {
+                fetchReminders();
+                fetchStats();
+              }}
+              loading={loading}
+            />
 
-            {/* Today Section */}
-            {groupedReminders?.today && groupedReminders.today.length > 0 && (
+            {/* Reminders List */}
+            {reminders.length === 0 ? (
+              <div className="p-8 rounded-xl border border-[#303030] bg-[#141414]">
+                <EmptyState
+                  icon={Bell}
+                  title={`No ${section !== "all" ? section : ""} reminders found`}
+                  description={
+                    search
+                      ? "No reminders matched your search criteria. Try modifying your filter terms."
+                      : section === "completed"
+                      ? "No completed reminders in the archive."
+                      : section === "overdue"
+                      ? "All alerts are fully on track! Zero overdue items."
+                      : "Create reminders with custom frequencies, priority levels, and automatic notification delivery."
+                  }
+                  action={{
+                    label: "Add First Reminder",
+                    onClick: () => {
+                      setEditingReminder(null);
+                      setIsDialogOpen(true);
+                    },
+                  }}
+                />
+              </div>
+            ) : viewMode === "flat" ? (
               <div className="space-y-2.5">
-                <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-wider">
-                  <span>Today ({groupedReminders.today.length})</span>
-                </div>
-                {groupedReminders.today.map((reminder) => (
+                {reminders.map((reminder) => (
                   <ReminderCard
                     key={reminder.id}
                     reminder={reminder}
@@ -346,104 +313,154 @@ export function RemindersManager() {
                   />
                 ))}
               </div>
-            )}
+            ) : (
+              <div className="space-y-6">
+                {/* Overdue Section */}
+                {groupedReminders?.overdue && groupedReminders.overdue.length > 0 && (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-red-400 uppercase tracking-wider">
+                      <span>Overdue ({groupedReminders.overdue.length})</span>
+                    </div>
+                    {groupedReminders.overdue.map((reminder) => (
+                      <ReminderCard
+                        key={reminder.id}
+                        reminder={reminder}
+                        onComplete={handleComplete}
+                        onReactivate={handleReactivate}
+                        onCancel={handleCancel}
+                        onEdit={(r) => {
+                          setEditingReminder(r);
+                          setIsDialogOpen(true);
+                        }}
+                        onOpenSnooze={(r) => setSnoozeReminder(r)}
+                        onDelete={(r) => setDeleteReminder(r)}
+                      />
+                    ))}
+                  </div>
+                )}
 
-            {/* Tomorrow Section */}
-            {groupedReminders?.tomorrow && groupedReminders.tomorrow.length > 0 && (
-              <div className="space-y-2.5">
-                <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider">
-                  <span>Tomorrow ({groupedReminders.tomorrow.length})</span>
-                </div>
-                {groupedReminders.tomorrow.map((reminder) => (
-                  <ReminderCard
-                    key={reminder.id}
-                    reminder={reminder}
-                    onComplete={handleComplete}
-                    onReactivate={handleReactivate}
-                    onCancel={handleCancel}
-                    onEdit={(r) => {
-                      setEditingReminder(r);
-                      setIsDialogOpen(true);
-                    }}
-                    onOpenSnooze={(r) => setSnoozeReminder(r)}
-                    onDelete={(r) => setDeleteReminder(r)}
-                  />
-                ))}
-              </div>
-            )}
+                {/* Today Section */}
+                {groupedReminders?.today && groupedReminders.today.length > 0 && (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-wider">
+                      <span>Today ({groupedReminders.today.length})</span>
+                    </div>
+                    {groupedReminders.today.map((reminder) => (
+                      <ReminderCard
+                        key={reminder.id}
+                        reminder={reminder}
+                        onComplete={handleComplete}
+                        onReactivate={handleReactivate}
+                        onCancel={handleCancel}
+                        onEdit={(r) => {
+                          setEditingReminder(r);
+                          setIsDialogOpen(true);
+                        }}
+                        onOpenSnooze={(r) => setSnoozeReminder(r)}
+                        onDelete={(r) => setDeleteReminder(r)}
+                      />
+                    ))}
+                  </div>
+                )}
 
-            {/* This Week Section */}
-            {groupedReminders?.thisWeek && groupedReminders.thisWeek.length > 0 && (
-              <div className="space-y-2.5">
-                <div className="flex items-center gap-2 text-xs font-semibold text-secondary-text uppercase tracking-wider">
-                  <span>This Week ({groupedReminders.thisWeek.length})</span>
-                </div>
-                {groupedReminders.thisWeek.map((reminder) => (
-                  <ReminderCard
-                    key={reminder.id}
-                    reminder={reminder}
-                    onComplete={handleComplete}
-                    onReactivate={handleReactivate}
-                    onCancel={handleCancel}
-                    onEdit={(r) => {
-                      setEditingReminder(r);
-                      setIsDialogOpen(true);
-                    }}
-                    onOpenSnooze={(r) => setSnoozeReminder(r)}
-                    onDelete={(r) => setDeleteReminder(r)}
-                  />
-                ))}
-              </div>
-            )}
+                {/* Tomorrow Section */}
+                {groupedReminders?.tomorrow && groupedReminders.tomorrow.length > 0 && (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-blue-400 uppercase tracking-wider">
+                      <span>Tomorrow ({groupedReminders.tomorrow.length})</span>
+                    </div>
+                    {groupedReminders.tomorrow.map((reminder) => (
+                      <ReminderCard
+                        key={reminder.id}
+                        reminder={reminder}
+                        onComplete={handleComplete}
+                        onReactivate={handleReactivate}
+                        onCancel={handleCancel}
+                        onEdit={(r) => {
+                          setEditingReminder(r);
+                          setIsDialogOpen(true);
+                        }}
+                        onOpenSnooze={(r) => setSnoozeReminder(r)}
+                        onDelete={(r) => setDeleteReminder(r)}
+                      />
+                    ))}
+                  </div>
+                )}
 
-            {/* Later Section */}
-            {groupedReminders?.later && groupedReminders.later.length > 0 && (
-              <div className="space-y-2.5">
-                <div className="flex items-center gap-2 text-xs font-semibold text-secondary-text uppercase tracking-wider">
-                  <span>Later ({groupedReminders.later.length})</span>
-                </div>
-                {groupedReminders.later.map((reminder) => (
-                  <ReminderCard
-                    key={reminder.id}
-                    reminder={reminder}
-                    onComplete={handleComplete}
-                    onReactivate={handleReactivate}
-                    onCancel={handleCancel}
-                    onEdit={(r) => {
-                      setEditingReminder(r);
-                      setIsDialogOpen(true);
-                    }}
-                    onOpenSnooze={(r) => setSnoozeReminder(r)}
-                    onDelete={(r) => setDeleteReminder(r)}
-                  />
-                ))}
-              </div>
-            )}
+                {/* This Week Section */}
+                {groupedReminders?.thisWeek && groupedReminders.thisWeek.length > 0 && (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-[#8B5CF6] uppercase tracking-wider">
+                      <span>This Week ({groupedReminders.thisWeek.length})</span>
+                    </div>
+                    {groupedReminders.thisWeek.map((reminder) => (
+                      <ReminderCard
+                        key={reminder.id}
+                        reminder={reminder}
+                        onComplete={handleComplete}
+                        onReactivate={handleReactivate}
+                        onCancel={handleCancel}
+                        onEdit={(r) => {
+                          setEditingReminder(r);
+                          setIsDialogOpen(true);
+                        }}
+                        onOpenSnooze={(r) => setSnoozeReminder(r)}
+                        onDelete={(r) => setDeleteReminder(r)}
+                      />
+                    ))}
+                  </div>
+                )}
 
-            {/* Completed / Cancelled Section */}
-            {groupedReminders?.completedOrCancelled && groupedReminders.completedOrCancelled.length > 0 && (
-              <div className="space-y-2.5">
-                <div className="flex items-center gap-2 text-xs font-semibold text-secondary-text uppercase tracking-wider">
-                  <span>Archived & Completed ({groupedReminders.completedOrCancelled.length})</span>
-                </div>
-                {groupedReminders.completedOrCancelled.map((reminder) => (
-                  <ReminderCard
-                    key={reminder.id}
-                    reminder={reminder}
-                    onComplete={handleComplete}
-                    onReactivate={handleReactivate}
-                    onCancel={handleCancel}
-                    onEdit={(r) => {
-                      setEditingReminder(r);
-                      setIsDialogOpen(true);
-                    }}
-                    onOpenSnooze={(r) => setSnoozeReminder(r)}
-                    onDelete={(r) => setDeleteReminder(r)}
-                  />
-                ))}
+                {/* Later Section */}
+                {groupedReminders?.later && groupedReminders.later.length > 0 && (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-[#737373] uppercase tracking-wider">
+                      <span>Later ({groupedReminders.later.length})</span>
+                    </div>
+                    {groupedReminders.later.map((reminder) => (
+                      <ReminderCard
+                        key={reminder.id}
+                        reminder={reminder}
+                        onComplete={handleComplete}
+                        onReactivate={handleReactivate}
+                        onCancel={handleCancel}
+                        onEdit={(r) => {
+                          setEditingReminder(r);
+                          setIsDialogOpen(true);
+                        }}
+                        onOpenSnooze={(r) => setSnoozeReminder(r)}
+                        onDelete={(r) => setDeleteReminder(r)}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Completed or Cancelled Section */}
+                {groupedReminders?.completedOrCancelled && groupedReminders.completedOrCancelled.length > 0 && (
+                  <div className="space-y-2.5 pt-4 border-t border-[#303030]">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-[#737373] uppercase tracking-wider">
+                      <span>Completed / Inactive ({groupedReminders.completedOrCancelled.length})</span>
+                    </div>
+                    {groupedReminders.completedOrCancelled.map((reminder) => (
+                      <ReminderCard
+                        key={reminder.id}
+                        reminder={reminder}
+                        onComplete={handleComplete}
+                        onReactivate={handleReactivate}
+                        onCancel={handleCancel}
+                        onEdit={(r) => {
+                          setEditingReminder(r);
+                          setIsDialogOpen(true);
+                        }}
+                        onOpenSnooze={(r) => setSnoozeReminder(r)}
+                        onDelete={(r) => setDeleteReminder(r)}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             )}
-          </div>
+          </>
         )}
       </div>
 
@@ -460,15 +477,15 @@ export function RemindersManager() {
       />
 
       <SnoozeDialog
-        isOpen={Boolean(snoozeReminder)}
         reminder={snoozeReminder}
+        isOpen={Boolean(snoozeReminder)}
         onClose={() => setSnoozeReminder(null)}
         onSnooze={handleSnooze}
       />
 
       <DeleteConfirmationDialog
-        isOpen={Boolean(deleteReminder)}
         reminder={deleteReminder}
+        isOpen={Boolean(deleteReminder)}
         onClose={() => setDeleteReminder(null)}
         onConfirm={handleDelete}
       />

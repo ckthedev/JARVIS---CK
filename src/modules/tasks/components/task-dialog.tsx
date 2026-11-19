@@ -186,7 +186,7 @@ export function TaskDialog({
           <textarea
             id="task-description"
             rows={3}
-            className="flex w-full rounded-md border border-input bg-[#0A101C] px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex w-full rounded-md border border-[#303030] bg-[#181818] px-3 py-2 text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:border-[#454545] disabled:cursor-not-allowed disabled:opacity-50"
             placeholder="Detailed notes, checklist items, or execution instructions..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -204,7 +204,7 @@ export function TaskDialog({
               id="task-priority"
               value={priority}
               onChange={(e) => setPriority(e.target.value as TaskPriority)}
-              className="flex h-9 w-full rounded-md border border-input bg-[#0A101C] px-3 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex h-9 w-full rounded-lg border border-[#303030] bg-[#181818] px-3 py-1 text-xs text-[#F5F5F5] focus:outline-none focus:border-[#454545] transition-colors"
             >
               <option value="CRITICAL">Critical</option>
               <option value="HIGH">High</option>
@@ -219,10 +219,12 @@ export function TaskDialog({
               id="task-status"
               value={status}
               onChange={(e) => setStatus(e.target.value as TaskStatus)}
-              className="flex h-9 w-full rounded-md border border-input bg-[#0A101C] px-3 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex h-9 w-full rounded-lg border border-[#303030] bg-[#181818] px-3 py-1 text-xs text-[#F5F5F5] focus:outline-none focus:border-[#454545] transition-colors"
             >
+              <option value="BACKLOG">Backlog</option>
               <option value="TODO">To Do</option>
               <option value="IN_PROGRESS">In Progress</option>
+              <option value="IN_REVIEW">In Review</option>
               <option value="COMPLETED">Completed</option>
               <option value="CANCELLED">Cancelled</option>
             </select>
@@ -237,7 +239,7 @@ export function TaskDialog({
               id="task-category"
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
-              className="flex h-9 w-full rounded-md border border-input bg-[#0A101C] px-3 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex h-9 w-full rounded-lg border border-[#303030] bg-[#181818] px-3 py-1 text-xs text-[#F5F5F5] focus:outline-none focus:border-[#454545] transition-colors"
             >
               <option value="">No Category</option>
               {categories.map((c) => (
@@ -254,7 +256,7 @@ export function TaskDialog({
               id="task-project"
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
-              className="flex h-9 w-full rounded-md border border-input bg-[#0A101C] px-3 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex h-9 w-full rounded-lg border border-[#303030] bg-[#181818] px-3 py-1 text-xs text-[#F5F5F5] focus:outline-none focus:border-[#454545] transition-colors"
             >
               <option value="">No Project</option>
               {projects.map((p) => (
@@ -289,10 +291,10 @@ export function TaskDialog({
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end gap-3 pt-2">
+        <div className="mt-6 flex justify-end gap-2.5 pt-2">
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={onClose}
             disabled={loading}

@@ -198,16 +198,16 @@ export function FileUploadDialog({
     >
       <div className="space-y-4 my-2">
         {/* Target Folder Selector */}
-        <div className="flex items-center justify-between gap-3 bg-[#0D1421] p-2.5 rounded-lg border border-border">
-          <div className="flex items-center gap-2 text-xs text-secondary-text">
-            <FolderIcon className="h-4 w-4 text-cyan-400" />
+        <div className="flex items-center justify-between gap-3 bg-[#181818] p-2.5 rounded-lg border border-[#292929]">
+          <div className="flex items-center gap-2 text-xs text-[#A3A3A3]">
+            <FolderIcon className="h-4 w-4 text-[#A3A3A3]" />
             <span>Upload to folder:</span>
           </div>
           <select
             value={selectedFolderId || ""}
             onChange={(e) => setSelectedFolderId(e.target.value || null)}
             disabled={isUploading}
-            className="bg-[#111B2B] text-foreground text-xs rounded border border-border px-2 py-1 focus:outline-none focus:border-primary cursor-pointer max-w-[200px]"
+            className="bg-[#141414] text-[#F5F5F5] text-xs rounded border border-[#303030] px-2 py-1 focus:outline-none focus:border-[#454545] cursor-pointer max-w-[200px]"
           >
             <option value="">Root (No folder)</option>
             {folders.map((f) => (
@@ -225,10 +225,10 @@ export function FileUploadDialog({
           onDrop={handleDrop}
           onClick={() => !isUploading && fileInputRef.current?.click()}
           className={cn(
-            "flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg transition-colors cursor-pointer text-center",
+            "flex flex-col items-center justify-center p-6 border rounded-lg transition-colors cursor-pointer text-center",
             isDragging
-              ? "border-primary bg-primary/10"
-              : "border-border/80 hover:border-primary/50 bg-[#0D1421]/60 hover:bg-[#0D1421]"
+              ? "border-[#454545] bg-[#242424]"
+              : "border-[#303030] hover:border-[#404040] bg-[#181818] hover:bg-[#202020]"
           )}
         >
           <input
@@ -238,11 +238,11 @@ export function FileUploadDialog({
             multiple
             className="hidden"
           />
-          <div className="p-3 rounded-full bg-primary/10 text-primary mb-3">
+          <div className="p-3 rounded-full bg-[#202020] border border-[#303030] text-[#A3A3A3] mb-3">
             <Upload className="h-6 w-6" />
           </div>
-          <p className="text-sm font-medium text-foreground mb-1">
-            Drag and drop files here, or <span className="text-primary hover:underline">browse</span>
+          <p className="text-sm font-medium text-[#F5F5F5] mb-1">
+            Drag and drop files here, or <span className="text-[#A3A3A3] underline hover:text-[#F5F5F5]">browse</span>
           </p>
           <p className="text-xs text-secondary-text">
             Supports any file format up to 100 MB per file.
@@ -268,34 +268,34 @@ export function FileUploadDialog({
             {uploadQueue.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-col gap-1.5 p-2 rounded bg-[#0D1421] border border-border text-xs"
+                className="flex flex-col gap-1.5 p-2 rounded bg-[#181818] border border-[#292929] text-xs"
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 truncate">
-                    <FileText className="h-4 w-4 text-primary shrink-0" />
-                    <span className="font-medium truncate text-foreground" title={item.file.name}>
+                    <FileText className="h-4 w-4 text-[#A3A3A3] shrink-0" />
+                    <span className="font-medium truncate text-[#F5F5F5]" title={item.file.name}>
                       {item.file.name}
                     </span>
-                    <span className="text-secondary-text font-mono text-[11px] shrink-0">
+                    <span className="text-[#737373] font-mono text-[11px] shrink-0">
                       ({formatBytes(item.file.size)})
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
                     {item.status === "uploading" && (
-                      <div className="flex items-center gap-1 text-primary">
+                      <div className="flex items-center gap-1 text-[#A3A3A3]">
                         <Loader2 className="h-3 w-3 animate-spin" />
                         <span className="font-mono text-[11px]">{item.progress}%</span>
                       </div>
                     )}
                     {item.status === "success" && (
-                      <div className="flex items-center gap-1 text-emerald-400">
+                      <div className="flex items-center gap-1 text-[#A3A3A3]">
                         <CheckCircle2 className="h-3.5 w-3.5" />
                         <span>Uploaded</span>
                       </div>
                     )}
                     {item.status === "error" && (
-                      <div className="flex items-center gap-1 text-red-400" title={item.error}>
+                      <div className="flex items-center gap-1 text-[#EF4444]" title={item.error}>
                         <AlertCircle className="h-3.5 w-3.5" />
                         <span className="truncate max-w-[120px]">{item.error || "Failed"}</span>
                       </div>
@@ -305,7 +305,7 @@ export function FileUploadDialog({
                       <button
                         type="button"
                         onClick={() => removeFileFromQueue(item.id)}
-                        className="text-secondary-text hover:text-red-400 p-0.5 rounded"
+                        className="text-[#737373] hover:text-[#EF4444] p-0.5 rounded"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
@@ -315,9 +315,9 @@ export function FileUploadDialog({
 
                 {/* Progress Bar */}
                 {item.status === "uploading" && (
-                  <div className="w-full bg-[#111B2B] h-1 rounded-full overflow-hidden">
+                  <div className="w-full bg-[#141414] border border-[#292929] h-1 rounded-full overflow-hidden">
                     <div
-                      className="bg-primary h-full transition-all duration-150"
+                      className="bg-[#A3A3A3] h-full transition-all duration-150"
                       style={{ width: `${item.progress}%` }}
                     />
                   </div>
@@ -327,13 +327,13 @@ export function FileUploadDialog({
           </div>
         )}
 
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/50">
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#292929]">
           <Button
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isUploading}
-            className="border-border bg-transparent text-secondary-text hover:text-foreground text-xs"
+            className="border-[#303030] bg-transparent text-[#A3A3A3] hover:text-[#F5F5F5] text-xs"
           >
             {allCompleted ? "Done" : "Cancel"}
           </Button>
@@ -343,7 +343,7 @@ export function FileUploadDialog({
               type="button"
               onClick={startUpload}
               disabled={isUploading}
-              className="bg-primary text-black font-medium hover:bg-primary/90 text-xs gap-1.5 shadow-md shadow-primary/20"
+              className="bg-[#383838] text-[#F5F5F5] font-medium hover:bg-[#454545] text-xs gap-1.5"
             >
               {isUploading ? (
                 <>

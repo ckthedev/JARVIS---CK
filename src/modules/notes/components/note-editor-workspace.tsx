@@ -107,15 +107,15 @@ export function NoteEditorWorkspace({
   const isTrash = !!note.deletedAt;
 
   return (
-    <div className={cn("flex flex-col h-full bg-[#080D16] overflow-hidden", className)}>
+    <div className={cn("flex flex-col h-full bg-[#101010] overflow-hidden", className)}>
       {/* Top Workspace Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/80 bg-[#0A101C] px-4 py-2.5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#292929] bg-[#181818] px-4 py-2.5">
         <div className="flex items-center gap-2">
           {onBackToList && (
             <button
               type="button"
               onClick={onBackToList}
-              className="md:hidden rounded-md p-1.5 text-secondary-text hover:text-foreground hover:bg-card-hover"
+              className="md:hidden rounded-md p-1.5 text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#252525]"
               title="Back to notes list"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -131,7 +131,7 @@ export function NoteEditorWorkspace({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           {!isTrash ? (
             <>
               <button
@@ -140,8 +140,8 @@ export function NoteEditorWorkspace({
                 className={cn(
                   "flex items-center gap-1 rounded-md px-2.5 py-1 text-xs transition-colors border",
                   note.isPinned
-                    ? "bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20"
-                    : "border-border text-secondary-text hover:text-foreground hover:bg-card-hover"
+                    ? "bg-[#282828] border-[#383838] text-[#F5F5F5]"
+                    : "border-[#303030] bg-[#202020] text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#252525]"
                 )}
                 title={note.isPinned ? "Unpin Note" : "Pin Note to top"}
               >
@@ -155,8 +155,8 @@ export function NoteEditorWorkspace({
                 className={cn(
                   "flex items-center gap-1 rounded-md px-2.5 py-1 text-xs transition-colors border",
                   note.isArchived
-                    ? "bg-secondary/15 border-secondary/30 text-[#A78BFA] hover:bg-secondary/25"
-                    : "border-border text-secondary-text hover:text-foreground hover:bg-card-hover"
+                    ? "bg-[#282828] border-[#383838] text-[#F5F5F5]"
+                    : "border-[#303030] bg-[#202020] text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#252525]"
                 )}
                 title={note.isArchived ? "Unarchive Note" : "Archive Note"}
               >
@@ -167,7 +167,7 @@ export function NoteEditorWorkspace({
               <button
                 type="button"
                 onClick={onDuplicate}
-                className="flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs text-secondary-text hover:text-foreground hover:bg-card-hover transition-colors"
+                className="flex items-center gap-1 rounded-md border border-[#303030] bg-[#202020] px-2.5 py-1 text-xs text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#252525] transition-colors"
                 title="Duplicate Note"
               >
                 <Copy className="h-3.5 w-3.5" />
@@ -177,7 +177,7 @@ export function NoteEditorWorkspace({
               <button
                 type="button"
                 onClick={onDelete}
-                className="flex items-center gap-1 rounded-md border border-red-500/20 px-2.5 py-1 text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+                className="flex items-center gap-1 rounded-md border border-[#502020] bg-[#2A1818] px-2.5 py-1 text-xs text-[#EF4444] hover:bg-[#381F1F] transition-colors"
                 title="Move Note to Trash"
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -190,7 +190,7 @@ export function NoteEditorWorkspace({
                 <button
                   type="button"
                   onClick={onRestore}
-                  className="flex items-center gap-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 text-xs text-emerald-400 hover:bg-emerald-500/20 font-medium"
+                  className="flex items-center gap-1 rounded-md bg-[#202020] border border-[#303030] px-3 py-1 text-xs text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#252525] font-medium"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
                   Restore Note
@@ -200,7 +200,7 @@ export function NoteEditorWorkspace({
                 <button
                   type="button"
                   onClick={onPermanentDelete}
-                  className="flex items-center gap-1 rounded-md bg-red-500/10 border border-red-500/30 px-3 py-1 text-xs text-red-400 hover:bg-red-500/20 font-medium"
+                  className="flex items-center gap-1 rounded-md bg-[#2A1818] border border-[#502020] px-3 py-1 text-xs text-[#EF4444] hover:bg-[#381F1F] font-medium"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Delete Permanently
@@ -222,21 +222,21 @@ export function NoteEditorWorkspace({
             onBlur={handleTitleBlur}
             disabled={isTrash}
             placeholder="Untitled Note"
-            className="w-full bg-transparent text-2xl sm:text-3xl font-bold tracking-tight text-foreground placeholder:text-secondary-text/40 focus:outline-none border-b border-transparent focus:border-border/60 pb-1.5 transition-colors disabled:opacity-75"
+            className="w-full bg-transparent text-2xl sm:text-3xl font-bold tracking-tight text-[#F5F5F5] placeholder:text-[#555555] focus:outline-none border-b border-transparent focus:border-[#404040] pb-1.5 transition-colors disabled:opacity-75"
           />
         </div>
 
         {/* Metadata Controls: Category & Tags */}
-        <div className="flex flex-wrap items-center gap-3 text-xs border-y border-border/40 py-2.5">
+        <div className="flex flex-wrap items-center gap-3 text-xs border-y border-[#292929] py-2.5">
           {/* Category Dropdown */}
           <div className="flex items-center gap-1.5">
-            <Folder className="h-3.5 w-3.5 text-secondary-text" />
-            <span className="text-secondary-text">Category:</span>
+            <Folder className="h-3.5 w-3.5 text-[#737373]" />
+            <span className="text-[#A3A3A3]">Category:</span>
             <select
               value={note.categoryId || ""}
               onChange={(e) => onCategoryChange(e.target.value || null)}
               disabled={isTrash}
-              className="bg-[#111B2B] border border-border rounded px-2 py-1 text-xs text-foreground focus:outline-none focus:border-primary cursor-pointer disabled:opacity-60"
+              className="bg-[#181818] border border-[#303030] rounded px-2 py-1 text-xs text-[#F5F5F5] focus:outline-none focus:border-[#454545] cursor-pointer disabled:opacity-60"
             >
               <option value="">Uncategorized</option>
               {categories.map((c) => (
@@ -249,7 +249,7 @@ export function NoteEditorWorkspace({
               <button
                 type="button"
                 onClick={onOpenCategoryManager}
-                className="text-secondary-text hover:text-primary p-0.5 rounded"
+                className="text-[#737373] hover:text-[#F5F5F5] p-0.5 rounded"
                 title="Manage Categories"
               >
                 <Plus className="h-3 w-3" />
@@ -257,26 +257,26 @@ export function NoteEditorWorkspace({
             )}
           </div>
 
-          <div className="h-3.5 w-[1px] bg-border/60 hidden sm:block" />
+          <div className="h-3.5 w-[1px] bg-[#303030] hidden sm:block" />
 
           {/* Tags Chips & Add Input */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <Tag className="h-3.5 w-3.5 text-secondary-text shrink-0" />
+            <Tag className="h-3.5 w-3.5 text-[#737373] shrink-0" />
             {note.tags.map((tag) => (
               <span
                 key={tag.id}
-                className="inline-flex items-center gap-1 rounded-full bg-sidebar-accent px-2 py-0.5 text-[11px] text-foreground border border-border"
+                className="inline-flex items-center gap-1 rounded-full bg-[#181818] px-2 py-0.5 text-[11px] text-[#D4D4D4] border border-[#292929]"
               >
                 <span
                   className="h-1.5 w-1.5 rounded-full"
-                  style={{ backgroundColor: tag.color || "#7A3FFF" }}
+                  style={{ backgroundColor: tag.color || "#888888" }}
                 />
                 #{tag.name}
                 {!isTrash && (
                   <button
                     type="button"
                     onClick={() => handleRemoveTag(tag.name)}
-                    className="text-secondary-text hover:text-red-400 ml-0.5"
+                    className="text-[#737373] hover:text-[#EF4444] ml-0.5"
                   >
                     <X className="h-2.5 w-2.5" />
                   </button>
@@ -296,7 +296,7 @@ export function NoteEditorWorkspace({
                     list="available-note-tags"
                     placeholder="tag name..."
                     autoFocus
-                    className="h-6 w-24 rounded bg-[#111B2B] border border-primary px-2 text-[11px] text-foreground focus:outline-none"
+                    className="h-6 w-24 rounded bg-[#181818] border border-[#454545] px-2 text-[11px] text-[#F5F5F5] focus:outline-none"
                   />
                   <datalist id="available-note-tags">
                     {tags.map((t) => (
@@ -308,7 +308,7 @@ export function NoteEditorWorkspace({
                 <button
                   type="button"
                   onClick={() => setShowTagInput(true)}
-                  className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-2 py-0.5 text-[11px] text-secondary-text hover:text-foreground hover:border-border/80"
+                  className="inline-flex items-center gap-1 rounded-full border border-[#303030] bg-[#181818] px-2 py-0.5 text-[11px] text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#202020]"
                 >
                   <Plus className="h-2.5 w-2.5" />
                   Add Tag

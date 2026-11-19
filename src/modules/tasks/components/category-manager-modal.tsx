@@ -160,14 +160,14 @@ export function CategoryManagerModal({
       >
         <div className="space-y-6">
           {/* Create or Edit Form */}
-          <div className="rounded-lg border border-border/80 bg-[#0A101C] p-4 space-y-4">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
-              <Tag className="h-3.5 w-3.5" />
+          <div className="rounded-lg border border-[#292929] bg-[#181818] p-4 space-y-4">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-[#F5F5F5] flex items-center gap-2">
+              <Tag className="h-3.5 w-3.5 text-[#737373]" />
               {editingCategory ? "Edit Category" : "Add New Category"}
             </h4>
 
             {error && (
-              <div className="flex items-center gap-2 rounded-md border border-red-500/30 bg-red-500/10 p-2.5 text-xs text-red-400">
+              <div className="flex items-center gap-2 rounded-md border border-[#4A2020] bg-[#2A1818] p-2.5 text-xs text-[#EF4444]">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>
@@ -207,7 +207,7 @@ export function CategoryManagerModal({
                     type="color"
                     value={color}
                     onChange={(e) => setColor(e.target.value)}
-                    className="h-6 w-6 cursor-pointer rounded-full border border-border bg-transparent p-0"
+                    className="h-6 w-6 cursor-pointer rounded-full border border-[#303030] bg-transparent p-0"
                     title="Custom Hex Color"
                   />
                 </div>
@@ -233,20 +233,20 @@ export function CategoryManagerModal({
 
           {/* Existing Categories List */}
           <div className="space-y-2">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-[#A3A3A3]">
               Active Categories ({categories.length})
             </h4>
 
             {categories.length === 0 ? (
-              <p className="py-4 text-center text-xs text-secondary-text">
+              <p className="py-4 text-center text-xs text-[#737373]">
                 No categories created yet. Add your first category above.
               </p>
             ) : (
-              <div className="max-h-60 overflow-y-auto divide-y divide-border/40 rounded-md border border-border bg-[#0A101C]">
+              <div className="max-h-60 overflow-y-auto divide-y divide-[#292929] rounded-lg border border-[#292929] bg-[#181818]">
                 {categories.map((cat) => (
                   <div
                     key={cat.id}
-                    className="flex items-center justify-between p-3 transition-colors hover:bg-sidebar-accent/40"
+                    className="flex items-center justify-between p-3 transition-colors hover:bg-[#202020]"
                   >
                     <div className="flex items-center gap-2.5">
                       <span

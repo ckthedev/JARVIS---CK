@@ -78,10 +78,10 @@ export function FilePreviewModal({
       open={open}
       onClose={() => onOpenChange(false)}
       maxWidth="2xl"
-      className="p-0 overflow-hidden bg-[#080D16] border-border"
+      className="p-0 overflow-hidden bg-card border-border rounded-2xl"
     >
       {/* Top Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border/80 bg-[#0D1421] shrink-0">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border/80 bg-muted/60 shrink-0">
         <div className="flex items-center gap-2.5 min-w-0 pr-4">
           <FileCategoryIcon category={file.category} extension={file.extension} className="h-5 w-5 shrink-0" />
           <div className="min-w-0">
@@ -89,7 +89,7 @@ export function FilePreviewModal({
               {file.originalName}
             </h3>
             <div className="flex items-center gap-2 text-[11px] text-secondary-text">
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0 uppercase font-mono border-border bg-[#111B2B]">
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 uppercase font-mono border-border bg-card">
                 {file.category}
               </Badge>
               <span>&bull;</span>
@@ -109,7 +109,7 @@ export function FilePreviewModal({
             size="sm"
             variant="outline"
             onClick={() => onDownload(file)}
-            className="h-8 gap-1.5 border-border bg-[#111B2B] text-xs hover:border-primary/50"
+            className="h-8 gap-1.5 border-border bg-card text-xs hover:border-primary/50"
           >
             <Download className="h-3.5 w-3.5 text-primary" />
             <span>Download</span>
@@ -118,7 +118,7 @@ export function FilePreviewModal({
       </div>
 
       {/* Center Content Preview */}
-      <div className="min-h-[50vh] max-h-[75vh] overflow-auto bg-[#080D16] p-4 flex items-center justify-center">
+      <div className="min-h-[50vh] max-h-[75vh] overflow-auto bg-muted/30 p-4 flex items-center justify-center">
         {/* Images */}
         {isImage && (
           <div className="relative max-h-full max-w-full flex items-center justify-center">
@@ -147,8 +147,8 @@ export function FilePreviewModal({
 
         {/* Audio */}
         {isAudio && (
-          <div className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl bg-[#0D1421] border border-border shadow-xl max-w-md w-full">
-            <div className="p-4 rounded-full bg-emerald-500/10 text-emerald-400">
+          <div className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl bg-card border border-border shadow-saas max-w-md w-full">
+            <div className="p-4 rounded-full bg-success/10 text-success">
               <FileCategoryIcon category="AUDIO" className="h-10 w-10" />
             </div>
             <div className="text-center">
@@ -163,25 +163,25 @@ export function FilePreviewModal({
 
         {/* PDF Viewer */}
         {isPdf && (
-          <div className="h-[65vh] w-full rounded-lg overflow-hidden border border-border">
+          <div className="h-[65vh] w-full rounded-xl overflow-hidden border border-border">
             <iframe
               src={`${previewUrl}#toolbar=1`}
               title={file.originalName}
-              className="h-full w-full rounded-lg bg-white"
+              className="h-full w-full rounded-xl bg-white"
             />
           </div>
         )}
 
         {/* Code / Text Viewer */}
         {isCodeOrText && !isPdf && (
-          <div className="h-[65vh] w-full flex flex-col rounded-lg border border-border bg-[#0D1421] overflow-hidden">
-            <div className="flex items-center justify-between px-3 py-1.5 border-b border-border/80 bg-[#111B2B] text-xs text-secondary-text">
+          <div className="h-[65vh] w-full flex flex-col rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center justify-between px-3 py-1.5 border-b border-border/80 bg-muted/60 text-xs text-secondary-text">
               <div className="flex items-center gap-1.5 font-mono">
-                <FileCode className="h-3.5 w-3.5 text-blue-400" />
+                <FileCode className="h-3.5 w-3.5 text-primary" />
                 <span>Previewing code / text</span>
               </div>
               {Boolean(file.metadata?.isExecutable) && (
-                <div className="flex items-center gap-1 text-amber-400 text-[10px]">
+                <div className="flex items-center gap-1 text-warning text-[10px]">
                   <ShieldAlert className="h-3 w-3" />
                   <span>Script execution isolated</span>
                 </div>
@@ -195,7 +195,7 @@ export function FilePreviewModal({
                   <span>Loading file contents...</span>
                 </div>
               ) : textError ? (
-                <div className="flex items-center justify-center h-48 text-red-400 text-xs">
+                <div className="flex items-center justify-center h-48 text-danger text-xs">
                   {textError}
                 </div>
               ) : (
@@ -207,8 +207,8 @@ export function FilePreviewModal({
 
         {/* Unsupported Formats Fallback */}
         {!isImage && !isVideo && !isAudio && !isPdf && !isCodeOrText && (
-          <div className="flex flex-col items-center justify-center p-8 rounded-xl bg-[#0D1421] border border-border max-w-md w-full text-center space-y-4 shadow-xl">
-            <div className="p-4 rounded-full bg-[#111B2B] text-secondary-text">
+          <div className="flex flex-col items-center justify-center p-8 rounded-2xl bg-card border border-border max-w-md w-full text-center space-y-4 shadow-saas">
+            <div className="p-4 rounded-full bg-muted text-secondary-text">
               <FileQuestion className="h-10 w-10 text-secondary-text" />
             </div>
 
@@ -219,7 +219,7 @@ export function FilePreviewModal({
               </p>
             </div>
 
-            <div className="w-full bg-[#111B2B] rounded-lg p-3 text-left space-y-1.5 text-xs">
+            <div className="w-full bg-muted/60 rounded-xl p-3 text-left space-y-1.5 text-xs">
               <div className="flex justify-between text-secondary-text">
                 <span>File Size:</span>
                 <span className="font-mono text-foreground">{formatBytes(file.sizeBytes)}</span>

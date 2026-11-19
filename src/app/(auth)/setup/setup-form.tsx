@@ -85,13 +85,13 @@ export function SetupForm() {
   };
 
   return (
-    <Card className="border border-border/80 bg-card shadow-jarvis">
+    <Card className="border border-border bg-card shadow-saas rounded-2xl">
       <CardHeader className="space-y-3 text-center pb-6">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/30 text-primary shadow-jarvis-glow">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-subtle text-primary shadow-saas">
           <Bot className="h-6 w-6" />
         </div>
         <div>
-          <CardTitle className="text-xl font-bold tracking-widest font-mono text-foreground">
+          <CardTitle className="text-xl font-bold tracking-tight text-primary-text font-sans">
             JARVIS CORE SETUP
           </CardTitle>
           <CardDescription className="text-xs text-secondary-text mt-1">

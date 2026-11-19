@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   Bell,
-  Check,
   Trash2,
   ExternalLink,
   CheckCheck,
@@ -14,11 +13,11 @@ import {
   Info,
   CheckCircle2,
   RefreshCw,
+  Check,
 } from "lucide-react";
 import { cn, formatDateTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { EmptyState } from "@/components/shared/empty-state";
-import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/dark-workspace";
 
 interface NotificationItem {
   id: string;
@@ -128,16 +127,16 @@ export function NotificationsCenter() {
       case "REMINDER":
         return <Bell className="h-4 w-4 text-amber-400" />;
       case "TASK":
-        return <CheckCircle2 className="h-4 w-4 text-primary" />;
+        return <CheckCircle2 className="h-4 w-4 text-blue-400" />;
       case "MEETING":
         return <Calendar className="h-4 w-4 text-emerald-400" />;
       case "SOCIAL":
-        return <Share2 className="h-4 w-4 text-purple-400" />;
+        return <Share2 className="h-4 w-4 text-[#8B5CF6]" />;
       case "WARNING":
       case "ALERT":
         return <AlertTriangle className="h-4 w-4 text-red-400" />;
       default:
-        return <Info className="h-4 w-4 text-primary" />;
+        return <Info className="h-4 w-4 text-blue-400" />;
     }
   };
 
@@ -151,9 +150,9 @@ export function NotificationsCenter() {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-5xl">
       {/* Top action toolbar & filter tabs */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-xl border border-border/80 bg-card">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-xl border border-[#303030] bg-[#141414]">
         {/* Tabs */}
         <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
           {tabs.map((tab) => (
@@ -163,8 +162,8 @@ export function NotificationsCenter() {
               className={cn(
                 "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shrink-0",
                 activeTab === tab.id
-                  ? "bg-primary/20 text-primary"
-                  : "text-secondary-text hover:text-foreground hover:bg-sidebar-accent/50"
+                  ? "bg-[#262626] text-[#F5F5F5] border border-[#8B5CF6]/40"
+                  : "text-[#737373] hover:text-[#F5F5F5] hover:bg-[#202020]"
               )}
             >
               {tab.label}
@@ -179,8 +178,8 @@ export function NotificationsCenter() {
             className={cn(
               "px-2.5 py-1 rounded-md text-xs border transition-colors",
               unreadOnly
-                ? "bg-amber-400/20 border-amber-400 text-amber-400 font-medium"
-                : "border-border/80 bg-sidebar text-secondary-text hover:text-foreground"
+                ? "bg-amber-500/10 border-amber-500/30 text-amber-400 font-medium"
+                : "border-[#303030] bg-[#181818] text-[#737373] hover:text-[#F5F5F5]"
             )}
           >
             Unread only
@@ -191,10 +190,10 @@ export function NotificationsCenter() {
               variant="outline"
               size="sm"
               onClick={markAllRead}
-              className="h-8 gap-1 text-xs border-border/80 bg-sidebar text-primary hover:text-primary-foreground"
+              className="h-8 gap-1 text-xs border-[#303030] bg-[#181818] text-[#8B5CF6] hover:bg-[#202020]"
             >
               <CheckCheck className="h-3.5 w-3.5" />
-              Mark all read
+              <span>Mark all read</span>
             </Button>
           )}
 
@@ -203,10 +202,10 @@ export function NotificationsCenter() {
               variant="ghost"
               size="sm"
               onClick={clearAllNotifications}
-              className="h-8 gap-1 text-xs text-secondary-text hover:text-red-400"
+              className="h-8 gap-1 text-xs text-[#737373] hover:text-red-400 hover:bg-[#202020]"
             >
               <Trash2 className="h-3.5 w-3.5" />
-              Clear all
+              <span>Clear all</span>
             </Button>
           )}
 
@@ -215,16 +214,16 @@ export function NotificationsCenter() {
             size="sm"
             onClick={fetchNotifications}
             disabled={loading}
-            className="h-8 px-2 text-secondary-text hover:text-foreground"
+            className="h-8 px-2 text-[#737373] hover:text-[#F5F5F5] hover:bg-[#202020]"
           >
-            <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin text-primary")} />
+            <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin text-[#8B5CF6]")} />
           </Button>
         </div>
       </div>
 
       {/* Notifications listing */}
       {notifications.length === 0 ? (
-        <div className="rounded-xl border border-border/80 bg-card p-8">
+        <div className="rounded-xl border border-[#303030] bg-[#141414] p-8">
           <EmptyState
             icon={Bell}
             title="No notifications"
@@ -243,12 +242,12 @@ export function NotificationsCenter() {
               className={cn(
                 "flex items-start justify-between gap-3 p-4 rounded-xl border transition-colors",
                 !n.isRead
-                  ? "bg-card border-primary/40 shadow-sm shadow-primary/5"
-                  : "bg-card/50 border-border/60 hover:border-border"
+                  ? "bg-[#202020] border-[#8B5CF6]/40 shadow-sm"
+                  : "bg-[#181818] border-[#303030] hover:bg-[#202020]"
               )}
             >
               <div className="flex items-start gap-3 min-w-0 flex-1">
-                <div className="mt-0.5 p-2 rounded-lg bg-sidebar border border-border/60 shrink-0">
+                <div className="mt-0.5 p-2 rounded-lg bg-[#141414] border border-[#303030] shrink-0">
                   {getTypeIcon(n.type)}
                 </div>
 
@@ -256,50 +255,54 @@ export function NotificationsCenter() {
                   <div className="flex flex-wrap items-center gap-2">
                     <h4
                       className={cn(
-                        "text-sm font-semibold truncate",
-                        !n.isRead ? "text-foreground" : "text-foreground/80"
+                        "text-xs font-semibold truncate",
+                        !n.isRead ? "text-[#F5F5F5]" : "text-[#A3A3A3]"
                       )}
                     >
                       {n.title}
                     </h4>
-                    <Badge variant="outline" className="text-[10px] h-4 px-1 text-secondary-text">
-                      {n.type}
-                    </Badge>
+
+                    <span className="text-[10px] px-1.5 py-0.2 rounded font-medium bg-[#141414] border border-[#303030] text-[#737373] capitalize">
+                      {n.type.toLowerCase()}
+                    </span>
+
                     {!n.isRead && (
-                      <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#8B5CF6]" />
                     )}
                   </div>
 
-                  <p className="text-xs text-secondary-text whitespace-pre-line">
+                  <p className="text-xs text-[#A3A3A3] leading-relaxed">
                     {n.message}
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] text-secondary-text">
+                  <div className="flex items-center gap-3 text-[11px] text-[#737373] pt-1">
                     <span className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
                       {formatDateTime(n.createdAt)}
                     </span>
+
                     {n.link && (
                       <a
                         href={n.link}
-                        className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
+                        className="text-[#8B5CF6] hover:underline inline-flex items-center gap-1"
                       >
-                        View Related Item <ExternalLink className="h-3 w-3" />
+                        <span>Open details</span>
+                        <ExternalLink className="h-2.5 w-2.5" />
                       </a>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Action buttons */}
-              <div className="flex items-center gap-1 shrink-0">
+              {/* Quick actions for each item */}
+              <div className="flex items-center gap-1 ml-2 shrink-0">
                 {!n.isRead && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => markSingleRead(n.id)}
                     title="Mark as read"
-                    className="h-8 w-8 p-0 text-secondary-text hover:text-primary"
+                    className="h-7 w-7 p-0 text-[#737373] hover:text-[#22C55E] hover:bg-[#262626]"
                   >
                     <Check className="h-3.5 w-3.5" />
                   </Button>
@@ -309,7 +312,7 @@ export function NotificationsCenter() {
                   size="sm"
                   onClick={() => deleteNotification(n.id)}
                   title="Delete notification"
-                  className="h-8 w-8 p-0 text-secondary-text hover:text-red-400"
+                  className="h-7 w-7 p-0 text-[#737373] hover:text-red-400 hover:bg-[#262626]"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>

@@ -34,6 +34,7 @@ import {
   AttendeeStatus,
 } from "../types";
 import { FileDto } from "@/modules/files/types";
+import { cn } from "@/lib/utils";
 
 interface MeetingDetailsModalProps {
   meeting: MeetingDto | null;
@@ -123,8 +124,9 @@ export function MeetingDetailsModal({
   const durationMins = Math.max(1, differenceInMinutes(endTime, startTime));
 
   const copyAddress = () => {
-    if (meeting.location) {
-      navigator.clipboard.writeText(meeting.location);
+    const target = meeting.meetingUrl || meeting.location;
+    if (target) {
+      navigator.clipboard.writeText(target);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -328,21 +330,21 @@ export function MeetingDetailsModal({
       open={isOpen}
       onClose={onClose}
       maxWidth="2xl"
-      className="p-0 overflow-hidden"
+      className="p-0 overflow-hidden bg-[#141414] border-[#303030]"
     >
-      <div className="flex flex-col max-h-[85vh]">
+      <div className="flex flex-col max-h-[85vh] bg-[#141414] text-[#F5F5F5]">
         {/* Workspace Header */}
-        <div className="p-5 border-b border-border/60 bg-[#0B1220]">
+        <div className="p-5 border-b border-[#303030] bg-[#181818]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/20 text-primary border border-primary/30">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#262626] text-[#F5F5F5] border border-[#303030]">
                 {meeting.status}
               </span>
-              <span className="px-2 py-0.5 rounded-md text-xs font-semibold bg-secondary/80 text-foreground/90 border border-border/60">
-                {meeting.meetingType}
+              <span className="px-2 py-0.5 rounded text-xs font-medium bg-[#202020] text-[#A3A3A3] border border-[#303030] capitalize">
+                {meeting.meetingType.toLowerCase()}
               </span>
               {meeting.priority === "HIGH" && (
-                <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-red-500/10 text-red-400 border border-red-500/30">
                   HIGH PRIORITY
                 </span>
               )}
@@ -355,7 +357,7 @@ export function MeetingDetailsModal({
                   href={meeting.meetingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-md transition-all"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-medium text-xs transition-colors"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                   <span>Join Call</span>
@@ -367,7 +369,7 @@ export function MeetingDetailsModal({
                   size="sm"
                   variant="outline"
                   onClick={() => onStart(meeting.id)}
-                  className="h-8 text-xs text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10 gap-1.5"
+                  className="h-8 text-xs text-emerald-400 border-[#303030] bg-[#202020] hover:bg-[#2C2C2C] gap-1.5"
                 >
                   <PlayCircle className="h-3.5 w-3.5" />
                   <span>Start</span>
@@ -379,7 +381,7 @@ export function MeetingDetailsModal({
                   size="sm"
                   variant="outline"
                   onClick={() => onComplete(meeting.id)}
-                  className="h-8 text-xs text-green-400 border-green-500/30 hover:bg-green-500/10 gap-1.5"
+                  className="h-8 text-xs text-green-400 border-[#303030] bg-[#202020] hover:bg-[#2C2C2C] gap-1.5"
                 >
                   <CheckCircle2 className="h-3.5 w-3.5" />
                   <span>Complete</span>
@@ -390,7 +392,7 @@ export function MeetingDetailsModal({
                 size="sm"
                 variant="outline"
                 onClick={() => onReschedule(meeting)}
-                className="h-8 text-xs text-amber-400 border-amber-500/30 hover:bg-amber-500/10 gap-1.5"
+                className="h-8 text-xs text-amber-400 border-[#303030] bg-[#202020] hover:bg-[#2C2C2C] gap-1.5"
               >
                 <Calendar className="h-3.5 w-3.5" />
                 <span>Reschedule</span>
@@ -401,7 +403,7 @@ export function MeetingDetailsModal({
                   size="sm"
                   variant="outline"
                   onClick={() => onNoShow(meeting.id)}
-                  className="h-8 text-xs text-purple-400 border-purple-500/30 hover:bg-purple-500/10 gap-1.5"
+                  className="h-8 text-xs text-purple-400 border-[#303030] bg-[#202020] hover:bg-[#2C2C2C] gap-1.5"
                 >
                   <AlertCircle className="h-3.5 w-3.5" />
                   <span>No-Show</span>
@@ -413,7 +415,7 @@ export function MeetingDetailsModal({
                   size="sm"
                   variant="outline"
                   onClick={() => onCancel(meeting.id)}
-                  className="h-8 text-xs text-rose-400 border-rose-500/30 hover:bg-rose-500/10 gap-1.5"
+                  className="h-8 text-xs text-red-400 border-[#303030] bg-[#202020] hover:bg-[#2C2C2C] gap-1.5"
                 >
                   <XCircle className="h-3.5 w-3.5" />
                   <span>Cancel</span>
@@ -424,25 +426,25 @@ export function MeetingDetailsModal({
                 size="sm"
                 variant="outline"
                 onClick={() => onEdit(meeting)}
-                className="h-8 text-xs text-foreground/80 hover:bg-card gap-1.5"
+                className="h-8 text-xs text-[#F5F5F5] border-[#303030] bg-[#202020] hover:bg-[#2C2C2C] gap-1.5"
               >
-                <Edit2 className="h-3.5 w-3.5" />
+                <Edit2 className="h-3.5 w-3.5 text-[#A3A3A3]" />
                 <span>Edit</span>
               </Button>
             </div>
           </div>
 
-          <h2 className="text-xl font-bold text-foreground mb-1.5">{meeting.title}</h2>
+          <h2 className="text-lg font-bold text-[#F5F5F5] mb-1">{meeting.title}</h2>
 
           {meeting.description && (
-            <p className="text-xs text-secondary-text mb-3 leading-relaxed">
+            <p className="text-xs text-[#A3A3A3] mb-3 leading-relaxed">
               {meeting.description}
             </p>
           )}
 
-          <div className="flex flex-wrap items-center gap-4 text-xs text-secondary-text pt-1">
+          <div className="flex flex-wrap items-center gap-4 text-xs text-[#A3A3A3] pt-1">
             <div className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-primary" />
+              <Clock className="h-3.5 w-3.5 text-[#8B5CF6]" />
               <span>
                 {format(startTime, "EEEE, MMMM d, yyyy • h:mm a")} – {format(endTime, "h:mm a")} ({durationMins}m)
               </span>
@@ -450,11 +452,12 @@ export function MeetingDetailsModal({
 
             {meeting.location && (
               <div className="flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-amber-400" />
+                <MapPin className="h-3.5 w-3.5 text-amber-400" />
                 <span>{meeting.location}</span>
                 <button
                   onClick={copyAddress}
-                  className="text-secondary-text hover:text-foreground ml-1"
+                  className="text-[#737373] hover:text-[#F5F5F5] ml-1 transition-colors"
+                  title="Copy location"
                 >
                   {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                 </button>
@@ -464,14 +467,15 @@ export function MeetingDetailsModal({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-1 px-5 border-b border-border/60 bg-[#090E18] text-xs">
+        <div className="flex items-center gap-1 px-5 border-b border-[#303030] bg-[#141414] text-xs">
           <button
             onClick={() => setActiveTab("agenda")}
-            className={`flex items-center gap-1.5 px-3 py-2.5 font-medium border-b-2 transition-all ${
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-2.5 font-medium border-b-2 transition-colors",
               activeTab === "agenda"
-                ? "border-primary text-primary"
-                : "border-transparent text-secondary-text hover:text-foreground"
-            }`}
+                ? "border-[#8B5CF6] text-[#F5F5F5]"
+                : "border-transparent text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <ListTodo className="h-3.5 w-3.5" />
             <span>Agenda ({meeting.agendaItems?.length || 0})</span>
@@ -479,11 +483,12 @@ export function MeetingDetailsModal({
 
           <button
             onClick={() => setActiveTab("participants")}
-            className={`flex items-center gap-1.5 px-3 py-2.5 font-medium border-b-2 transition-all ${
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-2.5 font-medium border-b-2 transition-colors",
               activeTab === "participants"
-                ? "border-primary text-primary"
-                : "border-transparent text-secondary-text hover:text-foreground"
-            }`}
+                ? "border-[#8B5CF6] text-[#F5F5F5]"
+                : "border-transparent text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <Users className="h-3.5 w-3.5" />
             <span>Participants ({meeting.attendees?.length || 0})</span>
@@ -491,11 +496,12 @@ export function MeetingDetailsModal({
 
           <button
             onClick={() => setActiveTab("notes")}
-            className={`flex items-center gap-1.5 px-3 py-2.5 font-medium border-b-2 transition-all ${
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-2.5 font-medium border-b-2 transition-colors",
               activeTab === "notes"
-                ? "border-primary text-primary"
-                : "border-transparent text-secondary-text hover:text-foreground"
-            }`}
+                ? "border-[#8B5CF6] text-[#F5F5F5]"
+                : "border-transparent text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <FileText className="h-3.5 w-3.5" />
             <span>Discussion Notes</span>
@@ -503,11 +509,12 @@ export function MeetingDetailsModal({
 
           <button
             onClick={() => setActiveTab("tasks")}
-            className={`flex items-center gap-1.5 px-3 py-2.5 font-medium border-b-2 transition-all ${
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-2.5 font-medium border-b-2 transition-colors",
               activeTab === "tasks"
-                ? "border-primary text-primary"
-                : "border-transparent text-secondary-text hover:text-foreground"
-            }`}
+                ? "border-[#8B5CF6] text-[#F5F5F5]"
+                : "border-transparent text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <CheckCircle2 className="h-3.5 w-3.5" />
             <span>Follow-up Tasks ({meeting.tasks?.length || 0})</span>
@@ -515,11 +522,12 @@ export function MeetingDetailsModal({
 
           <button
             onClick={() => setActiveTab("attachments")}
-            className={`flex items-center gap-1.5 px-3 py-2.5 font-medium border-b-2 transition-all ${
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-2.5 font-medium border-b-2 transition-colors",
               activeTab === "attachments"
-                ? "border-primary text-primary"
-                : "border-transparent text-secondary-text hover:text-foreground"
-            }`}
+                ? "border-[#8B5CF6] text-[#F5F5F5]"
+                : "border-transparent text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <Paperclip className="h-3.5 w-3.5" />
             <span>Attachments ({meeting.attachments?.length || 0})</span>
@@ -537,16 +545,20 @@ export function MeetingDetailsModal({
                   placeholder="New agenda item title..."
                   value={newAgTitle}
                   onChange={(e) => setNewAgTitle(e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="flex-1 px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
                 <input
                   type="number"
                   placeholder="mins"
                   value={newAgDuration}
                   onChange={(e) => setNewAgDuration(e.target.value)}
-                  className="w-16 px-2 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-16 px-2 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
-                <Button type="submit" size="sm" className="h-9 px-3 text-xs gap-1">
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="h-9 px-3 text-xs gap-1 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
+                >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Add Item</span>
                 </Button>
@@ -554,42 +566,43 @@ export function MeetingDetailsModal({
 
               <div className="space-y-2">
                 {(!meeting.agendaItems || meeting.agendaItems.length === 0) ? (
-                  <p className="text-xs text-secondary-text italic py-4 text-center">
+                  <p className="text-xs text-[#737373] italic py-6 text-center">
                     No agenda items yet. Add items above to structure this meeting.
                   </p>
                 ) : (
                   meeting.agendaItems.map((item, index) => (
                     <div
                       key={item.id}
-                      className={`flex items-center justify-between p-3 rounded-lg border text-xs transition-all ${
+                      className={cn(
+                        "flex items-center justify-between p-3 rounded-lg border text-xs transition-colors",
                         item.isCompleted
-                          ? "bg-emerald-500/5 border-emerald-500/20 text-secondary-text"
-                          : "bg-card/40 border-border/60 text-foreground"
-                      }`}
+                          ? "bg-[#202020]/50 border-[#303030] text-[#737373]"
+                          : "bg-[#202020] border-[#303030] text-[#F5F5F5]"
+                      )}
                     >
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <button
                           type="button"
                           onClick={() => handleToggleAgendaItem(item.id, item.isCompleted)}
-                          className="text-primary hover:text-primary/80 transition-colors"
+                          className="text-[#8B5CF6] hover:text-[#7C3AED] transition-colors"
                         >
                           {item.isCompleted ? (
                             <CheckSquare className="h-4 w-4 text-emerald-400" />
                           ) : (
-                            <Square className="h-4 w-4 text-secondary-text" />
+                            <Square className="h-4 w-4 text-[#737373]" />
                           )}
                         </button>
                         <div className="min-w-0 flex-1">
-                          <span className={`font-medium ${item.isCompleted ? "line-through opacity-70" : ""}`}>
+                          <span className={cn("font-medium", item.isCompleted && "line-through opacity-60")}>
                             {index + 1}. {item.title}
                           </span>
                           {item.description && (
-                            <p className="text-[11px] text-secondary-text truncate mt-0.5">
+                            <p className="text-[11px] text-[#737373] truncate mt-0.5">
                               {item.description}
                             </p>
                           )}
                         </div>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-card text-secondary-text border border-border/60 shrink-0">
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#181818] text-[#A3A3A3] border border-[#303030] shrink-0">
                           {item.durationMinutes}m
                         </span>
                       </div>
@@ -598,20 +611,20 @@ export function MeetingDetailsModal({
                         <button
                           onClick={() => handleMoveAgenda(index, "up")}
                           disabled={index === 0}
-                          className="p-1 text-secondary-text hover:text-foreground disabled:opacity-20"
+                          className="p-1 text-[#737373] hover:text-[#F5F5F5] disabled:opacity-20"
                         >
                           <ArrowUp className="h-3 w-3" />
                         </button>
                         <button
                           onClick={() => handleMoveAgenda(index, "down")}
                           disabled={index === (meeting.agendaItems?.length || 1) - 1}
-                          className="p-1 text-secondary-text hover:text-foreground disabled:opacity-20"
+                          className="p-1 text-[#737373] hover:text-[#F5F5F5] disabled:opacity-20"
                         >
                           <ArrowDown className="h-3 w-3" />
                         </button>
                         <button
                           onClick={() => handleDeleteAgendaItem(item.id)}
-                          className="p-1 text-secondary-text hover:text-red-400 ml-1"
+                          className="p-1 text-[#737373] hover:text-red-400 ml-1"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -632,16 +645,20 @@ export function MeetingDetailsModal({
                   placeholder="Participant name *"
                   value={newAttName}
                   onChange={(e) => setNewAttName(e.target.value)}
-                  className="sm:col-span-2 px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="sm:col-span-2 px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
                 <input
                   type="email"
                   placeholder="Email"
                   value={newAttEmail}
                   onChange={(e) => setNewAttEmail(e.target.value)}
-                  className="px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
-                <Button type="submit" size="sm" className="h-9 text-xs gap-1">
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="h-9 text-xs gap-1 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
+                >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Add</span>
                 </Button>
@@ -649,23 +666,23 @@ export function MeetingDetailsModal({
 
               <div className="space-y-2">
                 {(!meeting.attendees || meeting.attendees.length === 0) ? (
-                  <p className="text-xs text-secondary-text italic py-4 text-center">
+                  <p className="text-xs text-[#737373] italic py-6 text-center">
                     No participants added yet.
                   </p>
                 ) : (
                   meeting.attendees.map((attendee) => (
                     <div
                       key={attendee.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-card/40 border border-border/60 text-xs gap-2"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-[#202020] border border-[#303030] text-xs gap-2"
                     >
                       <div>
-                        <div className="font-semibold text-foreground flex items-center gap-2">
+                        <div className="font-semibold text-[#F5F5F5] flex items-center gap-2">
                           <span>{attendee.name}</span>
-                          <span className="text-[10px] px-2 py-0.2 rounded-full font-semibold bg-primary/10 text-primary border border-primary/20">
+                          <span className="text-[10px] px-2 py-0.2 rounded-full font-medium bg-[#181818] text-[#A3A3A3] border border-[#303030]">
                             {attendee.status}
                           </span>
                         </div>
-                        <div className="text-[11px] text-secondary-text flex items-center gap-2 mt-0.5">
+                        <div className="text-[11px] text-[#737373] flex items-center gap-2 mt-0.5">
                           {attendee.email && <span>{attendee.email}</span>}
                           {attendee.phone && <span>• {attendee.phone}</span>}
                           {attendee.organization && <span>• {attendee.organization}</span>}
@@ -676,37 +693,40 @@ export function MeetingDetailsModal({
                       <div className="flex items-center gap-1 shrink-0 flex-wrap">
                         <button
                           onClick={() => handleUpdateAttendeeStatus(attendee.id, "ATTENDED")}
-                          className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${
+                          className={cn(
+                            "px-2 py-1 rounded text-[11px] font-medium transition-colors border",
                             attendee.status === "ATTENDED"
-                              ? "bg-emerald-500/20 text-emerald-400 font-bold"
-                              : "bg-card hover:bg-card/80 text-secondary-text"
-                          }`}
+                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-semibold"
+                              : "bg-[#181818] text-[#737373] border-[#303030] hover:text-[#F5F5F5]"
+                          )}
                         >
                           Attended
                         </button>
                         <button
                           onClick={() => handleUpdateAttendeeStatus(attendee.id, "ABSENT")}
-                          className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${
+                          className={cn(
+                            "px-2 py-1 rounded text-[11px] font-medium transition-colors border",
                             attendee.status === "ABSENT"
-                              ? "bg-rose-500/20 text-rose-400 font-bold"
-                              : "bg-card hover:bg-card/80 text-secondary-text"
-                          }`}
+                              ? "bg-red-500/10 text-red-400 border-red-500/30 font-semibold"
+                              : "bg-[#181818] text-[#737373] border-[#303030] hover:text-[#F5F5F5]"
+                          )}
                         >
                           Absent
                         </button>
                         <button
                           onClick={() => handleUpdateAttendeeStatus(attendee.id, "ACCEPTED")}
-                          className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${
+                          className={cn(
+                            "px-2 py-1 rounded text-[11px] font-medium transition-colors border",
                             attendee.status === "ACCEPTED"
-                              ? "bg-cyan-500/20 text-cyan-400 font-bold"
-                              : "bg-card hover:bg-card/80 text-secondary-text"
-                          }`}
+                              ? "bg-blue-500/10 text-blue-400 border-blue-500/30 font-semibold"
+                              : "bg-[#181818] text-[#737373] border-[#303030] hover:text-[#F5F5F5]"
+                          )}
                         >
                           Accepted
                         </button>
                         <button
                           onClick={() => handleRemoveAttendee(attendee.id)}
-                          className="p-1 text-secondary-text hover:text-red-400 ml-1"
+                          className="p-1 text-[#737373] hover:text-red-400 ml-1"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -723,7 +743,7 @@ export function MeetingDetailsModal({
             <div className="space-y-3.5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-secondary-text mb-1">
+                  <label className="block text-xs font-semibold text-[#A3A3A3] mb-1">
                     Discussion Summary
                   </label>
                   <textarea
@@ -731,12 +751,12 @@ export function MeetingDetailsModal({
                     value={discussionSummary}
                     onChange={(e) => setDiscussionSummary(e.target.value)}
                     placeholder="High-level overview of topics discussed..."
-                    className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                    className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] resize-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-secondary-text mb-1">
+                  <label className="block text-xs font-semibold text-[#A3A3A3] mb-1">
                     Key Decisions
                   </label>
                   <textarea
@@ -744,12 +764,12 @@ export function MeetingDetailsModal({
                     value={keyDecisions}
                     onChange={(e) => setKeyDecisions(e.target.value)}
                     placeholder="Formal decisions made during this meeting..."
-                    className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                    className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] resize-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-secondary-text mb-1">
+                  <label className="block text-xs font-semibold text-[#A3A3A3] mb-1">
                     Important Points
                   </label>
                   <textarea
@@ -757,12 +777,12 @@ export function MeetingDetailsModal({
                     value={importantPoints}
                     onChange={(e) => setImportantPoints(e.target.value)}
                     placeholder="Key takeaways or critical highlights..."
-                    className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                    className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] resize-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-secondary-text mb-1">
+                  <label className="block text-xs font-semibold text-[#A3A3A3] mb-1">
                     Follow-Up Info
                   </label>
                   <textarea
@@ -770,13 +790,13 @@ export function MeetingDetailsModal({
                     value={followUpInfo}
                     onChange={(e) => setFollowUpInfo(e.target.value)}
                     placeholder="Next steps, owners, deadlines..."
-                    className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                    className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] resize-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-secondary-text mb-1">
+                <label className="block text-xs font-semibold text-[#A3A3A3] mb-1">
                   Full Meeting Notes (Saved in Notes Manager)
                 </label>
                 <textarea
@@ -784,7 +804,7 @@ export function MeetingDetailsModal({
                   value={noteContent}
                   onChange={(e) => setNoteContent(e.target.value)}
                   placeholder="Detailed meeting minutes, transcription notes, scratchpad..."
-                  className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none font-mono"
+                  className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] resize-none font-mono"
                 />
               </div>
 
@@ -798,7 +818,7 @@ export function MeetingDetailsModal({
                   size="sm"
                   onClick={handleSaveNotes}
                   disabled={savingNotes}
-                  className="text-xs gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                  className="text-xs gap-1.5 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-medium"
                 >
                   <Save className="h-3.5 w-3.5" />
                   <span>{savingNotes ? "Saving..." : "Save Notes"}</span>
@@ -810,8 +830,8 @@ export function MeetingDetailsModal({
           {/* Follow-up Tasks Tab */}
           {activeTab === "tasks" && (
             <div className="space-y-4">
-              <form onSubmit={handleCreateTask} className="p-3 rounded-lg bg-card/40 border border-border/60 space-y-2">
-                <span className="text-xs font-semibold text-foreground">Create Follow-Up Task</span>
+              <form onSubmit={handleCreateTask} className="p-3 rounded-lg bg-[#181818] border border-[#303030] space-y-2">
+                <span className="text-xs font-semibold text-[#F5F5F5]">Create Follow-Up Task</span>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <input
                     type="text"
@@ -819,12 +839,12 @@ export function MeetingDetailsModal({
                     placeholder="Task title *"
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
-                    className="sm:col-span-2 px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="sm:col-span-2 px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                   />
                   <select
                     value={taskPriority}
                     onChange={(e) => setTaskPriority(e.target.value as "CRITICAL" | "HIGH" | "NORMAL" | "LOW")}
-                    className="px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                   >
                     <option value="NORMAL">Normal Priority</option>
                     <option value="HIGH">High Priority</option>
@@ -837,13 +857,13 @@ export function MeetingDetailsModal({
                     type="date"
                     value={taskDueDate}
                     onChange={(e) => setTaskDueDate(e.target.value)}
-                    className="px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                   />
                   <Button
                     type="submit"
                     size="sm"
                     disabled={creatingTask || !taskTitle.trim()}
-                    className="h-8 text-xs gap-1"
+                    className="h-8 text-xs gap-1 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white font-medium"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Create Task</span>
@@ -853,30 +873,31 @@ export function MeetingDetailsModal({
 
               <div className="space-y-2">
                 {(!meeting.tasks || meeting.tasks.length === 0) ? (
-                  <p className="text-xs text-secondary-text italic py-4 text-center">
+                  <p className="text-xs text-[#737373] italic py-6 text-center">
                     No follow-up tasks linked to this meeting.
                   </p>
                 ) : (
                   meeting.tasks.map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-card/40 border border-border/60 text-xs"
+                      className="flex items-center justify-between p-3 rounded-lg bg-[#202020] border border-[#303030] text-xs"
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        <span className={cn(
+                          "px-2 py-0.5 rounded text-[10px] font-bold",
                           task.priority === "HIGH" || task.priority === "CRITICAL"
-                            ? "bg-red-500/20 text-red-400"
-                            : "bg-blue-500/20 text-blue-400"
-                        }`}>
+                            ? "bg-red-500/10 text-red-400 border border-red-500/30"
+                            : "bg-blue-500/10 text-blue-400 border border-blue-500/30"
+                        )}>
                           {task.priority}
                         </span>
-                        <span className="font-medium text-foreground">{task.title}</span>
+                        <span className="font-medium text-[#F5F5F5]">{task.title}</span>
                       </div>
-                      <div className="flex items-center gap-3 text-secondary-text">
+                      <div className="flex items-center gap-3 text-[#737373]">
                         {task.dueDate && (
                           <span>Due {format(new Date(task.dueDate), "MMM d")}</span>
                         )}
-                        <span className="px-2 py-0.5 rounded-full text-[10px] bg-secondary/80 text-foreground font-semibold">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#181818] border border-[#303030] text-[#A3A3A3] font-medium">
                           {task.status}
                         </span>
                       </div>
@@ -894,7 +915,7 @@ export function MeetingDetailsModal({
                 <select
                   value={selectedFileToAttach}
                   onChange={(e) => setSelectedFileToAttach(e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="flex-1 px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 >
                   <option value="">Select a file from File Manager...</option>
                   {availableFiles.map((f) => (
@@ -907,7 +928,7 @@ export function MeetingDetailsModal({
                   size="sm"
                   onClick={handleAttachFile}
                   disabled={!selectedFileToAttach}
-                  className="text-xs gap-1"
+                  className="text-xs gap-1 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Attach</span>
@@ -916,22 +937,22 @@ export function MeetingDetailsModal({
 
               <div className="space-y-2">
                 {(!meeting.attachments || meeting.attachments.length === 0) ? (
-                  <p className="text-xs text-secondary-text italic py-4 text-center">
+                  <p className="text-xs text-[#737373] italic py-6 text-center">
                     No files attached to this meeting.
                   </p>
                 ) : (
                   meeting.attachments.map((att) => (
                     <div
                       key={att.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-card/40 border border-border/60 text-xs"
+                      className="flex items-center justify-between p-3 rounded-lg bg-[#202020] border border-[#303030] text-xs"
                     >
                       <div className="flex items-center gap-2.5 truncate">
-                        <Paperclip className="h-4 w-4 text-primary shrink-0" />
-                        <span className="font-medium text-foreground truncate">
+                        <Paperclip className="h-4 w-4 text-[#8B5CF6] shrink-0" />
+                        <span className="font-medium text-[#F5F5F5] truncate">
                           {att.file?.originalName || "Attached file"}
                         </span>
                         {att.file?.sizeBytes && (
-                          <span className="text-[10px] text-secondary-text shrink-0">
+                          <span className="text-[10px] text-[#737373] shrink-0">
                             ({Math.round(att.file.sizeBytes / 1024)} KB)
                           </span>
                         )}
@@ -942,7 +963,7 @@ export function MeetingDetailsModal({
                           <a
                             href={`/api/files/${att.file.id}/download`}
                             download
-                            className="p-1 text-secondary-text hover:text-foreground"
+                            className="p-1 text-[#737373] hover:text-[#F5F5F5]"
                             title="Download"
                           >
                             <Download className="h-3.5 w-3.5" />
@@ -950,7 +971,7 @@ export function MeetingDetailsModal({
                         )}
                         <button
                           onClick={() => handleDetachFile(att.fileId)}
-                          className="p-1 text-secondary-text hover:text-red-400"
+                          className="p-1 text-[#737373] hover:text-red-400"
                           title="Unlink"
                         >
                           <Trash2 className="h-3.5 w-3.5" />

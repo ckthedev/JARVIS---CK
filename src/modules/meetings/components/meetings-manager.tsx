@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Plus, Calendar, AlertCircle } from "lucide-react";
+import { Calendar, AlertCircle } from "lucide-react";
 import {
   MeetingDto,
   MeetingSection,
@@ -11,15 +11,16 @@ import {
 import { MeetingsNav } from "./meetings-nav";
 import { MeetingsToolbar } from "./meetings-toolbar";
 import { MeetingCard } from "./meeting-card";
+import { MeetingsOverview } from "./meetings-overview";
 import { MeetingDialog } from "./meeting-dialog";
 import { RescheduleDialog } from "./reschedule-dialog";
 import { DeleteMeetingDialog } from "./delete-meeting-dialog";
 import { MeetingDetailsModal } from "./meeting-details-modal";
 import { CalendarView } from "./calendar-view";
-import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/dark-workspace";
 
 export function MeetingsManager() {
-  const [currentSection, setCurrentSection] = useState<MeetingSection>("all");
+  const [currentSection, setCurrentSection] = useState<MeetingSection>("overview");
   const [filters, setFilters] = useState<MeetingFilters>({
     sortBy: "startTime",
     sortOrder: "asc",
@@ -61,7 +62,8 @@ export function MeetingsManager() {
       setError(null);
 
       const params = new URLSearchParams();
-      params.set("section", currentSection);
+      // If overview, query 'all' so overview widgets have the full data
+      params.set("section", currentSection === "overview" ? "all" : currentSection);
 
       if (filters.search) params.set("search", filters.search);
       if (filters.status) params.set("status", filters.status);
@@ -204,7 +206,7 @@ export function MeetingsManager() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-[#080D16]">
+    <div className="flex h-[calc(100vh-12rem)] min-h-[680px] w-full overflow-hidden bg-[#101010] rounded-xl border border-[#303030]">
       {/* Sidebar Nav */}
       <MeetingsNav
         currentSection={currentSection}
@@ -218,91 +220,111 @@ export function MeetingsManager() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
-        {/* Toolbar */}
-        <MeetingsToolbar
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-        />
-
-        {/* View Content */}
-        <div className="flex-1 overflow-y-auto">
-          {error && (
-            <div className="m-4 p-3 rounded-lg bg-red-500/15 border border-red-500/30 text-xs text-red-400 flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {viewMode === "calendar" ? (
-            <CalendarView
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#101010]">
+        {/* Render Overview mode vs List / Calendar */}
+        {currentSection === "overview" ? (
+          <div className="flex-1 overflow-y-auto">
+            <MeetingsOverview
               meetings={meetings}
+              stats={stats}
               onOpenDetails={(m) => setDetailsMeeting(m)}
-              onOpenCreateWithDate={handleOpenCreateWithDate}
+              onOpenCreate={() => {
+                setEditingMeeting(null);
+                setInitialDateForCreate(null);
+                setCreateDialogOpen(true);
+              }}
+              onViewCalendar={() => {
+                setCurrentSection("calendar");
+                setViewMode("calendar");
+              }}
+              onViewAll={() => {
+                setCurrentSection("all");
+                setViewMode("list");
+              }}
             />
-          ) : (
-            <div className="p-5">
-              {loading && meetings.length === 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div
-                      key={i}
-                      className="h-44 rounded-xl bg-card/20 border border-border/30 animate-pulse"
-                    />
-                  ))}
+          </div>
+        ) : (
+          <>
+            {/* Toolbar */}
+            <MeetingsToolbar
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
+
+            {/* View Content */}
+            <div className="flex-1 overflow-y-auto">
+              {error && (
+                <div className="m-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400 flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>{error}</span>
                 </div>
-              ) : meetings.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-center max-w-sm mx-auto">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-3">
-                    <Calendar className="h-6 w-6" />
-                  </div>
-                  <h3 className="font-semibold text-foreground text-sm mb-1">
-                    No meetings found
-                  </h3>
-                  <p className="text-xs text-secondary-text mb-4">
-                    {filters.search
-                      ? "No meetings matched your search criteria."
-                      : `You have no ${currentSection !== "all" ? currentSection : ""} meetings scheduled.`}
-                  </p>
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      setEditingMeeting(null);
-                      setInitialDateForCreate(null);
-                      setCreateDialogOpen(true);
-                    }}
-                    className="text-xs gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    <span>Schedule Meeting</span>
-                  </Button>
-                </div>
+              )}
+
+              {viewMode === "calendar" ? (
+                <CalendarView
+                  meetings={meetings}
+                  onOpenDetails={(m) => setDetailsMeeting(m)}
+                  onOpenCreateWithDate={handleOpenCreateWithDate}
+                />
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {meetings.map((meeting) => (
-                    <MeetingCard
-                      key={meeting.id}
-                      meeting={meeting}
-                      onOpenDetails={(m) => setDetailsMeeting(m)}
-                      onEdit={(m) => {
-                        setEditingMeeting(m);
-                        setCreateDialogOpen(true);
-                      }}
-                      onReschedule={(m) => setReschedulingMeeting(m)}
-                      onStart={handleStartMeeting}
-                      onComplete={handleCompleteMeeting}
-                      onNoShow={handleNoShowMeeting}
-                      onCancel={handleCancelMeeting}
-                      onDelete={(m) => setDeletingMeeting(m)}
-                    />
-                  ))}
+                <div className="p-5">
+                  {loading && meetings.length === 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <div
+                          key={i}
+                          className="h-44 rounded-xl bg-[#181818] border border-[#303030] animate-pulse"
+                        />
+                      ))}
+                    </div>
+                  ) : meetings.length === 0 ? (
+                    <div className="p-8">
+                      <EmptyState
+                        icon={Calendar}
+                        title="No meetings found"
+                        description={
+                          filters.search
+                            ? "No meetings matched your search criteria. Try modifying your filter terms."
+                            : `You have no ${currentSection !== "all" ? currentSection : ""} meetings scheduled.`
+                        }
+                        action={{
+                          label: "Schedule Meeting",
+                          onClick: () => {
+                            setEditingMeeting(null);
+                            setInitialDateForCreate(null);
+                            setCreateDialogOpen(true);
+                          },
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                      {meetings.map((meeting) => (
+                        <MeetingCard
+                          key={meeting.id}
+                          meeting={meeting}
+                          onOpenDetails={(m) => setDetailsMeeting(m)}
+                          onEdit={(m) => {
+                            setEditingMeeting(m);
+                            setCreateDialogOpen(true);
+                          }}
+                          onReschedule={(m) => setReschedulingMeeting(m)}
+                          onStart={handleStartMeeting}
+                          onComplete={handleCompleteMeeting}
+                          onNoShow={handleNoShowMeeting}
+                          onCancel={handleCancelMeeting}
+                          onDelete={(m) => setDeletingMeeting(m)}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       {/* Create / Edit Dialog */}

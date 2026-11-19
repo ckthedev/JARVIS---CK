@@ -269,14 +269,14 @@ export function HashtagManager() {
           <Button
             size="sm"
             onClick={openCreateColl}
-            className="text-xs gap-1.5 h-8 bg-purple-600 hover:bg-purple-500 text-white"
+            className="text-xs gap-1.5 h-8 bg-[#383838] hover:bg-[#454545] text-[#F5F5F5]"
           >
             <Plus className="h-3.5 w-3.5" /> New Collection
           </Button>
         </div>
 
         {collections.length === 0 ? (
-          <div className="py-8 text-center text-xs text-muted-foreground border border-dashed border-white/[0.08] rounded-xl">
+          <div className="py-8 text-center text-xs text-[#737373] border border-[#292929] bg-[#181818]/60 rounded-xl">
             No hashtag collections yet. Create a collection to bundle related tags together.
           </div>
         ) : (
@@ -374,12 +374,12 @@ export function HashtagManager() {
       {/* HASHTAG LIBRARY SECTION */}
       {/* ======================================================== */}
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-xl border border-white/[0.08] bg-[#0c1320]">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-xl border border-[#292929] bg-[#181818]">
           <div className="flex items-center gap-2">
-            <Hash className="h-5 w-5 text-primary" />
+            <Hash className="h-5 w-5 text-[#A3A3A3]" />
             <div>
-              <h2 className="text-base font-semibold text-foreground">Hashtag Library</h2>
-              <p className="text-xs text-muted-foreground">
+              <h2 className="text-base font-semibold text-[#F5F5F5]">Hashtag Library</h2>
+              <p className="text-xs text-[#737373]">
                 All saved tags with usage tracking and categorization.
               </p>
             </div>
@@ -387,12 +387,12 @@ export function HashtagManager() {
 
           <div className="flex items-center gap-2">
             <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[#737373]" />
               <input
                 placeholder="Search tags..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-8 pr-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary w-40 sm:w-48"
+                className="pl-8 pr-3 py-1.5 rounded-lg bg-[#141414] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#555555] focus:outline-none focus:border-[#454545] w-40 sm:w-48"
               />
             </div>
 
@@ -400,7 +400,7 @@ export function HashtagManager() {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="h-8 text-xs px-2.5 rounded-lg bg-card/60 border border-border/80 text-foreground focus:outline-none focus:ring-1 focus:ring-primary min-w-[120px]"
+                className="h-8 text-xs px-2.5 rounded-lg bg-[#141414] border border-[#303030] text-[#F5F5F5] focus:outline-none focus:border-[#454545] min-w-[120px]"
               >
                 <option value="all">All Categories</option>
                 {categories.map((cat) => (
@@ -414,7 +414,7 @@ export function HashtagManager() {
             <Button
               size="sm"
               onClick={openCreateHt}
-              className="text-xs gap-1.5 h-8"
+              className="text-xs gap-1.5 h-8 bg-[#383838] hover:bg-[#454545] text-[#F5F5F5]"
             >
               <Plus className="h-3.5 w-3.5" /> Add Tag
             </Button>
@@ -423,12 +423,12 @@ export function HashtagManager() {
 
         {/* Hashtags Grid */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <div className="flex flex-col items-center justify-center py-16 text-[#737373] gap-2">
+            <Loader2 className="h-6 w-6 animate-spin text-[#A3A3A3]" />
             <span className="text-xs">Loading hashtags...</span>
           </div>
         ) : filteredHashtags.length === 0 ? (
-          <div className="py-16 text-center text-xs text-muted-foreground border border-dashed border-white/[0.08] rounded-xl">
+          <div className="py-16 text-center text-xs text-[#737373] border border-[#292929] bg-[#181818]/60 rounded-xl">
             No hashtags found matching filters.
           </div>
         ) : (
@@ -438,10 +438,10 @@ export function HashtagManager() {
               return (
                 <div
                   key={ht.id}
-                  className="rounded-lg border border-white/[0.08] bg-[#0c1320] p-2.5 flex flex-col justify-between hover:border-white/[0.18] transition-all group"
+                  className="rounded-lg border border-[#292929] bg-[#181818] p-2.5 flex flex-col justify-between hover:border-[#383838] transition-all group"
                 >
                   <div className="flex items-start justify-between gap-1">
-                    <span className="font-semibold text-xs text-primary font-mono truncate">
+                    <span className="font-semibold text-xs text-[#F5F5F5] font-mono truncate">
                       {ht.displayTag}
                     </span>
                     <button

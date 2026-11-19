@@ -13,10 +13,8 @@ import {
   Trash2,
   RotateCcw,
   Link2,
-  Flame,
 } from "lucide-react";
 import { ReminderDto } from "../types";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn, formatDateTime } from "@/lib/utils";
 
@@ -93,17 +91,30 @@ export function ReminderCard({
 
   const recurrenceText = getRecurrenceText();
 
+  const getPriorityBadgeClass = () => {
+    switch (reminder.priority) {
+      case "CRITICAL":
+        return "bg-red-500/10 text-red-400 border-red-500/30";
+      case "HIGH":
+        return "bg-amber-500/10 text-amber-400 border-amber-500/30";
+      case "LOW":
+        return "bg-[#262626] text-[#737373] border-[#303030]";
+      default:
+        return "bg-blue-500/10 text-blue-400 border-blue-500/30";
+    }
+  };
+
   return (
     <div
       className={cn(
-        "group relative flex items-start justify-between gap-3 p-4 rounded-xl border transition-all",
+        "group relative flex items-start justify-between gap-3 p-3.5 rounded-xl border transition-all duration-200",
         isCompleted
-          ? "bg-card/40 border-border/40 opacity-70"
+          ? "bg-[#181818] border-[#303030] opacity-60"
           : isCancelled
-          ? "bg-card/30 border-border/40 opacity-60"
+          ? "bg-[#181818] border-[#303030] opacity-50"
           : isOverdue
-          ? "bg-red-950/10 border-red-500/40 hover:border-red-500/60"
-          : "bg-card border-border/80 hover:border-primary/50"
+          ? "bg-[#202020] border-red-500/40 hover:border-red-500/60"
+          : "bg-[#202020] border-[#303030] hover:border-[#8B5CF6]/50"
       )}
     >
       <div className="flex items-start gap-3 min-w-0 flex-1">
@@ -116,67 +127,56 @@ export function ReminderCard({
           }
           title={isCompleted ? "Reactivate reminder" : "Mark as completed"}
           className={cn(
-            "mt-0.5 h-5 w-5 rounded-full border flex items-center justify-center transition-colors shrink-0",
+            "mt-0.5 h-4.5 w-4.5 rounded-full border flex items-center justify-center transition-colors shrink-0",
             isCompleted
-              ? "bg-emerald-500 border-emerald-500 text-black"
-              : "border-secondary-text hover:border-primary text-transparent hover:text-primary/40"
+              ? "bg-[#22C55E] border-[#22C55E] text-black"
+              : "border-[#737373] hover:border-[#8B5CF6] text-transparent hover:text-[#8B5CF6]/40"
           )}
         >
-          <CheckCircle2 className="h-4 w-4 fill-current" />
+          <CheckCircle2 className="h-3.5 w-3.5 fill-current" />
         </button>
 
-        <div className="min-w-0 flex-1 space-y-1.5">
+        <div className="min-w-0 flex-1 space-y-1">
           {/* Header line: Title & Badges */}
           <div className="flex flex-wrap items-center gap-2">
             <h4
               className={cn(
-                "text-sm font-semibold truncate",
-                isCompleted
-                  ? "line-through text-secondary-text"
-                  : isCancelled
-                  ? "line-through text-secondary-text"
-                  : "text-foreground"
+                "text-xs font-semibold truncate",
+                isCompleted || isCancelled
+                  ? "line-through text-[#737373]"
+                  : "text-[#F5F5F5]"
               )}
             >
               {reminder.title}
             </h4>
 
             {/* Priority Badge */}
-            <Badge
-              variant={
-                reminder.priority === "CRITICAL"
-                  ? "destructive"
-                  : reminder.priority === "HIGH"
-                  ? "warning"
-                  : reminder.priority === "LOW"
-                  ? "outline"
-                  : "default"
-              }
-              className="text-[10px] uppercase font-semibold tracking-wider h-5 px-1.5"
-            >
-              {reminder.priority === "CRITICAL" && (
-                <Flame className="h-3 w-3 mr-0.5 inline" />
+            <span
+              className={cn(
+                "text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded border",
+                getPriorityBadgeClass()
               )}
+            >
               {reminder.priority}
-            </Badge>
+            </span>
 
-            {/* Status pill if snoozed / cancelled */}
+            {/* Snoozed pill */}
             {isSnoozed && (
-              <Badge variant="secondary" className="text-[10px] h-5 px-1.5 gap-1">
-                <Clock className="h-3 w-3" />
+              <span className="inline-flex items-center gap-1 rounded bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.2 text-[10px] font-medium text-amber-400">
+                <Clock className="h-2.5 w-2.5" />
                 Snoozed ({reminder.snoozeCount})
-              </Badge>
+              </span>
             )}
 
             {isCancelled && (
-              <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-secondary-text">
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#181818] border border-[#303030] text-[#737373]">
                 Cancelled
-              </Badge>
+              </span>
             )}
 
             {/* Recurrence Badge */}
             {recurrenceText && (
-              <span className="inline-flex items-center gap-1 rounded bg-purple-500/15 border border-purple-500/30 px-1.5 py-0.5 text-[10px] font-medium text-purple-300">
+              <span className="inline-flex items-center gap-1 rounded bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 px-1.5 py-0.2 text-[10px] font-medium text-[#8B5CF6]">
                 <Repeat className="h-2.5 w-2.5" />
                 {recurrenceText}
               </span>
@@ -185,26 +185,26 @@ export function ReminderCard({
 
           {/* Description */}
           {reminder.description && (
-            <p className="text-xs text-secondary-text line-clamp-2">
+            <p className="text-xs text-[#A3A3A3] line-clamp-2">
               {reminder.description}
             </p>
           )}
 
           {/* Meta line: Due time, overdue warning, links */}
-          <div className="flex flex-wrap items-center gap-3 text-xs text-secondary-text pt-0.5">
+          <div className="flex flex-wrap items-center gap-3 text-xs pt-0.5">
             {/* Due date info */}
             <div
               className={cn(
                 "flex items-center gap-1 text-[11px]",
                 isOverdue
                   ? "text-red-400 font-semibold"
-                  : "text-secondary-text"
+                  : "text-[#737373]"
               )}
             >
               {isOverdue ? (
                 <AlertTriangle className="h-3 w-3" />
               ) : (
-                <Clock className="h-3 w-3 text-primary" />
+                <Clock className="h-3 w-3 text-[#8B5CF6]" />
               )}
               <span>
                 {isOverdue ? "Overdue: " : "Due: "}
@@ -221,7 +221,7 @@ export function ReminderCard({
 
             {/* Linked Task badge */}
             {reminder.task && (
-              <span className="inline-flex items-center gap-1 text-[11px] text-primary bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
+              <span className="inline-flex items-center gap-1 text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.2 rounded border border-blue-500/20">
                 <Link2 className="h-2.5 w-2.5" />
                 Task: {reminder.task.title}
               </span>
@@ -229,11 +229,11 @@ export function ReminderCard({
 
             {/* Linked Meeting badge */}
             {reminder.meeting && (
-              <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+              <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
                 <Calendar className="h-2.5 w-2.5" />
                 Meeting: {reminder.meeting.title}
                 {reminder.offsetMinutes !== null && reminder.offsetMinutes !== undefined && (
-                  <span className="text-[10px] text-secondary-text">
+                  <span className="text-[#737373]">
                     ({reminder.offsetMinutes === 0 ? "at start" : `${reminder.offsetMinutes}m before`})
                   </span>
                 )}
@@ -250,9 +250,9 @@ export function ReminderCard({
             variant="outline"
             size="sm"
             onClick={() => onOpenSnooze(reminder)}
-            className="h-8 px-2 text-xs border-border/80 bg-sidebar text-secondary-text hover:text-foreground hover:border-primary/40 gap-1"
+            className="h-7 px-2 text-xs border-[#303030] bg-[#181818] text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#262626] gap-1"
           >
-            <Clock className="h-3 w-3 text-primary" />
+            <Clock className="h-3 w-3 text-[#8B5CF6]" />
             <span className="hidden sm:inline">Snooze</span>
           </Button>
         )}
@@ -262,23 +262,23 @@ export function ReminderCard({
           variant="ghost"
           size="sm"
           onClick={() => setMenuOpen((o) => !o)}
-          className="h-8 w-8 p-0 text-secondary-text hover:text-foreground"
+          className="h-7 w-7 p-0 text-[#737373] hover:text-[#F5F5F5] hover:bg-[#262626] rounded"
         >
-          <MoreVertical className="h-4 w-4" />
+          <MoreVertical className="h-3.5 w-3.5" />
         </Button>
 
         {/* Dropdown Menu Popup */}
         {menuOpen && (
-          <div className="absolute right-0 top-9 z-30 w-44 rounded-md border border-border bg-[#111B2B] py-1 shadow-xl text-xs space-y-0.5 animate-in fade-in-50 zoom-in-95 duration-100">
+          <div className="absolute right-0 top-8 z-30 w-44 rounded-lg border border-[#303030] bg-[#181818] py-1 shadow-xl text-xs space-y-0.5">
             <button
               onClick={() => {
                 setMenuOpen(false);
                 onEdit(reminder);
               }}
-              className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-card-hover text-secondary-text hover:text-foreground text-left"
+              className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-[#262626] text-[#A3A3A3] hover:text-[#F5F5F5] text-left"
             >
-              <Edit2 className="h-3.5 w-3.5 text-primary" />
-              Edit Reminder
+              <Edit2 className="h-3.5 w-3.5 text-[#8B5CF6]" />
+              <span>Edit Reminder</span>
             </button>
 
             {!isCompleted && !isCancelled && (
@@ -287,10 +287,10 @@ export function ReminderCard({
                   setMenuOpen(false);
                   onOpenSnooze(reminder);
                 }}
-                className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-card-hover text-secondary-text hover:text-foreground text-left"
+                className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-[#262626] text-amber-400 text-left"
               >
-                <Clock className="h-3.5 w-3.5 text-amber-400" />
-                Snooze Alert
+                <Clock className="h-3.5 w-3.5" />
+                <span>Snooze Alert</span>
               </button>
             )}
 
@@ -300,10 +300,10 @@ export function ReminderCard({
                   setMenuOpen(false);
                   onReactivate(reminder.id);
                 }}
-                className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-card-hover text-emerald-400 text-left"
+                className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-[#262626] text-emerald-400 text-left"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
-                Reactivate
+                <span>Reactivate</span>
               </button>
             ) : (
               <button
@@ -311,10 +311,10 @@ export function ReminderCard({
                   setMenuOpen(false);
                   onComplete(reminder.id);
                 }}
-                className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-card-hover text-emerald-400 text-left"
+                className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-[#262626] text-emerald-400 text-left"
               >
                 <CheckCircle2 className="h-3.5 w-3.5" />
-                Mark Completed
+                <span>Mark Completed</span>
               </button>
             )}
 
@@ -324,14 +324,14 @@ export function ReminderCard({
                   setMenuOpen(false);
                   onCancel(reminder.id);
                 }}
-                className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-card-hover text-secondary-text hover:text-foreground text-left"
+                className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-[#262626] text-[#737373] hover:text-[#F5F5F5] text-left"
               >
-                <XCircle className="h-3.5 w-3.5 text-secondary-text" />
-                Cancel Reminder
+                <XCircle className="h-3.5 w-3.5" />
+                <span>Cancel Reminder</span>
               </button>
             )}
 
-            <div className="border-t border-border/60 my-1" />
+            <div className="border-t border-[#303030] my-1" />
 
             <button
               onClick={() => {
@@ -341,7 +341,7 @@ export function ReminderCard({
               className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-red-500/10 text-red-400 text-left"
             >
               <Trash2 className="h-3.5 w-3.5" />
-              Delete
+              <span>Delete</span>
             </button>
           </div>
         )}

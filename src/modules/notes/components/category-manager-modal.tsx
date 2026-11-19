@@ -155,8 +155,8 @@ export function CategoryManagerModal({
     <Dialog open={open} onClose={onClose} title="Manage Note Categories" maxWidth="lg">
       <div className="space-y-6">
         {/* Create Category Form */}
-        <form onSubmit={handleCreate} className="space-y-3 rounded-lg border border-border bg-[#0A101C] p-4">
-          <Label className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
+        <form onSubmit={handleCreate} className="space-y-3 rounded-lg border border-[#292929] bg-[#181818] p-4">
+          <Label className="text-xs font-semibold uppercase tracking-wider text-[#737373]">
             Create New Category
           </Label>
           <div className="flex gap-2">
@@ -164,7 +164,7 @@ export function CategoryManagerModal({
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="e.g. Architecture, Research, Sprint Notes"
-              className="flex-1 bg-[#111B2B] border-border text-sm"
+              className="flex-1 bg-[#141414] border-[#303030] text-[#F5F5F5] text-sm"
               disabled={submitting}
             />
             <Button type="submit" size="sm" disabled={submitting || !newName.trim()} className="gap-1 shrink-0">
@@ -175,7 +175,7 @@ export function CategoryManagerModal({
 
           {/* Color Palette */}
           <div className="flex items-center gap-2 pt-1">
-            <span className="text-xs text-secondary-text">Color:</span>
+            <span className="text-xs text-[#A3A3A3]">Color:</span>
             <div className="flex items-center gap-1.5 flex-wrap">
               {PRESET_COLORS.map((color) => (
                 <button
@@ -195,25 +195,25 @@ export function CategoryManagerModal({
 
         {/* Existing Categories List */}
         <div className="space-y-2">
-          <Label className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
+          <Label className="text-xs font-semibold uppercase tracking-wider text-[#737373]">
             Categories ({categories.length})
           </Label>
 
           <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1">
             {categories.length === 0 ? (
-              <p className="text-xs text-secondary-text py-4 text-center">No categories created yet.</p>
+              <p className="text-xs text-[#737373] py-4 text-center">No categories created yet.</p>
             ) : (
               categories.map((cat) => (
                 <div
                   key={cat.id}
-                  className="flex items-center justify-between rounded-md border border-border bg-[#0A101C] p-2.5 transition-colors hover:border-border/80"
+                  className="flex items-center justify-between rounded-md border border-[#292929] bg-[#181818] p-2.5 transition-colors hover:border-[#383838]"
                 >
                   {editingId === cat.id ? (
                     <div className="flex-1 flex items-center gap-2 mr-2">
                       <Input
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
-                        className="h-8 text-xs bg-[#111B2B]"
+                        className="h-8 text-xs bg-[#141414] border-[#303030] text-[#F5F5F5]"
                         autoFocus
                       />
                       <div className="flex items-center gap-1">
@@ -249,10 +249,10 @@ export function CategoryManagerModal({
                       <div className="flex items-center gap-2.5 min-w-0">
                         <span
                           className="h-3 w-3 rounded-full shrink-0 border border-white/20"
-                          style={{ backgroundColor: cat.color || "#00D4FF" }}
+                          style={{ backgroundColor: cat.color || "#888888" }}
                         />
-                        <span className="text-sm font-medium text-foreground truncate">{cat.name}</span>
-                        <span className="rounded-full bg-sidebar-accent px-2 py-0.5 text-[10px] text-secondary-text">
+                        <span className="text-sm font-medium text-[#F5F5F5] truncate">{cat.name}</span>
+                        <span className="rounded bg-[#202020] border border-[#292929] px-2 py-0.5 text-[10px] text-[#A3A3A3]">
                           {cat.noteCount ?? 0} notes
                         </span>
                       </div>

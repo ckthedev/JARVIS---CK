@@ -120,16 +120,16 @@ export function UserNav({ user }: UserNavProps) {
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-card shadow-xl z-50 overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
-            <div className="border-b border-border p-3 bg-[#0A101C]">
-              <p className="text-xs font-semibold text-foreground truncate">
+          <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-border bg-card shadow-dropdown z-50 overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
+            <div className="border-b border-border p-3 bg-muted/60">
+              <p className="text-xs font-semibold text-primary-text truncate">
                 {user.name || "Administrator"}
               </p>
               <p className="text-[11px] text-secondary-text truncate mt-0.5">
                 {user.email}
               </p>
               <div className="mt-2 flex items-center gap-1.5">
-                <span className="inline-flex items-center gap-1 rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                <span className="inline-flex items-center gap-1 rounded-full bg-accent-subtle px-2 py-0.5 text-[10px] font-semibold text-primary">
                   <ShieldCheck className="h-3 w-3" /> {user.role || "ADMIN"}
                 </span>
               </div>
@@ -141,7 +141,7 @@ export function UserNav({ user }: UserNavProps) {
                   setMenuOpen(false);
                   setPasswordModalOpen(true);
                 }}
-                className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-xs text-secondary-text hover:text-foreground hover:bg-sidebar-accent transition-colors"
+                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors"
               >
                 <KeyRound className="h-3.5 w-3.5 text-primary" />
                 Change Password
@@ -150,9 +150,9 @@ export function UserNav({ user }: UserNavProps) {
               <Link
                 href="/settings"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2.5 rounded-md px-3 py-2 text-xs text-secondary-text hover:text-foreground hover:bg-sidebar-accent transition-colors"
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors"
               >
-                <Settings className="h-3.5 w-3.5" />
+                <Settings className="h-3.5 w-3.5 text-secondary-text" />
                 System Settings
               </Link>
             </div>
@@ -160,7 +160,7 @@ export function UserNav({ user }: UserNavProps) {
             <div className="border-t border-border p-1">
               <button
                 onClick={() => signOut({ callbackUrl: "/login" })}
-                className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-danger hover:bg-danger/10 transition-colors"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 Sign Out
@@ -172,8 +172,8 @@ export function UserNav({ user }: UserNavProps) {
 
       {/* Change Password Dialog Modal */}
       {passwordModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-2xl animate-in fade-in-50 zoom-in-95">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/75 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 text-foreground shadow-elevated animate-in fade-in-50 zoom-in-95">
             <button
               onClick={() => {
                 setPasswordModalOpen(false);

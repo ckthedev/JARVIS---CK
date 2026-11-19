@@ -476,24 +476,24 @@ export function FilesManager() {
                 variant="outline"
                 size="sm"
                 onClick={() => fetchFiles()}
-                className="text-xs border-border bg-[#0D1421] text-foreground"
+                className="text-xs border border-[#303030] bg-[#202020] text-[#F5F5F5] hover:bg-[#252525]"
               >
                 Try Again
               </Button>
             </div>
           ) : files.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-center p-6 rounded-xl border border-dashed border-border/80 bg-[#0D1421]/40">
-              <div className="p-3 rounded-full bg-primary/10 text-primary mb-3">
-                {isTrash ? <Trash2 className="h-6 w-6 text-red-400" /> : <FileText className="h-6 w-6" />}
+            <div className="flex flex-col items-center justify-center h-64 text-center p-6 rounded-xl border border-[#292929] bg-[#181818]/60">
+              <div className="p-3 rounded-full bg-[#202020] border border-[#303030] text-[#A3A3A3] mb-3">
+                {isTrash ? <Trash2 className="h-6 w-6 text-[#EF4444]" /> : <FileText className="h-6 w-6" />}
               </div>
-              <h3 className="text-sm font-semibold text-foreground mb-1">
+              <h3 className="text-sm font-semibold text-[#F5F5F5] mb-1">
                 {isTrash
                   ? "Trash is empty"
                   : searchQuery
                   ? "No matching files found"
                   : "No files here yet"}
               </h3>
-              <p className="text-xs text-secondary-text max-w-sm mb-4">
+              <p className="text-xs text-[#A3A3A3] max-w-sm mb-4">
                 {isTrash
                   ? "Deleted files will appear here until they are permanently removed."
                   : searchQuery
@@ -505,7 +505,7 @@ export function FilesManager() {
                   <Button
                     size="sm"
                     onClick={() => setUploadOpen(true)}
-                    className="bg-primary text-black font-medium hover:bg-primary/90 text-xs gap-1.5 shadow-md shadow-primary/20"
+                    className="bg-[#383838] text-[#F5F5F5] font-medium hover:bg-[#454545] text-xs gap-1.5"
                   >
                     <Upload className="h-3.5 w-3.5" />
                     <span>Upload Files</span>
@@ -518,9 +518,9 @@ export function FilesManager() {
                       setParentFolderIdForNew(selectedFolderId);
                       setFolderDialogOpen(true);
                     }}
-                    className="border-border bg-[#0D1421] text-xs gap-1.5 hover:border-primary/50"
+                    className="border border-[#303030] bg-[#202020] text-[#F5F5F5] text-xs gap-1.5 hover:bg-[#252525] hover:border-[#383838]"
                   >
-                    <FolderPlus className="h-3.5 w-3.5 text-primary" />
+                    <FolderPlus className="h-3.5 w-3.5 text-[#A3A3A3]" />
                     <span>New Folder</span>
                   </Button>
                 </div>
@@ -553,16 +553,16 @@ export function FilesManager() {
             </div>
           ) : (
             /* List View */
-            <div className="rounded-lg border border-border/80 bg-[#0D1421] overflow-hidden">
+            <div className="rounded-lg border border-[#292929] bg-[#181818] overflow-hidden">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-border/80 bg-[#111B2B]/70 text-[11px] font-semibold text-secondary-text uppercase tracking-wider">
+                  <tr className="border-b border-[#292929] bg-[#141414] text-[11px] font-semibold text-[#737373] uppercase tracking-wider">
                     <th className="w-10 px-3 py-2.5 text-center">
                       <input
                         type="checkbox"
                         checked={isAllSelected}
                         onChange={isAllSelected ? handleClearSelection : handleSelectAll}
-                        className="rounded border-border bg-[#111B2B] text-primary focus:ring-primary h-3.5 w-3.5 cursor-pointer"
+                        className="rounded border-[#303030] bg-[#141414] text-[#A3A3A3] focus:ring-0 h-3.5 w-3.5 cursor-pointer"
                       />
                     </th>
                     <th className="px-3 py-2.5">Name</th>

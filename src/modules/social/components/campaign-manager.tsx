@@ -216,16 +216,16 @@ export function CampaignManager({ onSelectCampaign }: CampaignManagerProps) {
           <span className="text-xs">Loading campaigns...</span>
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="py-20 text-center text-muted-foreground text-xs border border-dashed border-white/[0.08] rounded-xl p-8 space-y-3">
-          <Megaphone className="h-10 w-10 text-muted-foreground/40 mx-auto" />
-          <p className="text-sm font-medium text-foreground">No campaigns created yet</p>
-          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+        <div className="py-20 text-center text-[#737373] text-xs border border-[#292929] bg-[#181818]/60 rounded-xl p-8 space-y-3">
+          <Megaphone className="h-10 w-10 text-[#555555] mx-auto" />
+          <p className="text-sm font-medium text-[#F5F5F5]">No campaigns created yet</p>
+          <p className="text-xs text-[#A3A3A3] max-w-sm mx-auto">
             Organize themed initiatives, product launches, or seasonal promotions across your social channels.
           </p>
           <Button
             size="sm"
             onClick={openCreateDialog}
-            className="text-xs gap-1.5"
+            className="text-xs gap-1.5 bg-[#383838] hover:bg-[#454545] text-[#F5F5F5]"
           >
             <Plus className="h-3.5 w-3.5" /> Create First Campaign
           </Button>

@@ -126,7 +126,7 @@ export function ReminderSettingsCard() {
           <select
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
-            className="flex h-9 w-52 rounded-md border border-input bg-[#0A101C] px-3 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            className="flex h-9 w-52 rounded-xl border border-input bg-card px-3 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-saas"
           >
             <option value="Asia/Kolkata">Asia/Kolkata (IST +5:30)</option>
             <option value="UTC">UTC (GMT +0:00)</option>
@@ -172,7 +172,7 @@ export function ReminderSettingsCard() {
                 <select
                   value={soundTheme}
                   onChange={(e) => setSoundTheme(e.target.value as SoundTheme)}
-                  className="flex h-8 w-36 rounded-md border border-input bg-[#0A101C] px-2.5 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="flex h-8 w-36 rounded-xl border border-input bg-card px-2.5 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-saas"
                 >
                   <option value="subtle">Subtle Warm</option>
                   <option value="chime">Double Chime</option>
@@ -183,7 +183,7 @@ export function ReminderSettingsCard() {
                   variant="outline"
                   size="sm"
                   onClick={handleTestSound}
-                  className="h-8 px-2.5 text-xs gap-1 border-border/80 bg-sidebar"
+                  className="h-8 px-2.5 text-xs gap-1 border-border/80 bg-card"
                   title="Test notification sound"
                 >
                   <Play className="h-3 w-3 text-primary fill-current" />
@@ -208,7 +208,7 @@ export function ReminderSettingsCard() {
           <select
             value={defaultSnoozeMinutes.toString()}
             onChange={(e) => setDefaultSnoozeMinutes(parseInt(e.target.value, 10))}
-            className="flex h-8 w-36 rounded-md border border-input bg-[#0A101C] px-2.5 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            className="flex h-8 w-36 rounded-xl border border-input bg-card px-2.5 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-saas"
           >
             <option value="5">5 minutes</option>
             <option value="10">10 minutes</option>
@@ -232,7 +232,7 @@ export function ReminderSettingsCard() {
           <select
             value={missedReminderPolicy}
             onChange={(e) => setMissedReminderPolicy(e.target.value)}
-            className="flex h-8 w-52 rounded-md border border-input bg-[#0A101C] px-2.5 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            className="flex h-8 w-52 rounded-xl border border-input bg-card px-2.5 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-saas"
           >
             <option value="NOTIFY_IMMEDIATELY">Notify immediately on startup</option>
             <option value="SKIP_OLDER">Skip past occurrences</option>

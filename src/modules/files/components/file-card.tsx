@@ -62,10 +62,10 @@ export function FileCard({
   return (
     <div
       className={cn(
-        "group relative flex flex-col justify-between rounded-lg border bg-[#0D1421] p-3 transition-all duration-200 select-none",
+        "group relative flex flex-col justify-between rounded-xl border bg-card p-3 transition-all duration-200 select-none shadow-saas",
         selected
           ? "border-primary ring-1 ring-primary bg-primary/5"
-          : "border-border/80 hover:border-primary/50 hover:bg-[#111B2B]/60 shadow-sm hover:shadow-md"
+          : "border-border hover:border-primary/40 hover:bg-muted/40 hover:shadow-cardHover"
       )}
       onClick={() => onPreview(file)}
     >
@@ -85,7 +85,7 @@ export function FileCard({
             type="checkbox"
             checked={selected}
             onChange={() => {}} // Controlled by parent div click
-            className="rounded border-border bg-[#111B2B] text-primary focus:ring-primary h-3.5 w-3.5 cursor-pointer"
+            className="rounded border-border bg-card text-primary focus:ring-primary h-3.5 w-3.5 cursor-pointer"
           />
         </div>
 
@@ -98,7 +98,7 @@ export function FileCard({
               setMenuOpen(!menuOpen);
             }}
             className={cn(
-              "rounded p-1 text-secondary-text hover:text-foreground hover:bg-card-hover transition-opacity",
+              "rounded p-1 text-secondary-text hover:text-foreground hover:bg-muted transition-opacity",
               menuOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100"
             )}
             title="File options"
@@ -109,7 +109,7 @@ export function FileCard({
           {/* Options Dropdown */}
           {menuOpen && (
             <div
-              className="absolute right-0 top-7 z-30 w-44 rounded-md border border-border bg-[#0D1421] p-1 shadow-xl text-xs"
+              className="absolute right-0 top-7 z-30 w-44 rounded-xl border border-border bg-card p-1 shadow-dropdown text-xs"
               onClick={(e) => e.stopPropagation()}
             >
               {!isTrash ? (
@@ -238,7 +238,7 @@ export function FileCard({
       </div>
 
       {/* Center Media / Icon Preview Area */}
-      <div className="flex h-28 w-full items-center justify-center overflow-hidden rounded bg-[#111B2B]/60 p-2 my-1">
+      <div className="flex h-28 w-full items-center justify-center overflow-hidden rounded-xl bg-muted/60 p-2 my-1">
         {isImage && !imageError ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img

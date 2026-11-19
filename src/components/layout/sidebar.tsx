@@ -13,6 +13,7 @@ import {
   Share2,
   Bell,
   Calendar,
+  CalendarDays,
   FileText,
   FolderOpen,
   Settings,
@@ -20,7 +21,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Shield,
-  Bot,
+  Layers,
+  Terminal,
 } from "lucide-react";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -29,9 +31,12 @@ const iconMap: Record<string, React.ElementType> = {
   Share2,
   Bell,
   Calendar,
+  CalendarDays,
   FileText,
   FolderOpen,
   Settings,
+  Layers,
+  CalendarRange: CalendarDays,
 };
 
 export function Sidebar() {
@@ -47,7 +52,7 @@ export function Sidebar() {
       {/* Mobile Backdrop */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/75 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -55,27 +60,32 @@ export function Sidebar() {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-40 flex flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300 ease-in-out lg:static",
-          collapsed ? "w-16" : "w-64",
+          "fixed top-0 bottom-0 left-0 z-40 flex flex-col border-r border-[#303030] bg-[#141414] transition-all duration-300 ease-in-out lg:static",
+          collapsed ? "w-16" : "w-60",
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Brand Header */}
-        <div className="flex h-16 items-center justify-between px-4 border-b border-sidebar-border">
+        <div className="flex h-16 items-center justify-between px-4 border-b border-[#303030] bg-[#141414]">
           <Link
             href="/dashboard"
-            className="flex items-center gap-3 overflow-hidden group"
+            className="flex items-center gap-2.5 overflow-hidden group"
           >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 border border-primary/30 text-primary transition-all group-hover:shadow-jarvis-glow">
-              <Bot className="h-5 w-5" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#262626] border border-[#383838] text-[#F5F5F5] transition-transform group-hover:scale-105">
+              <Terminal className="h-4 w-4" />
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <span className="text-sm font-bold tracking-widest text-foreground font-mono">
-                  JARVIS
-                </span>
-                <span className="text-[10px] uppercase tracking-wider text-primary font-medium">
-                  AI Core v1.0
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-bold tracking-wider text-[#F5F5F5] font-mono">
+                    JARVIS
+                  </span>
+                  <span className="rounded bg-[#262626] border border-[#383838] px-1 py-0.2 text-[9px] font-mono font-medium text-[#A3A3A3]">
+                    AI
+                  </span>
+                </div>
+                <span className="text-[10px] text-[#737373] tracking-tight leading-none">
+                  Personal Assistant
                 </span>
               </div>
             )}
@@ -84,8 +94,9 @@ export function Sidebar() {
           {/* Desktop Collapse Toggle */}
           <button
             onClick={toggleCollapse}
-            className="hidden lg:flex h-7 w-7 items-center justify-center rounded-md text-secondary-text hover:text-foreground hover:bg-sidebar-accent transition-colors"
+            className="hidden lg:flex h-7 w-7 items-center justify-center rounded-lg text-[#737373] hover:text-[#F5F5F5] hover:bg-[#202020] transition-colors"
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? (
               <ChevronRight className="h-4 w-4" />
@@ -95,93 +106,84 @@ export function Sidebar() {
           </button>
         </div>
 
-        {/* Main Navigation */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-          <div className="px-2 mb-2">
-            {!collapsed && (
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-secondary-text">
-                Modules
-              </p>
-            )}
-          </div>
+        {/* Sectioned Navigation */}
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+          {siteConfig.sections.map((section) => (
+            <div key={section.title} className="space-y-1">
+              {!collapsed && (
+                <div className="px-3 pb-1">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-[#737373]">
+                    {section.title}
+                  </p>
+                </div>
+              )}
 
-          {siteConfig.mainNav.map((item) => {
-            const Icon = iconMap[item.iconName] || Shield;
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+              {section.items.map((item) => {
+                const Icon = iconMap[item.iconName] || Shield;
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/dashboard" && pathname.startsWith(item.href));
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                title={collapsed ? item.title : undefined}
-                className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all group relative",
-                  isActive
-                    ? "bg-primary/10 text-primary border-l-2 border-primary"
-                    : "text-secondary-text hover:text-foreground hover:bg-sidebar-accent"
-                )}
-              >
-                <Icon
-                  className={cn(
-                    "h-4 w-4 shrink-0 transition-colors",
-                    isActive
-                      ? "text-primary"
-                      : "text-secondary-text group-hover:text-foreground"
-                  )}
-                />
-                {!collapsed && (
-                  <span className="truncate">{item.title}</span>
-                )}
-                {item.badge && !collapsed && (
-                  <span className="ml-auto rounded bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    title={collapsed ? item.title : undefined}
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all group relative",
+                      isActive
+                        ? "bg-[#343434] text-[#F5F5F5] border border-[#404040]/60 font-medium shadow-sm"
+                        : "text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#202020] border border-transparent"
+                    )}
+                  >
+                    <Icon
+                      className={cn(
+                        "h-4 w-4 shrink-0 transition-colors",
+                        isActive
+                          ? "text-[#F5F5F5]"
+                          : "text-[#737373] group-hover:text-[#F5F5F5]"
+                      )}
+                    />
+                    {!collapsed && (
+                      <span className="truncate">{item.title}</span>
+                    )}
+                    {item.badge && !collapsed && (
+                      <span className="ml-auto rounded bg-[#262626] text-[#A3A3A3] border border-[#383838] px-1.5 py-0.2 text-[9px] font-medium">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
-        {/* Bottom Navigation */}
-        <div className="border-t border-sidebar-border p-3 space-y-2">
-          {!collapsed && (
-            <div className="flex items-center justify-between px-2 py-1.5 rounded bg-background/60 border border-border/40 font-mono text-[10px]">
-              <div className="flex items-center gap-1.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                </span>
-                <span className="text-primary font-semibold tracking-wider">ONLINE</span>
-              </div>
-              <span className="text-secondary-text">12ms</span>
-            </div>
-          )}
-
+        {/* Bottom Profile / Settings Footer */}
+        <div className="border-t border-[#303030] p-3 space-y-1 bg-[#141414]">
           <Link
             href="/settings"
             onClick={() => setMobileOpen(false)}
             title={collapsed ? "Settings" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all group",
+              "flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all group",
               pathname === "/settings"
-                ? "bg-primary/10 text-primary border-l-2 border-primary"
-                : "text-secondary-text hover:text-foreground hover:bg-sidebar-accent"
+                ? "bg-[#343434] text-[#F5F5F5] border border-[#404040]/60 font-medium"
+                : "text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#202020] border border-transparent"
             )}
           >
-            <Settings className="h-4 w-4 shrink-0" />
+            <Settings className="h-4 w-4 shrink-0 text-[#737373] group-hover:text-[#F5F5F5]" />
             {!collapsed && <span>Settings</span>}
           </Link>
 
           <button
             onClick={handleSignOut}
-            title={collapsed ? "Logout" : undefined}
-            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-secondary-text hover:text-red-400 hover:bg-red-500/10 transition-all group"
+            title={collapsed ? "Sign Out" : undefined}
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-[#737373] hover:text-[#EF4444] hover:bg-[#2A1818] transition-all group"
           >
             <LogOut className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>Logout</span>}
+            {!collapsed && <span>Sign Out</span>}
           </button>
         </div>
       </aside>

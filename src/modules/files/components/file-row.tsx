@@ -64,7 +64,7 @@ export function FileRow({
         "group border-b border-border/60 text-xs transition-colors cursor-pointer select-none",
         selected
           ? "bg-primary/10 hover:bg-primary/15"
-          : "hover:bg-[#111B2B]/50"
+          : "hover:bg-muted/60"
       )}
       onClick={() => onPreview(file)}
     >
@@ -80,7 +80,7 @@ export function FileRow({
           type="checkbox"
           checked={selected}
           onChange={() => {}}
-          className="rounded border-border bg-[#111B2B] text-primary focus:ring-primary h-3.5 w-3.5 cursor-pointer"
+          className="rounded border-border bg-card text-primary focus:ring-primary h-3.5 w-3.5 cursor-pointer"
         />
       </td>
 
@@ -103,7 +103,7 @@ export function FileRow({
 
       {/* Category */}
       <td className="px-3 py-2.5 hidden sm:table-cell">
-        <Badge variant="outline" className="text-[10px] uppercase font-mono border-border bg-[#111B2B]">
+        <Badge variant="outline" className="text-[10px] uppercase font-mono border-border bg-card">
           {file.category}
         </Badge>
       </td>
@@ -184,7 +184,7 @@ export function FileRow({
 
             {menuOpen && (
               <div
-                className="absolute right-0 top-6 z-30 w-44 rounded-md border border-border bg-[#0D1421] p-1 shadow-xl text-xs text-left"
+                className="absolute right-0 top-6 z-30 w-44 rounded-xl border border-border bg-card p-1 shadow-dropdown text-xs text-left"
                 onClick={(e) => e.stopPropagation()}
               >
                 {!isTrash ? (

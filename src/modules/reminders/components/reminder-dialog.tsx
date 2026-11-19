@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   ReminderDto,
@@ -19,6 +18,7 @@ import {
   MissedReminderPolicy,
 } from "../types";
 import { CreateReminderInput } from "@/lib/validations/reminder";
+import { cn } from "@/lib/utils";
 
 interface ReminderDialogProps {
   isOpen: boolean;
@@ -98,7 +98,7 @@ export function ReminderDialog({
         // New reminder defaults
         setTitle("");
         setDescription("");
-        const defaultDue = new Date(Date.now() + 60 * 60 * 1000); // 1 hour ahead
+        const defaultDue = new Date(Date.now() + 60 * 60 * 1000);
         defaultDue.setMinutes(0, 0, 0);
         setDueAt(formatForInput(defaultDue));
         setPriority("NORMAL");
@@ -225,6 +225,7 @@ export function ReminderDialog({
           : "Schedule a time-critical alert or recurring reminder."
       }
       maxWidth="lg"
+      className="bg-[#141414] border-[#303030] text-[#F5F5F5]"
     >
       <form onSubmit={handleSubmit} className="space-y-4 pt-1">
         {error && (
@@ -236,78 +237,84 @@ export function ReminderDialog({
 
         {/* Title */}
         <div className="space-y-1.5">
-          <Label htmlFor="reminder-title">
-            Reminder Title <span className="text-primary">*</span>
+          <Label htmlFor="reminder-title" className="text-xs text-[#A3A3A3]">
+            Reminder Title <span className="text-[#8B5CF6]">*</span>
           </Label>
-          <Input
+          <input
             id="reminder-title"
             placeholder="What needs reminding?"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
+            className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
           />
         </div>
 
         {/* Description */}
         <div className="space-y-1.5">
-          <Label htmlFor="reminder-desc">Description (optional)</Label>
+          <Label htmlFor="reminder-desc" className="text-xs text-[#A3A3A3]">
+            Description (optional)
+          </Label>
           <textarea
             id="reminder-desc"
             placeholder="Additional notes, instructions or context..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={2}
-            className="flex w-full rounded-md border border-input bg-[#0A101C] px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+            className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] resize-none"
           />
         </div>
 
         {/* Due Date & Time & Priority */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <Label htmlFor="reminder-due" className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 text-primary" />
-              Due Date & Time <span className="text-primary">*</span>
+            <Label htmlFor="reminder-due" className="flex items-center gap-1.5 text-xs text-[#A3A3A3]">
+              <Clock className="h-3.5 w-3.5 text-[#8B5CF6]" />
+              Due Date & Time <span className="text-[#8B5CF6]">*</span>
             </Label>
-            <Input
+            <input
               id="reminder-due"
               type="datetime-local"
               value={dueAt}
               onChange={(e) => setDueAt(e.target.value)}
               required
+              className="w-full px-3 py-1.5 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="reminder-priority">Priority</Label>
+            <Label htmlFor="reminder-priority" className="text-xs text-[#A3A3A3]">
+              Priority
+            </Label>
             <select
               id="reminder-priority"
               value={priority}
               onChange={(e) => setPriority(e.target.value as ReminderPriority)}
-              className="flex h-9 w-full rounded-md border border-input bg-[#0A101C] px-3 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full h-8 px-2.5 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
             >
-              <option value="CRITICAL">Critical</option>
-              <option value="HIGH">High</option>
-              <option value="NORMAL">Normal</option>
-              <option value="LOW">Low</option>
+              <option value="CRITICAL" className="bg-[#181818] text-[#F5F5F5]">Critical</option>
+              <option value="HIGH" className="bg-[#181818] text-[#F5F5F5]">High</option>
+              <option value="NORMAL" className="bg-[#181818] text-[#F5F5F5]">Normal</option>
+              <option value="LOW" className="bg-[#181818] text-[#F5F5F5]">Low</option>
             </select>
           </div>
         </div>
 
         {/* Links section: Task & Meeting */}
-        <div className="p-3 rounded-lg border border-border/60 bg-sidebar/50 space-y-3">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-            <LinkIcon className="h-3.5 w-3.5 text-primary" />
-            Linked Resources (Optional)
+        <div className="p-3 rounded-lg border border-[#303030] bg-[#181818] space-y-3">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F5F5F5]">
+            <LinkIcon className="h-3.5 w-3.5 text-[#8B5CF6]" />
+            <span>Linked Resources (Optional)</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Task Picker */}
             <div className="space-y-1">
-              <span className="text-[11px] text-secondary-text">Link to Task</span>
+              <span className="text-[11px] text-[#737373]">Link to Task</span>
               <select
                 value={taskId}
                 onChange={(e) => setTaskId(e.target.value)}
-                className="flex h-8 w-full rounded-md border border-input bg-[#0A101C] px-2.5 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full h-8 px-2 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
               >
                 <option value="">None (Independent Reminder)</option>
                 {tasks.map((t) => (
@@ -320,11 +327,11 @@ export function ReminderDialog({
 
             {/* Meeting Picker */}
             <div className="space-y-1">
-              <span className="text-[11px] text-secondary-text">Link to Meeting</span>
+              <span className="text-[11px] text-[#737373]">Link to Meeting</span>
               <select
                 value={meetingId}
                 onChange={(e) => handleMeetingChange(e.target.value)}
-                className="flex h-8 w-full rounded-md border border-input bg-[#0A101C] px-2.5 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full h-8 px-2 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
               >
                 <option value="">None (Independent Reminder)</option>
                 {meetings.map((m) => (
@@ -338,8 +345,8 @@ export function ReminderDialog({
 
           {/* Meeting Offset Picker if meeting is linked */}
           {meetingId && (
-            <div className="pt-2 border-t border-border/40 flex items-center justify-between text-xs">
-              <span className="text-secondary-text">Alert Timing:</span>
+            <div className="pt-2 border-t border-[#303030] flex items-center justify-between text-xs">
+              <span className="text-[#737373]">Alert Timing:</span>
               <div className="flex items-center gap-1.5">
                 {[
                   { label: "At start", mins: 0 },
@@ -352,11 +359,12 @@ export function ReminderDialog({
                     type="button"
                     key={opt.mins}
                     onClick={() => handleOffsetChange(opt.mins)}
-                    className={`px-2 py-0.5 rounded text-[11px] border transition-colors ${
+                    className={cn(
+                      "px-2 py-0.5 rounded text-[11px] border transition-colors",
                       offsetMinutes === opt.mins
-                        ? "bg-primary/20 border-primary text-primary"
-                        : "bg-card border-border/80 text-secondary-text hover:text-foreground"
-                    }`}
+                        ? "bg-[#262626] border-[#8B5CF6]/50 text-[#8B5CF6] font-semibold"
+                        : "bg-[#202020] border-[#303030] text-[#737373] hover:text-[#F5F5F5]"
+                    )}
                   >
                     {opt.label}
                   </button>
@@ -367,17 +375,17 @@ export function ReminderDialog({
         </div>
 
         {/* Recurrence Configuration */}
-        <div className="p-3 rounded-lg border border-border/60 bg-sidebar/50 space-y-3">
+        <div className="p-3 rounded-lg border border-[#303030] bg-[#181818] space-y-3">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={isRecurring}
               onChange={(e) => setIsRecurring(e.target.checked)}
-              className="rounded border-border/80 bg-[#0A101C] text-purple-400 focus:ring-purple-400"
+              className="rounded border-[#303030] bg-[#202020] text-[#8B5CF6] focus:ring-[#8B5CF6]"
             />
-            <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-              <Repeat className="h-3.5 w-3.5 text-purple-400" />
-              Make this a Recurring Reminder
+            <span className="text-xs font-semibold text-[#F5F5F5] flex items-center gap-1.5">
+              <Repeat className="h-3.5 w-3.5 text-[#8B5CF6]" />
+              <span>Make this a Recurring Reminder</span>
             </span>
           </label>
 
@@ -385,11 +393,11 @@ export function ReminderDialog({
             <div className="space-y-3 pt-2">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <span className="text-[11px] text-secondary-text">Frequency</span>
+                  <span className="text-[11px] text-[#737373]">Frequency</span>
                   <select
                     value={recurrenceRule}
                     onChange={(e) => setRecurrenceRule(e.target.value as RecurrenceRule)}
-                    className="flex h-8 w-full rounded-md border border-input bg-[#0A101C] px-2.5 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full h-8 px-2 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                   >
                     <option value="DAILY">Daily</option>
                     <option value="WEEKLY">Weekly</option>
@@ -400,14 +408,14 @@ export function ReminderDialog({
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] text-secondary-text">Interval (Every N)</span>
-                  <Input
+                  <span className="text-[11px] text-[#737373]">Interval (Every N)</span>
+                  <input
                     type="number"
                     min={1}
                     max={365}
                     value={recurrenceInterval}
                     onChange={(e) => setRecurrenceInterval(parseInt(e.target.value, 10) || 1)}
-                    className="h-8 text-xs"
+                    className="w-full h-8 px-2 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                   />
                 </div>
               </div>
@@ -415,7 +423,7 @@ export function ReminderDialog({
               {/* Weekly days picker */}
               {recurrenceRule === "WEEKLY" && (
                 <div className="space-y-1.5">
-                  <span className="text-[11px] text-secondary-text">Repeat On Days</span>
+                  <span className="text-[11px] text-[#737373]">Repeat On Days</span>
                   <div className="flex gap-1.5">
                     {weekdays.map(({ label, day }) => {
                       const isSelected = recurrenceDaysOfWeek.includes(day);
@@ -424,11 +432,12 @@ export function ReminderDialog({
                           type="button"
                           key={day}
                           onClick={() => toggleDayOfWeek(day)}
-                          className={`h-7 w-7 rounded-md text-xs font-medium border transition-colors ${
+                          className={cn(
+                            "h-7 w-7 rounded-md text-xs font-medium border transition-colors",
                             isSelected
-                              ? "bg-purple-500/20 border-purple-500 text-purple-400"
-                              : "bg-card border-border/80 text-secondary-text hover:text-foreground"
-                          }`}
+                              ? "bg-[#262626] border-[#8B5CF6] text-[#8B5CF6] font-bold"
+                              : "bg-[#202020] border-[#303030] text-[#737373] hover:text-[#F5F5F5]"
+                          )}
                         >
                           {label}
                         </button>
@@ -440,12 +449,12 @@ export function ReminderDialog({
 
               {/* End date */}
               <div className="space-y-1">
-                <span className="text-[11px] text-secondary-text">Repeat Until (Optional)</span>
-                <Input
+                <span className="text-[11px] text-[#737373]">Repeat Until (Optional)</span>
+                <input
                   type="datetime-local"
                   value={recurrenceEndAt}
                   onChange={(e) => setRecurrenceEndAt(e.target.value)}
-                  className="h-8 text-xs"
+                  className="w-full h-8 px-2 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
               </div>
             </div>
@@ -453,26 +462,26 @@ export function ReminderDialog({
         </div>
 
         {/* Missed Reminder Policy */}
-        <div className="flex items-center justify-between text-xs text-secondary-text px-1">
+        <div className="flex items-center justify-between text-xs text-[#737373] px-1">
           <span>If machine is offline when due:</span>
           <select
             value={missedPolicy}
             onChange={(e) => setMissedPolicy(e.target.value as MissedReminderPolicy)}
-            className="flex h-7 w-48 rounded-md border border-input bg-[#0A101C] px-2 text-[11px] text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            className="h-7 w-48 rounded-lg border border-[#303030] bg-[#181818] px-2 text-[11px] text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
           >
             <option value="NOTIFY_IMMEDIATELY">Alert on next boot</option>
             <option value="SKIP">Skip missed occurrences</option>
           </select>
         </div>
 
-        <div className="border-t border-border/60 pt-4 flex items-center justify-end gap-2">
+        <div className="border-t border-[#303030] pt-4 flex items-center justify-end gap-2">
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={onClose}
             disabled={submitting}
-            className="text-xs text-secondary-text hover:text-foreground"
+            className="text-xs text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#202020]"
           >
             Cancel
           </Button>
@@ -480,10 +489,10 @@ export function ReminderDialog({
             type="submit"
             size="sm"
             disabled={submitting}
-            className="gap-1.5 text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+            className="gap-1.5 text-xs font-medium bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
           >
             <Check className="h-3.5 w-3.5" />
-            {isEditing ? "Update Reminder" : "Create Reminder"}
+            <span>{isEditing ? "Update Reminder" : "Create Reminder"}</span>
           </Button>
         </div>
       </form>

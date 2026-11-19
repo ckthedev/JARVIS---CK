@@ -87,7 +87,7 @@ export function FileRenameDialog({
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="h-8 bg-[#0D1421] border-border text-foreground text-xs focus:border-primary"
+            className="h-8 bg-card border-border text-foreground text-xs focus:border-primary"
             autoFocus
             required
           />

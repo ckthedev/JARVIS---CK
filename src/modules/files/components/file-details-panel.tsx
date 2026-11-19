@@ -65,8 +65,8 @@ export function FileDetailsPanel({
     >
       <div className="space-y-4 my-2">
         {/* File Card Header */}
-        <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0D1421] border border-border">
-          <div className="p-2.5 rounded-md bg-[#111B2B] border border-border shrink-0">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/60 border border-border">
+          <div className="p-2.5 rounded-lg bg-card border border-border shrink-0">
             <FileCategoryIcon category={file.category} extension={file.extension} className="h-7 w-7" />
           </div>
           <div className="min-w-0 flex-1">
@@ -74,7 +74,7 @@ export function FileDetailsPanel({
               {file.originalName}
             </h4>
             <div className="flex items-center gap-2 mt-1">
-              <Badge variant="outline" className="text-[10px] uppercase font-mono border-border bg-[#111B2B]">
+              <Badge variant="outline" className="text-[10px] uppercase font-mono border-border bg-card">
                 {file.category}
               </Badge>
               <span className="text-[11px] font-mono text-secondary-text">
@@ -149,7 +149,7 @@ export function FileDetailsPanel({
                   )}
                 </button>
               </div>
-              <div className="font-mono text-[10px] text-secondary-text/80 break-all bg-[#0D1421] p-1.5 rounded border border-border">
+              <div className="font-mono text-[10px] text-secondary-text/80 break-all bg-muted/60 p-1.5 rounded border border-border">
                 {file.checksum}
               </div>
             </div>
@@ -165,7 +165,7 @@ export function FileDetailsPanel({
               onOpenChange(false);
               onDownload(file);
             }}
-            className="text-xs gap-1.5 border-border bg-[#0D1421] hover:border-primary/50"
+            className="text-xs gap-1.5 border-border bg-card hover:border-primary/50"
           >
             <Download className="h-3.5 w-3.5 text-primary" />
             <span>Download</span>
@@ -178,9 +178,9 @@ export function FileDetailsPanel({
               onOpenChange(false);
               onRename(file);
             }}
-            className="text-xs gap-1.5 border-border bg-[#0D1421] hover:border-primary/50"
+            className="text-xs gap-1.5 border-border bg-card hover:border-primary/50"
           >
-            <Pencil className="h-3.5 w-3.5 text-amber-400" />
+            <Pencil className="h-3.5 w-3.5 text-warning" />
             <span>Rename</span>
           </Button>
 
@@ -191,9 +191,9 @@ export function FileDetailsPanel({
               onOpenChange(false);
               onMove(file);
             }}
-            className="text-xs gap-1.5 border-border bg-[#0D1421] hover:border-primary/50"
+            className="text-xs gap-1.5 border-border bg-card hover:border-primary/50"
           >
-            <FolderInput className="h-3.5 w-3.5 text-cyan-400" />
+            <FolderInput className="h-3.5 w-3.5 text-secondary" />
             <span>Move</span>
           </Button>
 
@@ -204,7 +204,7 @@ export function FileDetailsPanel({
               onOpenChange(false);
               onDelete(file);
             }}
-            className="text-xs gap-1.5 border-red-500/30 bg-[#0D1421] text-red-400 hover:bg-red-500/10"
+            className="text-xs gap-1.5 border-danger/30 bg-card text-danger hover:bg-danger/10"
           >
             <Trash2 className="h-3.5 w-3.5" />
             <span>Move to Trash</span>

@@ -154,8 +154,8 @@ export function TagManagerModal({
     <Dialog open={open} onClose={onClose} title="Manage Tags" maxWidth="md">
       <div className="space-y-6">
         {/* Create Tag Form */}
-        <form onSubmit={handleCreate} className="space-y-3 rounded-lg border border-border bg-[#0A101C] p-4">
-          <Label className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
+        <form onSubmit={handleCreate} className="space-y-3 rounded-lg border border-[#292929] bg-[#181818] p-4">
+          <Label className="text-xs font-semibold uppercase tracking-wider text-[#737373]">
             Add New Tag
           </Label>
           <div className="flex gap-2">
@@ -163,7 +163,7 @@ export function TagManagerModal({
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="e.g. backend, meeting, priority"
-              className="flex-1 bg-[#111B2B] border-border text-sm"
+              className="flex-1 bg-[#141414] border-[#303030] text-[#F5F5F5] text-sm"
               disabled={submitting}
             />
             <Button type="submit" size="sm" disabled={submitting || !newName.trim()} className="gap-1 shrink-0">
@@ -193,25 +193,25 @@ export function TagManagerModal({
 
         {/* Tags List */}
         <div className="space-y-2">
-          <Label className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
+          <Label className="text-xs font-semibold uppercase tracking-wider text-[#737373]">
             Existing Tags ({tags.length})
           </Label>
 
           <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1">
             {tags.length === 0 ? (
-              <p className="text-xs text-secondary-text py-4 text-center">No tags created yet.</p>
+              <p className="text-xs text-[#737373] py-4 text-center">No tags created yet.</p>
             ) : (
               tags.map((tag) => (
                 <div
                   key={tag.id}
-                  className="flex items-center justify-between rounded-md border border-border bg-[#0A101C] p-2.5 transition-colors hover:border-border/80"
+                  className="flex items-center justify-between rounded-md border border-[#292929] bg-[#181818] p-2.5 transition-colors hover:border-[#383838]"
                 >
                   {editingId === tag.id ? (
                     <div className="flex-1 flex items-center gap-2 mr-2">
                       <Input
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
-                        className="h-8 text-xs bg-[#111B2B]"
+                        className="h-8 text-xs bg-[#141414] border-[#303030] text-[#F5F5F5]"
                         autoFocus
                       />
                       <Button
@@ -235,11 +235,11 @@ export function TagManagerModal({
                     <>
                       <div className="flex items-center gap-2 min-w-0">
                         <span
-                          className="h-2.5 w-2.5 rounded-full shrink-0"
-                          style={{ backgroundColor: tag.color || "#7A3FFF" }}
+                          className="h-2.5 w-2.5 rounded-full shrink-0 border border-white/20"
+                          style={{ backgroundColor: tag.color || "#888888" }}
                         />
-                        <span className="text-xs font-medium text-foreground truncate">#{tag.name}</span>
-                        <span className="rounded-full bg-sidebar-accent px-1.5 py-0.5 text-[10px] text-secondary-text">
+                        <span className="text-xs font-medium text-[#F5F5F5] truncate">#{tag.name}</span>
+                        <span className="rounded bg-[#202020] border border-[#292929] px-1.5 py-0.5 text-[10px] text-[#A3A3A3]">
                           {tag.noteCount ?? 0}
                         </span>
                       </div>

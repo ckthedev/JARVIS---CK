@@ -40,12 +40,12 @@ interface TaskManagerProps {
 }
 
 const TABS: { id: TaskViewTab; label: string; icon: React.ReactNode }[] = [
-  { id: "all", label: "All Tasks", icon: <Layers className="h-3.5 w-3.5" /> },
-  { id: "my-day", label: "My Day", icon: <Sun className="h-3.5 w-3.5 text-amber-400" /> },
-  { id: "upcoming", label: "Upcoming", icon: <Calendar className="h-3.5 w-3.5 text-primary" /> },
-  { id: "overdue", label: "Overdue", icon: <AlertTriangle className="h-3.5 w-3.5 text-red-400" /> },
-  { id: "completed", label: "Completed", icon: <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> },
-  { id: "cancelled", label: "Cancelled", icon: <XCircle className="h-3.5 w-3.5 text-muted-foreground" /> },
+  { id: "all", label: "All Tasks", icon: <Layers className="h-3.5 w-3.5 text-[#737373]" /> },
+  { id: "my-day", label: "My Day", icon: <Sun className="h-3.5 w-3.5 text-[#737373]" /> },
+  { id: "upcoming", label: "Upcoming", icon: <Calendar className="h-3.5 w-3.5 text-[#737373]" /> },
+  { id: "overdue", label: "Overdue", icon: <AlertTriangle className="h-3.5 w-3.5 text-[#737373]" /> },
+  { id: "completed", label: "Completed", icon: <CheckCircle2 className="h-3.5 w-3.5 text-[#737373]" /> },
+  { id: "cancelled", label: "Cancelled", icon: <XCircle className="h-3.5 w-3.5 text-[#737373]" /> },
 ];
 
 export function TaskManager({
@@ -64,7 +64,7 @@ export function TaskManager({
   const initialSearch = searchParams.get("search") || "";
 
   const [activeTab, setActiveTab] = useState<TaskViewTab>(initialView);
-  const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
+  const [viewMode, setViewMode] = useState<"list" | "kanban">("kanban");
 
   // Filters
   const [filters, setFilters] = useState<TaskFilters>({
@@ -334,13 +334,13 @@ export function TaskManager({
   return (
     <div className="space-y-6">
       {/* Top Header & Master Action Buttons */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/40">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#292929]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            <ListTodo className="h-6 w-6 text-primary" />
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F5F5F5] flex items-center gap-2">
+            <ListTodo className="h-5 w-5 text-[#A3A3A3]" />
             Task Manager
           </h1>
-          <p className="mt-1 text-xs text-secondary-text">
+          <p className="mt-1 text-xs text-[#737373]">
             Prioritize, track, and organize your daily execution items and projects.
           </p>
         </div>
@@ -348,41 +348,42 @@ export function TaskManager({
         <div className="flex flex-wrap items-center gap-2">
           <Button
             size="sm"
-            variant="outline"
-            className="gap-1.5 text-xs"
+            variant="secondary"
+            className="gap-1.5 text-xs h-8"
             onClick={() => setCategoryModalOpen(true)}
           >
-            <Tag className="h-3.5 w-3.5 text-primary" />
+            <Tag className="h-3.5 w-3.5 text-[#737373]" />
             Categories ({categories.length})
           </Button>
 
           <Button
             size="sm"
-            variant="outline"
-            className="gap-1.5 text-xs"
+            variant="secondary"
+            className="gap-1.5 text-xs h-8"
             onClick={() => setProjectModalOpen(true)}
           >
-            <Folder className="h-3.5 w-3.5 text-secondary" />
+            <Folder className="h-3.5 w-3.5 text-[#737373]" />
             Projects ({projects.length})
           </Button>
 
           <Button
             size="sm"
-            className="gap-1.5 text-xs font-semibold"
+            variant="default"
+            className="gap-1.5 text-xs h-8 font-medium"
             onClick={() => {
               setTaskToEdit(null);
               setCreateColumnStatus("TODO");
               setTaskDialogOpen(true);
             }}
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             New Task
           </Button>
         </div>
       </div>
 
       {/* Navigation Tabs (All Tasks, My Day, Upcoming, Overdue, Completed, Cancelled) */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-border/30">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-[#292929]">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           const count = tabCounts[tab.id];
@@ -391,19 +392,19 @@ export function TaskManager({
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`flex items-center gap-2 rounded-md px-3.5 py-2 text-xs font-medium transition-all whitespace-nowrap ${
+              className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap ${
                 isActive
-                  ? "bg-primary/15 text-primary border border-primary/30 shadow-sm"
-                  : "text-secondary-text hover:text-foreground hover:bg-sidebar-accent"
+                  ? "bg-[#343434] text-[#F5F5F5] border border-[#404040]"
+                  : "text-[#737373] hover:text-[#F5F5F5] hover:bg-[#252525] border border-transparent"
               }`}
             >
               {tab.icon}
               <span>{tab.label}</span>
               <span
-                className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
+                className={`rounded-full px-1.5 py-0.2 text-[10px] font-medium ${
                   isActive
-                    ? "bg-primary text-background"
-                    : "bg-sidebar-accent text-secondary-text"
+                    ? "bg-[#454545] text-[#F5F5F5]"
+                    : "bg-[#222222] text-[#737373]"
                 }`}
               >
                 {count}

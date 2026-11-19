@@ -407,12 +407,12 @@ export class TaskService {
       today,
       upcoming,
     ] = await Promise.all([
-      // Total active tasks (TODO or IN_PROGRESS, not deleted)
+      // Total active tasks (not completed or cancelled, not deleted)
       prisma.task.count({
         where: {
           userId,
           deletedAt: null,
-          status: { in: ["TODO", "IN_PROGRESS"] },
+          status: { notIn: ["COMPLETED", "CANCELLED"] },
         },
       }),
       // To Do

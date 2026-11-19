@@ -8,12 +8,11 @@ import {
   DropResult,
 } from "@hello-pangea/dnd";
 import { TaskDto, TaskStatus } from "../types";
-import { Badge } from "@/components/ui/badge";
 import { formatKolkataDate, isOverdueKolkata, isDueTodayKolkata } from "@/lib/utils/timezone";
 import { useToast } from "@/hooks/use-toast";
 import {
   Plus,
-  AlertTriangle,
+  AlertCircle,
   Calendar,
   Eye,
   Trash2,
@@ -29,11 +28,12 @@ interface TaskKanbanViewProps {
   onCreateInColumn: (status: TaskStatus) => void;
 }
 
-const COLUMNS: { id: TaskStatus; label: string; color: string; badge: string }[] = [
-  { id: "TODO", label: "To Do", color: "#94A3B8", badge: "border-slate-500/30 text-slate-300" },
-  { id: "IN_PROGRESS", label: "In Progress", color: "#00D4FF", badge: "border-primary/30 text-primary" },
-  { id: "COMPLETED", label: "Completed", color: "#10B981", badge: "border-emerald-500/30 text-emerald-400" },
-  { id: "CANCELLED", label: "Cancelled", color: "#64748B", badge: "border-border text-secondary-text" },
+const COLUMNS: { id: TaskStatus; label: string }[] = [
+  { id: "BACKLOG", label: "Backlog" },
+  { id: "TODO", label: "To Do" },
+  { id: "IN_PROGRESS", label: "In Progress" },
+  { id: "IN_REVIEW", label: "In Review" },
+  { id: "COMPLETED", label: "Completed" },
 ];
 
 export function TaskKanbanView({
@@ -73,35 +73,54 @@ export function TaskKanbanView({
     }
   };
 
-  const priorityVariants: Record<string, "destructive" | "warning" | "default" | "secondary"> = {
-    CRITICAL: "destructive",
-    HIGH: "warning",
-    NORMAL: "default",
-    LOW: "secondary",
+  const getPriorityBadge = (priority: string) => {
+    switch (priority) {
+      case "CRITICAL":
+        return (
+          <span className="rounded bg-[#2A1818] border border-[#4A2020] px-1.5 py-0.2 text-[9px] font-medium text-[#EF4444]">
+            CRITICAL
+          </span>
+        );
+      case "HIGH":
+        return (
+          <span className="rounded bg-[#282828] border border-[#383838] px-1.5 py-0.2 text-[9px] font-medium text-[#F5F5F5]">
+            HIGH
+          </span>
+        );
+      case "NORMAL":
+        return (
+          <span className="rounded bg-[#222222] border border-[#303030] px-1.5 py-0.2 text-[9px] font-medium text-[#A3A3A3]">
+            NORMAL
+          </span>
+        );
+      case "LOW":
+      default:
+        return (
+          <span className="rounded bg-[#1C1C1C] border border-[#292929] px-1.5 py-0.2 text-[9px] font-medium text-[#737373]">
+            LOW
+          </span>
+        );
+    }
   };
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5 items-start">
         {COLUMNS.map((col) => {
           const colTasks = tasks.filter((t) => t.status === col.id);
 
           return (
             <div
               key={col.id}
-              className="flex flex-col rounded-lg border border-border bg-[#0D1421] p-3 shadow-jarvis min-h-[500px]"
+              className="flex flex-col rounded-xl border border-[#292929] bg-[#181818] p-3 min-h-[520px] transition-colors"
             >
               {/* Column Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-border/50">
+              <div className="flex items-center justify-between pb-2.5 border-b border-[#292929]">
                 <div className="flex items-center gap-2">
-                  <span
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{ backgroundColor: col.color }}
-                  />
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[#A3A3A3]">
                     {col.label}
                   </h3>
-                  <span className="rounded bg-sidebar-accent px-1.5 py-0.2 text-[10px] font-semibold text-secondary-text">
+                  <span className="rounded bg-[#202020] px-1.5 py-0.2 text-[10px] font-medium text-[#737373] border border-[#292929]">
                     {colTasks.length}
                   </span>
                 </div>
@@ -109,10 +128,10 @@ export function TaskKanbanView({
                 <button
                   type="button"
                   onClick={() => onCreateInColumn(col.id)}
-                  className="rounded p-1 text-secondary-text hover:text-primary hover:bg-sidebar-accent transition-colors"
+                  className="rounded p-1 text-[#737373] hover:text-[#F5F5F5] hover:bg-[#252525] transition-colors"
                   title={`Add task to ${col.label}`}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-3.5 w-3.5" />
                 </button>
               </div>
 
@@ -122,13 +141,20 @@ export function TaskKanbanView({
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`flex-1 py-3 space-y-2.5 transition-colors ${
-                      snapshot.isDraggingOver ? "bg-sidebar-accent/30 rounded-md" : ""
+                    className={`flex-1 py-2.5 space-y-2 transition-colors ${
+                      snapshot.isDraggingOver ? "bg-[#202020]/60 rounded-lg" : ""
                     }`}
                   >
                     {colTasks.length === 0 && !snapshot.isDraggingOver && (
-                      <div className="py-8 text-center text-[11px] text-muted-foreground border border-dashed border-border/40 rounded-md">
-                        Drop tasks here
+                      <div className="py-14 flex flex-col items-center justify-center text-center">
+                        <span className="text-xs text-[#555555]">No tasks</span>
+                        <button
+                          type="button"
+                          onClick={() => onCreateInColumn(col.id)}
+                          className="mt-2 text-[11px] text-[#737373] hover:text-[#A3A3A3] transition-colors"
+                        >
+                          + Add task
+                        </button>
                       </div>
                     )}
 
@@ -148,39 +174,34 @@ export function TaskKanbanView({
                               ref={providedDrag.innerRef}
                               {...providedDrag.draggableProps}
                               {...providedDrag.dragHandleProps}
-                              className={`rounded-md border border-border bg-[#111B2B] p-3 text-xs shadow-sm transition-all hover:border-border/90 ${
+                              className={`rounded-lg border border-[#292929] bg-[#202020] p-3 text-xs transition-all hover:bg-[#242424] hover:border-[#383838] ${
                                 snapshotDrag.isDragging
-                                  ? "shadow-jarvis-glow border-primary/50 rotate-1"
+                                  ? "border-[#454545] bg-[#262626] shadow-lg"
                                   : ""
                               } ${isUpdating ? "opacity-50 pointer-events-none" : ""}`}
                             >
                               {/* Card Header: Priority & Actions */}
                               <div className="flex items-center justify-between gap-1 mb-1.5">
-                                <Badge
-                                  variant={priorityVariants[task.priority] || "default"}
-                                  className="text-[9px] px-1.5 py-0"
-                                >
-                                  {task.priority}
-                                </Badge>
+                                {getPriorityBadge(task.priority)}
 
-                                <div className="flex items-center gap-1 opacity-70 hover:opacity-100 transition-opacity">
+                                <div className="flex items-center gap-1 opacity-60 hover:opacity-100 transition-opacity">
                                   <button
                                     onClick={() => onViewDetail(task)}
-                                    className="p-0.5 text-secondary-text hover:text-foreground"
+                                    className="p-1 rounded text-[#737373] hover:text-[#F5F5F5] hover:bg-[#2C2C2C] transition-colors"
                                     title="View"
                                   >
                                     <Eye className="h-3 w-3" />
                                   </button>
                                   <button
                                     onClick={() => onEdit(task)}
-                                    className="p-0.5 text-secondary-text hover:text-primary"
+                                    className="p-1 rounded text-[#737373] hover:text-[#F5F5F5] hover:bg-[#2C2C2C] transition-colors"
                                     title="Edit"
                                   >
                                     <Edit2 className="h-3 w-3" />
                                   </button>
                                   <button
                                     onClick={() => onDelete(task)}
-                                    className="p-0.5 text-secondary-text hover:text-red-400"
+                                    className="p-1 rounded text-[#737373] hover:text-[#EF4444] hover:bg-[#2C2C2C] transition-colors"
                                     title="Delete"
                                   >
                                     <Trash2 className="h-3 w-3" />
@@ -191,9 +212,9 @@ export function TaskKanbanView({
                               {/* Task Title */}
                               <h4
                                 onClick={() => onViewDetail(task)}
-                                className={`font-semibold cursor-pointer text-foreground hover:text-primary transition-colors leading-snug line-clamp-2 ${
+                                className={`font-medium cursor-pointer text-[#F5F5F5] hover:text-[#FFFFFF] transition-colors leading-snug line-clamp-2 ${
                                   task.status === "COMPLETED"
-                                    ? "line-through text-secondary-text"
+                                    ? "line-through text-[#737373]"
                                     : ""
                                 }`}
                               >
@@ -202,27 +223,27 @@ export function TaskKanbanView({
 
                               {/* Description Preview */}
                               {task.description && (
-                                <p className="mt-1 text-[11px] text-secondary-text line-clamp-2">
+                                <p className="mt-1 text-[11px] text-[#737373] line-clamp-2">
                                   {task.description}
                                 </p>
                               )}
 
                               {/* Metadata Footer: Category & Due Date */}
-                              <div className="mt-2.5 flex flex-wrap items-center justify-between gap-1 border-t border-border/40 pt-2 text-[10px]">
+                              <div className="mt-2.5 flex flex-wrap items-center justify-between gap-1 border-t border-[#292929] pt-2 text-[10px]">
                                 {task.category ? (
-                                  <span className="inline-flex items-center gap-1 font-medium text-secondary-text">
+                                  <span className="inline-flex items-center gap-1 font-medium text-[#737373]">
                                     <span
                                       className="h-1.5 w-1.5 rounded-full"
                                       style={{
                                         backgroundColor:
-                                          task.category.color || "#00D4FF",
+                                          task.category.color || "#737373",
                                       }}
                                     />
                                     {task.category.name}
                                   </span>
                                 ) : task.project ? (
-                                  <span className="text-secondary-text truncate max-w-[100px]">
-                                    📁 {task.project.name}
+                                  <span className="text-[#737373] truncate max-w-[90px]">
+                                    {task.project.name}
                                   </span>
                                 ) : (
                                   <span />
@@ -232,16 +253,16 @@ export function TaskKanbanView({
                                   <span
                                     className={`inline-flex items-center gap-1 font-medium ${
                                       isOverdue
-                                        ? "text-red-400 font-bold"
+                                        ? "text-[#EF4444]"
                                         : isDueToday
-                                        ? "text-amber-400 font-bold"
-                                        : "text-secondary-text"
+                                        ? "text-[#D4D4D4]"
+                                        : "text-[#737373]"
                                     }`}
                                   >
                                     {isOverdue ? (
-                                      <AlertTriangle className="h-2.5 w-2.5" />
+                                      <AlertCircle className="h-2.5 w-2.5 text-[#EF4444]" />
                                     ) : (
-                                      <Calendar className="h-2.5 w-2.5" />
+                                      <Calendar className="h-2.5 w-2.5 text-[#737373]" />
                                     )}
                                     {formatKolkataDate(task.dueDate)}
                                   </span>

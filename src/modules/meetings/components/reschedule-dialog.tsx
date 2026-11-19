@@ -77,16 +77,17 @@ export function RescheduleDialog({
       title="Reschedule Meeting"
       description={`Move "${meeting.title}" to a new date and time.`}
       maxWidth="md"
+      className="bg-[#141414] border-[#303030] text-[#F5F5F5]"
     >
       <form onSubmit={handleSubmit} className="space-y-4 pt-2">
         {error && (
-          <div className="p-3 rounded-lg bg-red-500/15 border border-red-500/30 text-xs text-red-400">
+          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400">
             {error}
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-medium text-secondary-text mb-1.5">
+          <label className="block text-xs font-medium text-[#A3A3A3] mb-1.5">
             New Date
           </label>
           <input
@@ -94,13 +95,13 @@ export function RescheduleDialog({
             required
             value={dateStr}
             onChange={(e) => setDateStr(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-secondary-text mb-1.5">
+            <label className="block text-xs font-medium text-[#A3A3A3] mb-1.5">
               Start Time
             </label>
             <input
@@ -108,12 +109,12 @@ export function RescheduleDialog({
               required
               value={startTimeStr}
               onChange={(e) => setStartTimeStr(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-secondary-text mb-1.5">
+            <label className="block text-xs font-medium text-[#A3A3A3] mb-1.5">
               End Time
             </label>
             <input
@@ -121,31 +122,27 @@ export function RescheduleDialog({
               required
               value={endTimeStr}
               onChange={(e) => setEndTimeStr(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
             />
           </div>
         </div>
 
-        <p className="text-[11px] text-secondary-text leading-tight">
-          Rescheduling will automatically update all connected reminder schedules to match the new time.
-        </p>
-
-        <div className="border-t border-border/60 pt-4 flex items-center justify-end gap-2">
+        <div className="border-t border-[#303030] pt-4 flex items-center justify-end gap-2">
           <Button
             type="button"
             variant="ghost"
             onClick={onClose}
             disabled={loading}
-            className="text-xs text-secondary-text hover:text-foreground"
+            className="text-xs text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#202020]"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={loading}
-            className="text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+            className="text-xs font-medium bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
           >
-            {loading ? "Rescheduling..." : "Save New Time"}
+            {loading ? "Rescheduling..." : "Confirm Reschedule"}
           </Button>
         </div>
       </form>

@@ -69,52 +69,52 @@ export function FolderDeleteDialog({
         </p>
 
         <div className="space-y-2">
-          <label className="flex items-start gap-3 p-3 rounded-lg border border-border bg-[#0D1421] cursor-pointer hover:border-primary/50 transition-colors">
+          <label className="flex items-start gap-3 p-3 rounded-lg border border-[#303030] bg-[#181818] cursor-pointer hover:border-[#454545] transition-colors">
             <input
               type="radio"
               name="deletePolicy"
               value="move_to_parent"
               checked={action === "move_to_parent"}
               onChange={() => setAction("move_to_parent")}
-              className="mt-0.5 text-primary focus:ring-primary"
+              className="mt-0.5 text-[#A3A3A3] focus:ring-0"
             />
             <div className="space-y-0.5 text-xs">
-              <span className="font-medium text-foreground block">
+              <span className="font-medium text-[#F5F5F5] block">
                 Move contents to parent folder (Recommended)
               </span>
-              <span className="text-secondary-text block">
+              <span className="text-[#A3A3A3] block">
                 The folder itself is deleted, but all files and subfolders are safely moved up to the parent directory.
               </span>
             </div>
           </label>
 
-          <label className="flex items-start gap-3 p-3 rounded-lg border border-border bg-[#0D1421] cursor-pointer hover:border-red-500/50 transition-colors">
+          <label className="flex items-start gap-3 p-3 rounded-lg border border-[#502020] bg-[#2A1818] cursor-pointer hover:border-[#702525] transition-colors">
             <input
               type="radio"
               name="deletePolicy"
               value="trash_all"
               checked={action === "trash_all"}
               onChange={() => setAction("trash_all")}
-              className="mt-0.5 text-red-500 focus:ring-red-500"
+              className="mt-0.5 text-[#EF4444] focus:ring-0"
             />
             <div className="space-y-0.5 text-xs">
-              <span className="font-medium text-red-400 block">
+              <span className="font-medium text-[#EF4444] block">
                 Move folder and all contents to trash
               </span>
-              <span className="text-secondary-text block">
+              <span className="text-[#A3A3A3] block">
                 Soft-deletes this folder and moves all files inside to the Trash section.
               </span>
             </div>
           </label>
         </div>
 
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/50">
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#292929]">
           <Button
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={loading}
-            className="border-border bg-transparent text-secondary-text hover:text-foreground text-xs"
+            className="border-[#303030] bg-transparent text-[#A3A3A3] hover:text-[#F5F5F5] text-xs"
           >
             Cancel
           </Button>
@@ -122,7 +122,7 @@ export function FolderDeleteDialog({
             type="button"
             onClick={handleDelete}
             disabled={loading}
-            className="bg-red-500 text-white font-medium hover:bg-red-600 text-xs gap-1.5"
+            className="bg-[#2A1818] border border-[#502020] text-[#EF4444] font-medium hover:bg-[#381F1F] text-xs gap-1.5"
           >
             {loading && <Loader2 className="h-3 w-3 animate-spin" />}
             <span>Confirm Delete</span>

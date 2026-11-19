@@ -1,5 +1,5 @@
 export type TaskPriority = "CRITICAL" | "HIGH" | "NORMAL" | "LOW";
-export type TaskStatus = "TODO" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+export type TaskStatus = "BACKLOG" | "TODO" | "IN_PROGRESS" | "IN_REVIEW" | "COMPLETED" | "CANCELLED";
 export type TaskViewTab = "all" | "my-day" | "upcoming" | "overdue" | "completed" | "cancelled";
 
 export interface TaskCategorySummary {

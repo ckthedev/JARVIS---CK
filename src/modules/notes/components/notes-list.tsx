@@ -62,25 +62,25 @@ export function NotesList({
   const isTrash = currentSection === "trash";
 
   return (
-    <div className={cn("flex flex-col h-full bg-[#0A101C] border-r border-border/80", className)}>
+    <div className={cn("flex flex-col h-full bg-[#181818] border-r border-[#292929]", className)}>
       {/* Header & Search */}
-      <div className="p-3 border-b border-border/70 space-y-2.5">
+      <div className="p-3 border-b border-[#292929] space-y-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-secondary-text">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#737373]">
             {currentSection === "all" && "All Notes"}
             {currentSection === "pinned" && "Pinned Notes"}
             {currentSection === "archived" && "Archived Notes"}
             {currentSection === "trash" && "Trash"}
             {currentSection === "category" && "Category Notes"}
             {currentSection === "tag" && "Tagged Notes"}
-            <span className="text-secondary-text/60 ml-1.5 font-normal">({notes.length})</span>
+            <span className="text-[#555555] ml-1.5 font-normal">({notes.length})</span>
           </span>
 
           {!isTrash && (
             <button
               type="button"
               onClick={onCreateNote}
-              className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 bg-primary/10 hover:bg-primary/15 px-2.5 py-1 rounded-md transition-colors"
+              className="flex items-center gap-1 text-xs font-medium text-[#F5F5F5] bg-[#383838] hover:bg-[#454545] px-2.5 py-1 rounded-md transition-colors"
             >
               <Plus className="h-3.5 w-3.5" />
               New Note
@@ -90,18 +90,18 @@ export function NotesList({
 
         {/* Search Bar */}
         <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-secondary-text" />
+          <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[#737373]" />
           <Input
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search notes, tags, categories..."
-            className="h-8 pl-8 pr-8 text-xs bg-[#111B2B] border-border text-foreground"
+            className="h-8 pl-8 pr-8 text-xs bg-[#141414] border-[#303030] text-[#F5F5F5] focus:border-[#454545]"
           />
           {search && (
             <button
               type="button"
               onClick={() => onSearchChange("")}
-              className="absolute right-2.5 top-2.5 text-secondary-text hover:text-foreground"
+              className="absolute right-2.5 top-2.5 text-[#737373] hover:text-[#F5F5F5]"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -109,7 +109,7 @@ export function NotesList({
         </div>
 
         {/* Sort Controls */}
-        <div className="flex items-center justify-between text-[11px] text-secondary-text pt-0.5">
+        <div className="flex items-center justify-between text-[11px] text-[#737373] pt-0.5">
           <div className="flex items-center gap-1">
             <ArrowUpDown className="h-3 w-3" />
             <span>Sort:</span>
@@ -117,12 +117,12 @@ export function NotesList({
           <select
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value as "updatedAt" | "createdAt" | "title" | "oldest")}
-            className="bg-transparent text-foreground/80 hover:text-primary focus:outline-none text-[11px] cursor-pointer"
+            className="bg-transparent text-[#A3A3A3] hover:text-[#F5F5F5] focus:outline-none text-[11px] cursor-pointer"
           >
-            <option value="updatedAt" className="bg-[#111B2B]">Recently Updated</option>
-            <option value="createdAt" className="bg-[#111B2B]">Recently Created</option>
-            <option value="title" className="bg-[#111B2B]">Title (A-Z)</option>
-            <option value="oldest" className="bg-[#111B2B]">Oldest First</option>
+            <option value="updatedAt" className="bg-[#181818]">Recently Updated</option>
+            <option value="createdAt" className="bg-[#181818]">Recently Created</option>
+            <option value="title" className="bg-[#181818]">Title (A-Z)</option>
+            <option value="oldest" className="bg-[#181818]">Oldest First</option>
           </select>
         </div>
       </div>
@@ -130,14 +130,14 @@ export function NotesList({
       {/* Note Cards List */}
       <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
         {loading ? (
-          <div className="py-12 text-center text-xs text-secondary-text">Loading notes...</div>
+          <div className="py-12 text-center text-xs text-[#737373]">Loading notes...</div>
         ) : notes.length === 0 ? (
           <div className="py-12 px-4 text-center">
-            <FileText className="h-8 w-8 text-secondary-text/40 mx-auto mb-2" />
-            <p className="text-xs font-medium text-foreground">
+            <FileText className="h-8 w-8 text-[#555555] mx-auto mb-2" />
+            <p className="text-xs font-medium text-[#F5F5F5]">
               {search ? "No matching notes found" : isTrash ? "Trash is empty" : "No notes yet"}
             </p>
-            <p className="text-[11px] text-secondary-text mt-1">
+            <p className="text-[11px] text-[#737373] mt-1">
               {search
                 ? "Try adjusting your search terms"
                 : isTrash
@@ -148,7 +148,7 @@ export function NotesList({
               <button
                 type="button"
                 onClick={onCreateNote}
-                className="mt-3 text-xs text-primary hover:underline font-medium inline-block"
+                className="mt-3 text-xs text-[#A3A3A3] hover:text-[#F5F5F5] font-medium inline-block underline"
               >
                 Create note
               </button>
@@ -164,8 +164,8 @@ export function NotesList({
                 className={cn(
                   "group relative flex flex-col p-3 rounded-lg border transition-all cursor-pointer text-left",
                   isSelected
-                    ? "bg-[#111B2B] border-primary/50 shadow-md shadow-primary/5"
-                    : "bg-[#0A101C] border-border hover:border-border/80 hover:bg-[#101725]"
+                    ? "bg-[#262626] border-[#383838] shadow-sm"
+                    : "bg-[#202020] border-[#292929] hover:border-[#383838] hover:bg-[#242424]"
                 )}
               >
                 {/* Title & Pin Icon */}
@@ -173,7 +173,7 @@ export function NotesList({
                   <h4
                     className={cn(
                       "text-xs font-semibold truncate",
-                      isSelected ? "text-primary" : "text-foreground"
+                      isSelected ? "text-[#F5F5F5]" : "text-[#D4D4D4]"
                     )}
                   >
                     {note.title || "Untitled Note"}
@@ -181,7 +181,7 @@ export function NotesList({
 
                   <div className="flex items-center gap-1 shrink-0">
                     {note.isPinned && !isTrash && (
-                      <Pin className="h-3 w-3 text-amber-400 fill-amber-400/20" />
+                      <Pin className="h-3 w-3 text-[#A3A3A3]" />
                     )}
 
                     {/* Actions Menu Trigger */}
@@ -192,7 +192,7 @@ export function NotesList({
                           e.stopPropagation();
                           setActiveMenuId(activeMenuId === note.id ? null : note.id);
                         }}
-                        className="opacity-0 group-hover:opacity-100 rounded p-0.5 text-secondary-text hover:text-foreground hover:bg-card-hover transition-opacity"
+                        className="opacity-0 group-hover:opacity-100 rounded p-0.5 text-[#737373] hover:text-[#F5F5F5] hover:bg-[#2C2C2C] transition-opacity"
                         title="Note options"
                       >
                         <MoreVertical className="h-3.5 w-3.5" />
@@ -202,7 +202,7 @@ export function NotesList({
                       {activeMenuId === note.id && (
                         <div
                           onClick={(e) => e.stopPropagation()}
-                          className="absolute right-0 top-5 z-30 w-36 rounded-md border border-border bg-[#111B2B] py-1 shadow-xl text-xs space-y-0.5"
+                          className="absolute right-0 top-5 z-30 w-36 rounded-md border border-[#303030] bg-[#262626] py-1 shadow-xl text-xs space-y-0.5"
                         >
                           {!isTrash ? (
                             <>
@@ -212,7 +212,7 @@ export function NotesList({
                                   onTogglePin(note.id);
                                   setActiveMenuId(null);
                                 }}
-                                className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-card-hover text-secondary-text hover:text-foreground"
+                                className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-[#303030] text-[#A3A3A3] hover:text-[#F5F5F5]"
                               >
                                 <Pin className="h-3 w-3" />
                                 {note.isPinned ? "Unpin" : "Pin"}
@@ -223,7 +223,7 @@ export function NotesList({
                                   onToggleArchive(note.id);
                                   setActiveMenuId(null);
                                 }}
-                                className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-card-hover text-secondary-text hover:text-foreground"
+                                className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-[#303030] text-[#A3A3A3] hover:text-[#F5F5F5]"
                               >
                                 <Archive className="h-3 w-3" />
                                 {note.isArchived ? "Unarchive" : "Archive"}
@@ -234,19 +234,19 @@ export function NotesList({
                                   onDuplicate(note.id);
                                   setActiveMenuId(null);
                                 }}
-                                className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-card-hover text-secondary-text hover:text-foreground"
+                                className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-[#303030] text-[#A3A3A3] hover:text-[#F5F5F5]"
                               >
                                 <Copy className="h-3 w-3" />
                                 Duplicate
                               </button>
-                              <div className="border-t border-border/60 my-1" />
+                              <div className="border-t border-[#303030] my-1" />
                               <button
                                 type="button"
                                 onClick={() => {
                                   onDelete(note.id);
                                   setActiveMenuId(null);
                                 }}
-                                className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-red-500/10 text-red-400"
+                                className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-[#2A1818] text-[#EF4444]"
                               >
                                 <Trash2 className="h-3 w-3" />
                                 Move to Trash
@@ -256,12 +256,12 @@ export function NotesList({
                             <>
                               {onRestore && (
                                 <button
-                                  type="button"
-                                  onClick={() => {
-                                    onRestore(note.id);
-                                    setActiveMenuId(null);
-                                  }}
-                                  className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-card-hover text-emerald-400"
+                                   type="button"
+                                   onClick={() => {
+                                     onRestore(note.id);
+                                     setActiveMenuId(null);
+                                   }}
+                                   className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-[#303030] text-[#A3A3A3]"
                                 >
                                   <RotateCcw className="h-3 w-3" />
                                   Restore Note
@@ -274,7 +274,7 @@ export function NotesList({
                                     onPermanentDelete(note.id);
                                     setActiveMenuId(null);
                                   }}
-                                  className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-red-500/10 text-red-400"
+                                  className="w-full flex items-center gap-2 px-2.5 py-1.5 hover:bg-[#2A1818] text-[#EF4444]"
                                 >
                                   <Trash2 className="h-3 w-3" />
                                   Delete Forever
@@ -289,18 +289,18 @@ export function NotesList({
                 </div>
 
                 {/* Plain Text Snippet */}
-                <p className="mt-1 text-[11px] text-secondary-text line-clamp-2 leading-relaxed">
+                <p className="mt-1 text-[11px] text-[#A3A3A3] line-clamp-2 leading-relaxed">
                   {note.plainText || "Empty document"}
                 </p>
 
                 {/* Metadata Footer: Category & Tags & Date */}
-                <div className="mt-2.5 flex items-center justify-between text-[10px] text-secondary-text/80">
+                <div className="mt-2.5 flex items-center justify-between text-[10px] text-[#737373]">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {note.category && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-foreground">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#D4D4D4]">
                         <span
                           className="h-1.5 w-1.5 rounded-full"
-                          style={{ backgroundColor: note.category.color || "#00D4FF" }}
+                          style={{ backgroundColor: note.category.color || "#888888" }}
                         />
                         {note.category.name}
                       </span>
@@ -309,19 +309,19 @@ export function NotesList({
                     {note.tags.slice(0, 2).map((t) => (
                       <span
                         key={t.id}
-                        className="rounded bg-sidebar-accent px-1.5 py-0.5 text-[9px] text-secondary-text"
+                        className="rounded bg-[#181818] border border-[#292929] px-1.5 py-0.5 text-[9px] text-[#A3A3A3]"
                       >
                         #{t.name}
                       </span>
                     ))}
                     {note.tags.length > 2 && (
-                      <span className="text-[9px] text-secondary-text/60">
+                      <span className="text-[9px] text-[#737373]">
                         +{note.tags.length - 2}
                       </span>
                     )}
                   </div>
 
-                  <span className="shrink-0 text-[10px] text-secondary-text/60 ml-2">
+                  <span className="shrink-0 text-[10px] text-[#737373] ml-2">
                     {formatDate(note.updatedAt)}
                   </span>
                 </div>

@@ -4,27 +4,27 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 select-none",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-xs sm:text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#454545] disabled:pointer-events-none disabled:opacity-50 select-none",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-background font-semibold hover:bg-primary-hover shadow-sm active:scale-[0.98]",
+          "bg-[#383838] text-[#F5F5F5] hover:bg-[#454545] border border-[#484848]/40 active:scale-[0.985] shadow-sm",
         secondary:
-          "bg-secondary text-foreground hover:bg-secondary-hover shadow-sm active:scale-[0.98]",
+          "bg-[#252525] text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#2C2C2C] border border-[#303030] active:scale-[0.985]",
         outline:
-          "border border-border bg-card text-foreground hover:bg-card-hover hover:border-border/80 active:scale-[0.98]",
+          "border border-[#303030] bg-[#202020] text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#2C2C2C] hover:border-[#383838] active:scale-[0.985]",
         ghost:
-          "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent",
+          "text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#2C2C2C] active:scale-[0.985]",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm active:scale-[0.98]",
-        link: "text-primary underline-offset-4 hover:underline p-0 h-auto",
+          "bg-[#2A1818] border border-[#502020] text-[#EF4444] hover:bg-[#351C1C] hover:text-[#F87171] active:scale-[0.985]",
+        link: "text-[#F5F5F5] underline-offset-4 hover:underline p-0 h-auto",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-6 text-base",
-        icon: "h-9 w-9 p-0",
+        default: "h-8 sm:h-9 px-3.5 py-1.5",
+        sm: "h-7 sm:h-8 rounded-lg px-2.5 text-xs",
+        lg: "h-10 rounded-xl px-5 text-sm",
+        icon: "h-8 w-8 p-0 rounded-lg",
       },
     },
     defaultVariants: {
@@ -49,7 +49,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || isLoading}
         {...props}
       >
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin text-current" />}
+        {isLoading && <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin text-current" />}
         {children}
       </button>
     );

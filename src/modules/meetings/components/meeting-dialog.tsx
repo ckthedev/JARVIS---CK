@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { format, addHours } from "date-fns";
+import { format } from "date-fns";
 import {
   Video,
   MapPin,
@@ -21,6 +21,7 @@ import {
   MeetingPriority,
 } from "../types";
 import { FileDto } from "@/modules/files/types";
+import { cn } from "@/lib/utils";
 
 interface MeetingDialogProps {
   isOpen: boolean;
@@ -102,42 +103,38 @@ export function MeetingDialog({
         setAttendees(
           initialMeeting.attendees.map((a) => ({
             name: a.name,
-            email: a.email || "",
-            phone: a.phone || "",
-            organization: a.organization || "",
-            role: a.role || "",
+            email: a.email || undefined,
+            phone: a.phone || undefined,
+            organization: a.organization || undefined,
+            role: a.role || undefined,
           }))
         );
       }
+
       if (initialMeeting.agendaItems) {
         setAgendaItems(
           initialMeeting.agendaItems.map((ag) => ({
             title: ag.title,
-            description: ag.description || "",
-            durationMinutes: ag.durationMinutes || 15,
+            description: ag.description || undefined,
+            durationMinutes: ag.durationMinutes,
           }))
         );
       }
-      if (initialMeeting.reminders) {
-        const offsets = initialMeeting.reminders
-          .map((r) => r.offsetMinutes)
-          .filter((o): o is number => o !== null && o !== undefined);
-        setReminderOffsets(offsets.length > 0 ? offsets : [15]);
-      }
+
       if (initialMeeting.attachments) {
         setSelectedFileIds(initialMeeting.attachments.map((a) => a.fileId));
       }
     } else {
-      const baseDate = initialDate || new Date();
-      const nextHour = addHours(baseDate, 1);
-      nextHour.setMinutes(0, 0, 0);
-      const endHour = addHours(nextHour, 1);
-
+      // Default creation state
       setTitle("");
       setDescription("");
-      setDateStr(format(baseDate, "yyyy-MM-dd"));
-      setStartTimeStr(format(nextHour, "HH:mm"));
-      setEndTimeStr(format(endHour, "HH:mm"));
+      const now = initialDate ? new Date(initialDate) : new Date();
+      now.setMinutes(0, 0, 0);
+      now.setHours(now.getHours() + 1);
+      const end = new Date(now.getTime() + 60 * 60 * 1000);
+      setDateStr(format(now, "yyyy-MM-dd"));
+      setStartTimeStr(format(now, "HH:mm"));
+      setEndTimeStr(format(end, "HH:mm"));
       setTimezone("Asia/Kolkata");
       setMeetingType("ONLINE");
       setPriority("NORMAL");
@@ -145,16 +142,16 @@ export function MeetingDialog({
       setLocation("");
       setAttendees([]);
       setAgendaItems([]);
-      setReminderOffsets([15]);
       setSelectedFileIds([]);
+      setReminderOffsets([15]);
     }
-    setError(null);
     setActiveTab("general");
-  }, [initialMeeting, isOpen, initialDate]);
+    setError(null);
+  }, [initialMeeting, initialDate, isOpen]);
 
-  // Load available files for attachment picker
+  // Load available files for attachments tab
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && activeTab === "attachments") {
       setLoadingFiles(true);
       fetch("/api/files?limit=50")
         .then((res) => (res.ok ? res.json() : { files: [] }))
@@ -164,7 +161,7 @@ export function MeetingDialog({
         .catch(() => {})
         .finally(() => setLoadingFiles(false));
     }
-  }, [isOpen]);
+  }, [isOpen, activeTab]);
 
   const handleAddAttendee = () => {
     if (!attName.trim()) return;
@@ -291,35 +288,38 @@ export function MeetingDialog({
           : "Create a new meeting with agenda, attendees, and automated reminders."
       }
       maxWidth="2xl"
+      className="bg-[#141414] border-[#303030] text-[#F5F5F5]"
     >
       <form onSubmit={handleSubmit} className="space-y-4 pt-2">
         {error && (
-          <div className="p-3 rounded-lg bg-red-500/15 border border-red-500/30 text-xs text-red-400">
+          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400">
             {error}
           </div>
         )}
 
         {/* Tab Headers */}
-        <div className="flex items-center gap-1 border-b border-border/60 pb-2 overflow-x-auto text-xs">
+        <div className="flex items-center gap-1 border-b border-[#303030] pb-2 overflow-x-auto text-xs">
           <button
             type="button"
             onClick={() => setActiveTab("general")}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+            className={cn(
+              "px-3 py-1.5 rounded-lg font-medium transition-colors",
               activeTab === "general"
-                ? "bg-primary/20 text-primary"
-                : "text-secondary-text hover:text-foreground"
-            }`}
+                ? "bg-[#262626] text-[#8B5CF6] border border-[#8B5CF6]/40"
+                : "text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             General Details
           </button>
           <button
             type="button"
             onClick={() => setActiveTab("participants")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-colors ${
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-colors",
               activeTab === "participants"
-                ? "bg-primary/20 text-primary"
-                : "text-secondary-text hover:text-foreground"
-            }`}
+                ? "bg-[#262626] text-[#8B5CF6] border border-[#8B5CF6]/40"
+                : "text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <Users className="h-3.5 w-3.5" />
             <span>Participants ({attendees.length})</span>
@@ -327,11 +327,12 @@ export function MeetingDialog({
           <button
             type="button"
             onClick={() => setActiveTab("agenda")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-colors ${
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-colors",
               activeTab === "agenda"
-                ? "bg-primary/20 text-primary"
-                : "text-secondary-text hover:text-foreground"
-            }`}
+                ? "bg-[#262626] text-[#8B5CF6] border border-[#8B5CF6]/40"
+                : "text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <ListTodo className="h-3.5 w-3.5" />
             <span>Agenda ({agendaItems.length})</span>
@@ -339,11 +340,12 @@ export function MeetingDialog({
           <button
             type="button"
             onClick={() => setActiveTab("reminders")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-colors ${
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-colors",
               activeTab === "reminders"
-                ? "bg-primary/20 text-primary"
-                : "text-secondary-text hover:text-foreground"
-            }`}
+                ? "bg-[#262626] text-[#8B5CF6] border border-[#8B5CF6]/40"
+                : "text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <Bell className="h-3.5 w-3.5" />
             <span>Reminders ({reminderOffsets.length})</span>
@@ -351,11 +353,12 @@ export function MeetingDialog({
           <button
             type="button"
             onClick={() => setActiveTab("attachments")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-colors ${
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-colors",
               activeTab === "attachments"
-                ? "bg-primary/20 text-primary"
-                : "text-secondary-text hover:text-foreground"
-            }`}
+                ? "bg-[#262626] text-[#8B5CF6] border border-[#8B5CF6]/40"
+                : "text-[#737373] hover:text-[#F5F5F5]"
+            )}
           >
             <Paperclip className="h-3.5 w-3.5" />
             <span>Attachments ({selectedFileIds.length})</span>
@@ -366,7 +369,7 @@ export function MeetingDialog({
         {activeTab === "general" && (
           <div className="space-y-3.5 max-h-[60vh] overflow-y-auto pr-1">
             <div>
-              <label className="block text-xs font-medium text-secondary-text mb-1">
+              <label className="block text-xs font-medium text-[#A3A3A3] mb-1">
                 Meeting Title <span className="text-red-400">*</span>
               </label>
               <input
@@ -375,24 +378,25 @@ export function MeetingDialog({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Weekly Product Sync"
-                className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-medium text-secondary-text mb-1">
+                <label className="block text-xs font-medium text-[#A3A3A3] mb-1">
                   Meeting Type
                 </label>
-                <div className="flex rounded-lg bg-card/60 border border-border/80 p-0.5">
+                <div className="flex rounded-lg bg-[#181818] border border-[#303030] p-0.5">
                   <button
                     type="button"
                     onClick={() => setMeetingType("ONLINE")}
-                    className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded text-xs font-medium transition-colors ${
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-1 py-1.5 rounded text-xs font-medium transition-colors",
                       meetingType === "ONLINE"
-                        ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                        : "text-secondary-text hover:text-foreground"
-                    }`}
+                        ? "bg-[#262626] text-[#8B5CF6] font-semibold"
+                        : "text-[#737373] hover:text-[#F5F5F5]"
+                    )}
                   >
                     <Video className="h-3.5 w-3.5" />
                     <span>Online</span>
@@ -400,11 +404,12 @@ export function MeetingDialog({
                   <button
                     type="button"
                     onClick={() => setMeetingType("PHYSICAL")}
-                    className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded text-xs font-medium transition-colors ${
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-1 py-1.5 rounded text-xs font-medium transition-colors",
                       meetingType === "PHYSICAL"
-                        ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                        : "text-secondary-text hover:text-foreground"
-                    }`}
+                        ? "bg-[#262626] text-[#8B5CF6] font-semibold"
+                        : "text-[#737373] hover:text-[#F5F5F5]"
+                    )}
                   >
                     <MapPin className="h-3.5 w-3.5" />
                     <span>Physical</span>
@@ -412,11 +417,12 @@ export function MeetingDialog({
                   <button
                     type="button"
                     onClick={() => setMeetingType("PHONE")}
-                    className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded text-xs font-medium transition-colors ${
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-1 py-1.5 rounded text-xs font-medium transition-colors",
                       meetingType === "PHONE"
-                        ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                        : "text-secondary-text hover:text-foreground"
-                    }`}
+                        ? "bg-[#262626] text-[#8B5CF6] font-semibold"
+                        : "text-[#737373] hover:text-[#F5F5F5]"
+                    )}
                   >
                     <Phone className="h-3.5 w-3.5" />
                     <span>Phone</span>
@@ -425,29 +431,29 @@ export function MeetingDialog({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-secondary-text mb-1">
+                <label className="block text-xs font-medium text-[#A3A3A3] mb-1">
                   Priority
                 </label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as MeetingPriority)}
-                  className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 >
-                  <option value="NORMAL">Normal Priority</option>
-                  <option value="HIGH">High Priority</option>
-                  <option value="LOW">Low Priority</option>
+                  <option value="NORMAL" className="bg-[#181818] text-[#F5F5F5]">Normal Priority</option>
+                  <option value="HIGH" className="bg-[#181818] text-[#F5F5F5]">High Priority</option>
+                  <option value="LOW" className="bg-[#181818] text-[#F5F5F5]">Low Priority</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-secondary-text mb-1">
+                <label className="block text-xs font-medium text-[#A3A3A3] mb-1">
                   Timezone
                 </label>
                 <input
                   type="text"
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
               </div>
             </div>
@@ -455,7 +461,7 @@ export function MeetingDialog({
             {/* Date and Time */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-medium text-secondary-text mb-1">
+                <label className="block text-xs font-medium text-[#A3A3A3] mb-1">
                   Date
                 </label>
                 <input
@@ -463,12 +469,12 @@ export function MeetingDialog({
                   required
                   value={dateStr}
                   onChange={(e) => setDateStr(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-secondary-text mb-1">
+                <label className="block text-xs font-medium text-[#A3A3A3] mb-1">
                   Start Time
                 </label>
                 <input
@@ -476,12 +482,12 @@ export function MeetingDialog({
                   required
                   value={startTimeStr}
                   onChange={(e) => setStartTimeStr(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-secondary-text mb-1">
+                <label className="block text-xs font-medium text-[#A3A3A3] mb-1">
                   End Time
                 </label>
                 <input
@@ -489,7 +495,7 @@ export function MeetingDialog({
                   required
                   value={endTimeStr}
                   onChange={(e) => setEndTimeStr(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
               </div>
             </div>
@@ -497,7 +503,7 @@ export function MeetingDialog({
             {/* Location or Meeting URL */}
             {meetingType === "ONLINE" ? (
               <div>
-                <label className="block text-xs font-medium text-secondary-text mb-1">
+                <label className="block text-xs font-medium text-[#A3A3A3] mb-1">
                   Meeting URL (Google Meet, Zoom, MS Teams, etc.)
                 </label>
                 <input
@@ -505,12 +511,12 @@ export function MeetingDialog({
                   value={meetingUrl}
                   onChange={(e) => setMeetingUrl(e.target.value)}
                   placeholder="https://meet.google.com/xyz-abc or https://zoom.us/j/..."
-                  className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
               </div>
             ) : (
               <div>
-                <label className="block text-xs font-medium text-secondary-text mb-1">
+                <label className="block text-xs font-medium text-[#A3A3A3] mb-1">
                   {meetingType === "PHYSICAL" ? "Physical Location / Address" : "Phone Number / Bridge"}
                 </label>
                 <input
@@ -522,13 +528,13 @@ export function MeetingDialog({
                       ? "Conference Room B, HQ 4th Floor"
                       : "+91 98765 43210 (PIN: 1234)"
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-medium text-secondary-text mb-1">
+              <label className="block text-xs font-medium text-[#A3A3A3] mb-1">
                 Description / Purpose
               </label>
               <textarea
@@ -536,7 +542,7 @@ export function MeetingDialog({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Overview of the meeting goals and context..."
-                className="w-full px-3 py-2 rounded-lg bg-card/60 border border-border/80 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                className="w-full px-3 py-2 rounded-lg bg-[#181818] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6] resize-none"
               />
             </div>
           </div>
@@ -545,29 +551,29 @@ export function MeetingDialog({
         {/* Tab 2: Participants */}
         {activeTab === "participants" && (
           <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
-            <div className="p-3 rounded-lg bg-card/40 border border-border/60 space-y-2">
-              <span className="text-xs font-semibold text-foreground">Add Participant</span>
+            <div className="p-3 rounded-lg bg-[#181818] border border-[#303030] space-y-2">
+              <span className="text-xs font-semibold text-[#F5F5F5]">Add Participant</span>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <input
                   type="text"
                   placeholder="Full Name *"
                   value={attName}
                   onChange={(e) => setAttName(e.target.value)}
-                  className="px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
                 <input
                   type="email"
                   placeholder="Email Address"
                   value={attEmail}
                   onChange={(e) => setAttEmail(e.target.value)}
-                  className="px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
                 <input
                   type="text"
                   placeholder="Phone"
                   value={attPhone}
                   onChange={(e) => setAttPhone(e.target.value)}
-                  className="px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
                 <div className="flex gap-2">
                   <input
@@ -575,14 +581,14 @@ export function MeetingDialog({
                     placeholder="Organization"
                     value={attOrg}
                     onChange={(e) => setAttOrg(e.target.value)}
-                    className="flex-1 px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="flex-1 px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                   />
                   <input
                     type="text"
                     placeholder="Role"
                     value={attRole}
                     onChange={(e) => setAttRole(e.target.value)}
-                    className="flex-1 px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="flex-1 px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                   />
                 </div>
               </div>
@@ -592,7 +598,7 @@ export function MeetingDialog({
                 size="sm"
                 onClick={handleAddAttendee}
                 disabled={!attName.trim()}
-                className="text-xs gap-1 h-8"
+                className="text-xs gap-1 h-8 bg-[#202020] border-[#303030] text-[#F5F5F5] hover:bg-[#2C2C2C]"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add Participant</span>
@@ -601,22 +607,22 @@ export function MeetingDialog({
 
             {/* List */}
             <div className="space-y-1.5">
-              <span className="text-xs font-semibold text-secondary-text uppercase tracking-wide">
+              <span className="text-[11px] font-semibold text-[#737373] uppercase tracking-wide">
                 Added Participants ({attendees.length})
               </span>
               {attendees.length === 0 ? (
-                <p className="text-xs text-secondary-text italic py-2">
+                <p className="text-xs text-[#737373] italic py-2">
                   No participants added yet.
                 </p>
               ) : (
                 attendees.map((a, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between p-2.5 rounded-lg bg-card/30 border border-border/40 text-xs"
+                    className="flex items-center justify-between p-2.5 rounded-lg bg-[#202020] border border-[#303030] text-xs"
                   >
                     <div>
-                      <div className="font-semibold text-foreground">{a.name}</div>
-                      <div className="text-[11px] text-secondary-text flex items-center gap-2">
+                      <div className="font-semibold text-[#F5F5F5]">{a.name}</div>
+                      <div className="text-[11px] text-[#737373] flex items-center gap-2">
                         {a.email && <span>{a.email}</span>}
                         {a.role && <span>• {a.role}</span>}
                         {a.organization && <span>• {a.organization}</span>}
@@ -625,7 +631,7 @@ export function MeetingDialog({
                     <button
                       type="button"
                       onClick={() => handleRemoveAttendee(idx)}
-                      className="text-secondary-text hover:text-red-400 p-1"
+                      className="text-[#737373] hover:text-red-400 p-1"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -639,15 +645,15 @@ export function MeetingDialog({
         {/* Tab 3: Agenda */}
         {activeTab === "agenda" && (
           <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
-            <div className="p-3 rounded-lg bg-card/40 border border-border/60 space-y-2">
-              <span className="text-xs font-semibold text-foreground">Add Agenda Item</span>
+            <div className="p-3 rounded-lg bg-[#181818] border border-[#303030] space-y-2">
+              <span className="text-xs font-semibold text-[#F5F5F5]">Add Agenda Item</span>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
                 <input
                   type="text"
                   placeholder="Topic / Agenda Item *"
                   value={agTitle}
                   onChange={(e) => setAgTitle(e.target.value)}
-                  className="md:col-span-3 px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="md:col-span-3 px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
                 <input
                   type="number"
@@ -656,7 +662,7 @@ export function MeetingDialog({
                   placeholder="Minutes"
                   value={agDuration}
                   onChange={(e) => setAgDuration(e.target.value)}
-                  className="px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
                 />
               </div>
               <input
@@ -664,7 +670,7 @@ export function MeetingDialog({
                 placeholder="Optional description / context"
                 value={agDesc}
                 onChange={(e) => setAgDesc(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-lg bg-card/60 border border-border/80 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full px-3 py-1.5 rounded-lg bg-[#202020] border border-[#303030] text-xs text-[#F5F5F5] placeholder:text-[#737373] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
               />
               <Button
                 type="button"
@@ -672,7 +678,7 @@ export function MeetingDialog({
                 size="sm"
                 onClick={handleAddAgendaItem}
                 disabled={!agTitle.trim()}
-                className="text-xs gap-1 h-8"
+                className="text-xs gap-1 h-8 bg-[#202020] border-[#303030] text-[#F5F5F5] hover:bg-[#2C2C2C]"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Add Agenda Item</span>
@@ -681,28 +687,28 @@ export function MeetingDialog({
 
             {/* List */}
             <div className="space-y-1.5">
-              <span className="text-xs font-semibold text-secondary-text uppercase tracking-wide">
+              <span className="text-[11px] font-semibold text-[#737373] uppercase tracking-wide">
                 Agenda Outline ({agendaItems.length})
               </span>
               {agendaItems.length === 0 ? (
-                <p className="text-xs text-secondary-text italic py-2">
+                <p className="text-xs text-[#737373] italic py-2">
                   No agenda items defined yet.
                 </p>
               ) : (
                 agendaItems.map((ag, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between p-2.5 rounded-lg bg-card/30 border border-border/40 text-xs"
+                    className="flex items-center justify-between p-2.5 rounded-lg bg-[#202020] border border-[#303030] text-xs"
                   >
                     <div>
-                      <div className="font-semibold text-foreground flex items-center gap-2">
+                      <div className="font-semibold text-[#F5F5F5] flex items-center gap-2">
                         <span>{idx + 1}. {ag.title}</span>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-card text-secondary-text border border-border/60">
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#181818] text-[#A3A3A3] border border-[#303030]">
                           {ag.durationMinutes}m
                         </span>
                       </div>
                       {ag.description && (
-                        <div className="text-[11px] text-secondary-text mt-0.5">
+                        <div className="text-[11px] text-[#737373] mt-0.5">
                           {ag.description}
                         </div>
                       )}
@@ -710,7 +716,7 @@ export function MeetingDialog({
                     <button
                       type="button"
                       onClick={() => handleRemoveAgendaItem(idx)}
-                      className="text-secondary-text hover:text-red-400 p-1"
+                      className="text-[#737373] hover:text-red-400 p-1"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -724,7 +730,7 @@ export function MeetingDialog({
         {/* Tab 4: Reminders */}
         {activeTab === "reminders" && (
           <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
-            <p className="text-xs text-secondary-text">
+            <p className="text-xs text-[#A3A3A3]">
               Select when you would like to receive notifications before the meeting starts:
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -740,17 +746,18 @@ export function MeetingDialog({
                 return (
                   <label
                     key={offset}
-                    className={`flex items-center gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${
+                    className={cn(
+                      "flex items-center gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-colors",
                       checked
-                        ? "bg-primary/10 border-primary/40 text-foreground font-medium"
-                        : "bg-card/40 border-border/40 text-secondary-text hover:text-foreground"
-                    }`}
+                        ? "bg-[#262626] border-[#8B5CF6]/50 text-[#F5F5F5] font-medium"
+                        : "bg-[#202020] border-[#303030] text-[#737373] hover:text-[#F5F5F5]"
+                    )}
                   >
                     <input
                       type="checkbox"
                       checked={checked}
                       onChange={() => toggleReminderOffset(offset)}
-                      className="rounded border-border text-primary focus:ring-primary"
+                      className="rounded border-[#303030] bg-[#181818] text-[#8B5CF6] focus:ring-[#8B5CF6]"
                     />
                     <span>{label}</span>
                   </label>
@@ -763,13 +770,13 @@ export function MeetingDialog({
         {/* Tab 5: Attachments */}
         {activeTab === "attachments" && (
           <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
-            <p className="text-xs text-secondary-text">
+            <p className="text-xs text-[#A3A3A3]">
               Link existing documents or media from your File Manager:
             </p>
             {loadingFiles ? (
-              <p className="text-xs text-secondary-text">Loading files...</p>
+              <p className="text-xs text-[#737373]">Loading files...</p>
             ) : availableFiles.length === 0 ? (
-              <p className="text-xs text-secondary-text italic">
+              <p className="text-xs text-[#737373] italic">
                 No files found in File Manager.
               </p>
             ) : (
@@ -779,19 +786,20 @@ export function MeetingDialog({
                   return (
                     <label
                       key={file.id}
-                      className={`flex items-center gap-2 p-2 rounded-lg border text-xs cursor-pointer truncate transition-all ${
+                      className={cn(
+                        "flex items-center gap-2 p-2 rounded-lg border text-xs cursor-pointer truncate transition-colors",
                         selected
-                          ? "bg-primary/10 border-primary/40 text-foreground font-medium"
-                          : "bg-card/40 border-border/40 text-secondary-text hover:text-foreground"
-                      }`}
+                          ? "bg-[#262626] border-[#8B5CF6]/50 text-[#F5F5F5] font-medium"
+                          : "bg-[#202020] border-[#303030] text-[#737373] hover:text-[#F5F5F5]"
+                      )}
                     >
                       <input
                         type="checkbox"
                         checked={selected}
                         onChange={() => toggleFileSelection(file.id)}
-                        className="rounded border-border text-primary focus:ring-primary"
+                        className="rounded border-[#303030] bg-[#181818] text-[#8B5CF6] focus:ring-[#8B5CF6]"
                       />
-                      <Paperclip className="h-3.5 w-3.5 text-primary shrink-0" />
+                      <Paperclip className="h-3.5 w-3.5 text-[#8B5CF6] shrink-0" />
                       <span className="truncate">{file.originalName}</span>
                     </label>
                   );
@@ -802,20 +810,20 @@ export function MeetingDialog({
         )}
 
         {/* Footer controls */}
-        <div className="border-t border-border/60 pt-4 flex items-center justify-end gap-2">
+        <div className="border-t border-[#303030] pt-4 flex items-center justify-end gap-2">
           <Button
             type="button"
             variant="ghost"
             onClick={onClose}
             disabled={loading}
-            className="text-xs text-secondary-text hover:text-foreground"
+            className="text-xs text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#202020]"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={loading}
-            className="text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+            className="text-xs font-medium bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
           >
             {loading ? "Saving..." : isEditing ? "Save Changes" : "Create Meeting"}
           </Button>
